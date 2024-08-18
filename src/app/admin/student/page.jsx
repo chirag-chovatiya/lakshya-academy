@@ -40,7 +40,7 @@ export default function StudentLists() {
                 />
               </div>
               <Link
-                href="./doctors/create"
+                href="./student/create"
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
               >
                 <span>
@@ -56,10 +56,10 @@ export default function StudentLists() {
               <thead>
                 <tr className="bg-gray-2 bg text-left dark:bg-meta-4">
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    ID
+                  ID
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    StudentImage
+                  Image
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
                     FullName
@@ -68,7 +68,7 @@ export default function StudentLists() {
                     Email
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    PhoneNumber
+                    Phone
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
                     Address
@@ -128,7 +128,7 @@ export default function StudentLists() {
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
                       <Link
-                        href={`./doctors/edit/1`}
+                        href={`./student/edit/1`}
                         className="hover:text-primary"
                       >
                         <i className="fa-regular fa-pen-to-square"></i>

@@ -2,6 +2,7 @@
 import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
+import MainLoader from "@/components/app-loader/app-loader";
 
 export default function RootLayout({
   children,
@@ -18,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
-          {loading ? <Loader /> : children}
+          {loading ? <MainLoader /> : children}
         </div>
       </body>
     </html>

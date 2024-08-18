@@ -1,6 +1,3 @@
-import { post } from "@/service/api";
-import { API } from "@/service/constant/api-constant";
-import Compressor from "compressorjs";
 import React, { useEffect, useState } from "react";
 
 export default function ImageUploader({
@@ -41,9 +38,9 @@ export default function ImageUploader({
     ).then(async (images) => {
       setImagePreviews(multiple ? [...imagePreviews, ...images] : [...images]);
 
-      const { urls } = await post(API.imgUpload, formData, true);
-      console.log(urls);
-      handleImageChange ? handleImageChange(urls) : "";
+      // const { urls } = await post(API.imgUpload, formData, true);
+      // console.log(urls);
+      // handleImageChange ? handleImageChange(urls) : "";
     });
   };
   return (
@@ -84,7 +81,7 @@ export default function ImageUploader({
             />
             <button
               type="button"
-              className="absolute top-0 right-0 bg-red-500 text-white bg-red rounded-full text-[15px] p-1 flex items-center justify-center"
+              className="absolute top-0 right-0 bg-red-500 text-white bg-[#50399c] rounded-full text-[15px] p-1 flex items-center justify-center"
               onClick={() => {
                 const updatedPreviews = [...imagePreviews];
                 updatedPreviews.splice(index, 1);

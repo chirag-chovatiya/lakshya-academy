@@ -120,10 +120,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </SidebarLinkGroup>
               {/* <!-- Menu Item Dashboard --> */}
 
-              {/* <!-- Doctors --> */}
+              {/* <!-- Student --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/doctors" || pathname.includes("doctors")
+                  pathname === "/admin/student" || pathname.includes("student")
                 }
               >
                 {(handleClick, open) => {
@@ -132,8 +132,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/doctors" ||
-                            pathname.includes("doctors")) &&
+                          (pathname === "/admin/student" ||
+                            pathname.includes("student")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
                         onClick={(e) => {
@@ -144,9 +144,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         }}
                       >
                         <span>
-                          <i className="fa-solid fa-user-doctor"></i>
+                        <i class="fa-solid fa-user"></i>
                         </span>
-                        Doctors
+                        Student List
                         <span>
                           <i
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
@@ -163,23 +163,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/admin/doctors"
+                              href="/admin/student"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/doctors" && "text-white"
+                                pathname === "/admin/student" && "text-white"
                               }`}
                             >
-                              Doctors
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/admin/doctors/category"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/doctors/category" &&
-                                "text-white"
-                              } `}
-                            >
-                              Doctors Category
+                              Student
                             </Link>
                           </li>
                         </ul>
@@ -188,7 +177,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   );
                 }}
               </SidebarLinkGroup>
-              {/* <!-- Doctors End --> */}
+              {/* <!-- Student End --> */}
 
             </ul>
           </div>

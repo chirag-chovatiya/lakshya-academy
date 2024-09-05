@@ -4,11 +4,6 @@ import ImageUploader from "@/components/ImageUploader/ImageUploader";
 export default function FormElementStudent() {
   return (
     <>
-      {/* {loading && (
-        <div className="fixed top-0 left-0 bottom-0 right-0 z-50 w-full h-full bg-black/50">
-          <Loader />
-        </div>
-      )} */}
       <form>
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           <div>
@@ -62,7 +57,7 @@ export default function FormElementStudent() {
               for="standerd"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Standerd
+              Standard
             </label>
             <input
               type="text"

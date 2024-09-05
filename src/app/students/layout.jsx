@@ -1,4 +1,3 @@
-import AppFooter from "@/components/app-footer/app-footer";
 import AppNavbar from "@/components/app-navbar/app-navbar";
 
 export const metadata = {
@@ -9,9 +8,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <>
-      <AppNavbar />
       {children}
-      <AppFooter />
     </>
   );
 }

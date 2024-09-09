@@ -2,7 +2,7 @@ import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
 
 const StudentAddition = sequelize.define(
-  "StudentAddition",
+  "StudentTest",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,43 +10,33 @@ const StudentAddition = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    studentId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     horizontalDigits : {
       type: DataTypes.INTEGER,
       defaultValue: null,
-      validate: {
-        isInt: true, // Ensures the value is an integer
-        min: 1,      // Ensures the value is at least 1 (positive number)
-        max: 9       // Ensures the value is at most 9 (single digit)
-      }
+    },
+    subDigits : {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
     },
     verticalDigits : {
       type: DataTypes.INTEGER,
       defaultValue: null,
-      validate: {
-        isInt: true, // Ensures the value is an integer
-        min: 1,      // Ensures the value is at least 1 (positive number)
-        max: 9       // Ensures the value is at most 9 (single digit)
-      }
     },
     totalQuestion : {
       type: DataTypes.INTEGER,
       defaultValue: null,
-      validate: {
-        isInt: true, // Ensures the value is an integer
-        min: 1,      // Ensures the value is at least 1 (positive number)
-      }
     },
     question: {
       type: DataTypes.JSON,
       defaultValue: [],
     },
-    answare: {
-      type: DataTypes.JSON,
-      defaultValue: [],
+    level: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
+    type: {
+      type: DataTypes.ENUM("addition","subtraction","multiplication", "division"),
+      defaultValue: null,
     },
   },
   {

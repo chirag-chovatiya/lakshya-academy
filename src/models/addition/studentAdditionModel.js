@@ -1,29 +1,36 @@
-import { generateRandomNumber } from "@/helper/random.service";
+import { generateAdditionQuestion, generateDivisionQuestion, generateMultiplicationQuestion, generateSubtractionQuestion} from "@/helper/random.service";
 import { StudentAddition} from "./studentAdditionSchema";
 
-export const createAddition = async (data) => {
+export const createTest = async (data) => {
   try {
-    const { horizontalDigits, verticalDigits, totalQuestion } = data;
-
+    const { horizontalDigits, verticalDigits,subDigits, totalQuestion, type } = data;
     const questionAnswerSet = [];
 
+   
+
     for (let i = 0; i < totalQuestion; i++) {
-      const verticalNumbers = Array.from({ length: verticalDigits }, () =>
-        generateRandomNumber(horizontalDigits)
-      );
+      let question, answer;
 
-      const totalSum = verticalNumbers.reduce((acc, num) => acc + num, 0);
-
-      questionAnswerSet.push({
-        question: verticalNumbers, 
-        answare: totalSum          
-      });
+      if (type === "addition") {
+        const additionResult = generateAdditionQuestion(horizontalDigits, verticalDigits);
+        question = additionResult.question;
+        answer = additionResult.answer;
+      } else if (type === "multiplication") {
+        const multiplicationResult = generateMultiplicationQuestion(horizontalDigits, subDigits);
+        question = multiplicationResult.question;
+        answer = multiplicationResult.answer;
+      }else if(type === "subtraction") {
+        const subtractionResult = generateSubtractionQuestion(horizontalDigits, verticalDigits);
+        question = subtractionResult.question;
+        answer = subtractionResult.answer;
+      }else if (type === "division") {
+        const divisionResult = generateDivisionQuestion(horizontalDigits, subDigits);
+        question = divisionResult.question;
+        answer = divisionResult.answer;
+      }
+      questionAnswerSet.push({ question, answer });
     }
-
-    const updatedData = {
-      ...data,
-      question: questionAnswerSet,
-    };
+    const updatedData = { ...data, question: questionAnswerSet };
     const createData = await StudentAddition.create(updatedData);
     return createData;
   } catch (error) {

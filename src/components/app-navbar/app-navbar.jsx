@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import HoverButton from "./hover-btn";
 import NavMenu from "./app-menu";
 import Link from "next/link";
@@ -8,16 +8,12 @@ import Link from "next/link";
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <nav
-      id="navbar"
-      className={`fixed top-0 w-full left-0 right-0 z-50 bg-custom-blue`}
-    >
+    <nav id="navbar" className="sticky  bg-custom-blue">
       <div className="flex flex-wrap items-center justify-between mx-auto px-8 py-3 gap-4">
         <img
           src="/assets/logo/logo-11.png"
@@ -27,7 +23,8 @@ export default function AppNavbar() {
         <div className="flex md:order-2 space-x-4 md:space-x-0 rtl:space-x-reverse">
           <div className="hidden md:flex space-x-5">
             <HoverButton />
-            <Link href="/appointment"
+            <Link
+              href="/appointment"
               type="button"
               className="px-4 py-2 md:ms-3 rounded-full text-custom-blue cursor-pointer font-semibold text-sm w-full bg-custom-bg"
             >

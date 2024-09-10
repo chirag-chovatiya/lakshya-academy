@@ -1,28 +1,16 @@
 import { NextResponse } from "next/server";
 import sendResponse from "@/utils/response";
-import {
-  createTest,
-  getAllTest,
-} from "@/models/addition/studentAdditionModel";
+import { createReport, getAllReport } from "@/models/studentReport/studentReportModel";
 
 export async function POST(request) {
   try {
     const data = await request.json();
-
-    if (data.subDigits < 1 || data.subDigits > 9) {
-      return sendResponse(
-        NextResponse,
-        500,
-        "subDigits must be between 1 and 9."
-      );
-    }
-
-    const newAddition = await createTest(data);
+    const newAddition = await createReport(data);
 
     return sendResponse(
       NextResponse,
       201,
-      "Test created successfully",
+      "Student Report created successfully",
       newAddition
     );
   } catch (error) {
@@ -30,14 +18,13 @@ export async function POST(request) {
     return sendResponse(NextResponse, 500, "Internal server error");
   }
 }
-
 export async function GET() {
   try {
-    const allTest = await getAllTest();
-    if (allTest) {
-      return sendResponse(NextResponse, 200, "All Test are available", allTest);
+    const allReport = await getAllReport();
+    if (allReport) {
+      return sendResponse(NextResponse, 200, "All Report are available", allReport);
     } else {
-      return sendResponse(NextResponse, 404, "No Test available");
+      return sendResponse(NextResponse, 404, "No Report available");
     }
   } catch (error) {
     return sendResponse(NextResponse, 500, "Internal server error", {

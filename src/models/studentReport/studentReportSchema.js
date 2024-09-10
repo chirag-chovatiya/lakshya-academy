@@ -1,8 +1,8 @@
 import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
 
-const StudentAddition = sequelize.define(
-  "StudentTest",
+const StudentReport = sequelize.define(
+  "StudenReport",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,33 +10,33 @@ const StudentAddition = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    horizontalDigits : {
+    studentId : {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    subDigits : {
+    testId : {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    verticalDigits : {
+    additionMark : {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    totalQuestion : {
+    subtractionMark : {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    question: {
+    multiplicationMark: {
       type: DataTypes.JSON,
       defaultValue: [],
     },
-    level: {
+    divisionMark: {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    type: {
-      type: DataTypes.ENUM("addition","subtraction","multiplication", "division"),
-      defaultValue: null,
+    hwStatus: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: 0,
     },
   },
   {
@@ -45,4 +45,4 @@ const StudentAddition = sequelize.define(
   }
 );
 
-export { StudentAddition };
+export { StudentReport };

@@ -2,7 +2,7 @@ import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
 
 const User = sequelize.define(
-  "users",
+  "students",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -27,8 +27,12 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: null,
     },
+    level: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
     type: {
-      type: DataTypes.ENUM("Normal", "Admin", "Google"),
+      type: DataTypes.ENUM("Student", "Admin"),
       defaultValue: null,
     },
     status: {

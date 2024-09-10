@@ -10,7 +10,7 @@ export default function FormStudentAddition({
 }) {
   return (
     <AppModal
-      key="Add Student Addition"
+      key="Add Student Test"
       config={studentAdditionObj}
       component={
         <form>

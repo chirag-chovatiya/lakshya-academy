@@ -9,7 +9,7 @@ export default function StudentLists() {
   const [studentAdditionObj, setStudentAdditionObj] = useState({
     visible: false,
     displayHeader: true,
-    title: "Add Student Addition",
+    title: "Add Student Test",
     displayDefaultBtn: false,
     cancelBtnText: "Later",
     okBtnText: "Save",
@@ -18,7 +18,7 @@ export default function StudentLists() {
   const handleAddNewStudent = (id = null) => {
     setStudentAdditionObj((prevState) => ({
       ...prevState,
-      title: id ? "Edit Student Addition" : "Add Student Addition",
+      title: id ? "Edit Student Test" : "Add Student Test",
       visible: true,
     }));
   };

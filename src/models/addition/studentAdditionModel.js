@@ -6,11 +6,8 @@ export const createTest = async (data) => {
     const { horizontalDigits, verticalDigits,subDigits, totalQuestion, type } = data;
     const questionAnswerSet = [];
 
-   
-
     for (let i = 0; i < totalQuestion; i++) {
       let question, answer;
-
       if (type === "addition") {
         const additionResult = generateAdditionQuestion(horizontalDigits, verticalDigits);
         question = additionResult.question;
@@ -20,7 +17,7 @@ export const createTest = async (data) => {
         question = multiplicationResult.question;
         answer = multiplicationResult.answer;
       }else if(type === "subtraction") {
-        const subtractionResult = generateSubtractionQuestion(horizontalDigits, verticalDigits);
+        const subtractionResult = generateSubtractionQuestion(horizontalDigits, subDigits);
         question = subtractionResult.question;
         answer = subtractionResult.answer;
       }else if (type === "division") {
@@ -37,7 +34,7 @@ export const createTest = async (data) => {
     throw error;
   }
 };
-export const getAllAddition = async () => {
+export const getAllTest = async () => {
   try {
     const getAddition = await StudentAddition.findAll();
     return getAddition;
@@ -45,20 +42,45 @@ export const getAllAddition = async () => {
     throw error;
   }
 };
-export const getAdditionById = async (additionId) => {
+export const getTestById = async (testId) => {
   try {
-    const getData = await StudentAddition.findOne({ where: { id: additionId } });
+    const getData = await StudentAddition.findOne({ where: { id: testId } });
     return getData;
   } catch (error) {
     throw error;
   }
 };
-export const updateAdditionById = async (additionId, newData) => {
+export const updateTestById = async (testId, newData) => {
   try {
-    const findAddition = await StudentAddition.findOne({ where: { id:additionId } });
-    if (findAddition) {
-      const additionUpdated = await findAddition.update(newData);
-      return additionUpdated;
+    const findTest = await StudentAddition.findOne({ where: { id: testId } });
+    
+    if (findTest) {
+      const { horizontalDigits, verticalDigits, subDigits, totalQuestion, type } = newData;
+      const questionAnswerSet = [];
+      for (let i = 0; i < totalQuestion; i++) {
+        let question, answer;
+        if (type === "addition") {
+          const additionResult = generateAdditionQuestion(horizontalDigits, verticalDigits);
+          question = additionResult.question;
+          answer = additionResult.answer;
+        } else if (type === "multiplication") {
+          const multiplicationResult = generateMultiplicationQuestion(horizontalDigits, subDigits);
+          question = multiplicationResult.question;
+          answer = multiplicationResult.answer;
+        } else if (type === "subtraction") {
+          const subtractionResult = generateSubtractionQuestion(horizontalDigits, subDigits);
+          question = subtractionResult.question;
+          answer = subtractionResult.answer;
+        } else if (type === "division") {
+          const divisionResult = generateDivisionQuestion(horizontalDigits, subDigits);
+          question = divisionResult.question;
+          answer = divisionResult.answer;
+        }
+        questionAnswerSet.push({ question, answer });
+      }
+      const updatedData = { ...newData, question: questionAnswerSet };
+      const testUpdated = await findTest.update(updatedData);
+      return testUpdated;
     } else {
       return null;
     }
@@ -66,12 +88,12 @@ export const updateAdditionById = async (additionId, newData) => {
     throw error;
   }
 };
-export const deleteAdditionById = async function (additionId) {
+export const deleteTestById = async function (testId) {
   try {
-    const deleteAddition = await StudentAddition.findOne({ where: { id: additionId } });
-    if (deleteAddition) {
-      const additionDelete = await deleteAddition.update({ status: 'Delete' });
-      return additionDelete;
+    const deleteTest = await StudentAddition.findOne({ where: { id: testId } });
+    if (deleteTest) {
+      await deleteTest.destroy();
+      return { message: 'Test deleted successfully' };
     } else {
       return null;
     }
@@ -79,4 +101,5 @@ export const deleteAdditionById = async function (additionId) {
     throw error;
   }
 };
+
 

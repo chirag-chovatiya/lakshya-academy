@@ -26,15 +26,13 @@ export const generateMultiplicationQuestion = (horizontalDigits, subDigits) => {
   };
 };
 
-export const generateSubtractionQuestion = (horizontalDigits, verticalDigits) => {
-  const verticalNumbers = Array.from({ length: verticalDigits }, () =>
-    generateRandomNumber(horizontalDigits)
-  );
-  const totalSum = verticalNumbers.reduce((acc, num) => acc + num, 0);
-  const startingNumber = totalSum + generateRandomNumber(horizontalDigits);
-  const result = startingNumber - totalSum;
+export const generateSubtractionQuestion = (horizontalDigits, subDigits) => {
+  const horizontalNumber = generateRandomNumber(horizontalDigits);
+  const subNumber = generateRandomNumber(subDigits);
 
-  return { question: [startingNumber, ...verticalNumbers], answer: result };
+  const startingNumber = horizontalNumber + subNumber;
+  const result = startingNumber - subNumber;
+  return { question: [startingNumber, subNumber], answer: result };
 };
 
 export const generateDivisionQuestion = (horizontalDigits, subDigits) => {

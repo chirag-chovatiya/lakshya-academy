@@ -1,12 +1,19 @@
-import AppNavbar from "@/components/app-navbar/app-navbar";
-import HeroSection from "./components/hero-section";
+import ECommerce from "@/components/Dashboard/E-commerce";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
-export default function Students() {
+export const metadata = {
+  title: "MedEx Admin",
+  description: "MedEx Admin - Admin Dashboard",
+};
+
+export default function Home() {
   return (
     <>
-      <AppNavbar></AppNavbar>
-      <HeroSection />
      
+          <DefaultLayout>
+            <ECommerce />
+          </DefaultLayout>
+
     </>
   );
 }

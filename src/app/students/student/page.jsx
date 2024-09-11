@@ -4,25 +4,8 @@ import Link from "next/link";
 import React from "react";
 import DeleteButton from "@/components/Switchers/DeleteButton";
 import StatusButton from "@/components/Switchers/StatusButton";
-import { UserStoreProvider } from "@/providers/user-store-provider";
 
 export default function StudentLists() {
-  const {
-    data,
-    changePage,
-    onPageSizeChange,
-    onSelectionChange,
-    initialize,
-    search,
-    changeOrder,
-  } = UserStoreProvider((state) => state);
-
-  useEffect(() => {
-    onSelectionChange("contact");
-    if (Object.keys(contact.data).length == 0) {
-      initialize(null, "contact");
-    }
-  }, []);
   return (
     <>
       <div>

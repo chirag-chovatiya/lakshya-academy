@@ -69,13 +69,14 @@ export async function POST(req, res) {
 }
 
 export async function GET (request) {
-  //  const authResponse = await authenticateToken(request);
-  // if (authResponse) {
-  //   return authResponse;
-  // }
   try {
-    const allUser = await getAllUser()
-    if (allUser.length > 0) {
+    const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
+    const pageSize =
+    parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
+    const allUser = await getAllUser(page,
+      pageSize,)
+      console.log(allUser)
+    if (allUser) {
       return sendResponse(NextResponse, 200, 'All User are available', allUser)
     } else {
       return sendResponse(NextResponse, 404, 'No User available')

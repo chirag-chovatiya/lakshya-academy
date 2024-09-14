@@ -1,5 +1,6 @@
 import ECommerce from "@/components/Dashboard/E-commerce";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { UserStoreProvider } from "@/providers/user-store-provider";
 
 export const metadata = {
   title: "MedEx Admin",
@@ -9,11 +10,11 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-     
-          <DefaultLayout>
-            <ECommerce />
-          </DefaultLayout>
-
+      <UserStoreProvider>
+        <DefaultLayout>
+          <ECommerce />
+        </DefaultLayout>
+      </UserStoreProvider>
     </>
   );
 }

@@ -13,5 +13,5 @@ export async function getUserDetails(token) {
 }
 
 export const getAllUserData = async (pagination) => {
-  return await get(API.getAllBlog + pagination);
+  return await get(API.getAllUser + pagination);
 };

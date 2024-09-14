@@ -2,12 +2,12 @@ import { getAllUserData } from "@/service/auth-api";
 import { createStore } from "zustand/vanilla";
 
 export const defaultInitState = {
-  users: {
+  test: {
     data: {},
     page: 1,
     totalPages: 0,
     totalData: 0,
-    pageSize: 2,
+    pageSize: 10,
     loading: true,
     error: null,
     hasMoreData: true,
@@ -15,7 +15,7 @@ export const defaultInitState = {
 };
 
 async function fetchDataAndSetState(set, get) {
-  const { page, pageSize } = get().users;
+  const { page, pageSize } = get().test;
 
   try {
     const url = `?page=${page}&pageSize=${pageSize}`;
@@ -24,9 +24,9 @@ async function fetchDataAndSetState(set, get) {
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
       set((state) => ({
-        users: {
-          ...state.users,
-          data: { ...state.users.data, [page]: data.data },
+        test: {
+          ...state.test,
+          data: { ...state.test.data, [page]: data.data },
           loading: false,
           totalPages: data.totalPages,
           totalData: data.totalData,
@@ -35,20 +35,20 @@ async function fetchDataAndSetState(set, get) {
       }));
     } else {
       set((state) => ({
-        users: { ...state.users, error: data.message },
+        test: { ...state.test, error: data.message },
       }));
     }
   } catch (error) {
     set((state) => ({
-      users: { ...state.users, error: error.message || error },
+      test: { ...state.test, error: error.message || error },
     }));
   }
 }
 
-export const createUsersStore = (initState = defaultInitState) =>
+export const createtestStore = (initState = defaultInitState) =>
   createStore((set, get) => ({
     ...initState,
-    initialize: async (selected = "users") => {
+    initialize: async (selected = "test") => {
       set((state) => ({
         [selected]: {
           ...state[selected],
@@ -62,26 +62,26 @@ export const createUsersStore = (initState = defaultInitState) =>
     },
     changePage: async (page) => {
       const state = get();
-      if (!state.users.data[page]) {
+      if (!state.test.data[page]) {
         set({
-          users: { ...state.users, page, hasMoreData: true, loading: true },
+          test: { ...state.test, page, hasMoreData: true, loading: true },
         });
         await fetchDataAndSetState(set, get);
       } else {
-        set({ users: { ...state.users, page } });
+        set({ test: { ...state.test, page } });
       }
     },
     onSelectionChange: async (selected) => set({ selected }),
     onPageSizeChange: async (pageSize) => {
       set({
-        users: {
-          ...defaultInitState.users,
+        test: {
+          ...defaultInitState.test,
           pageSize,
           loading: true,
         },
       });
       await fetchDataAndSetState(set, get);
     },
-    onError: (error) => set({ users: { ...get().users, error } }),
-    noMoreData: () => set({ users: { ...get().users, hasMoreData: false } }),
+    onError: (error) => set({ test: { ...get().test, error } }),
+    noMoreData: () => set({ test: { ...get().test, hasMoreData: false } }),
   }));

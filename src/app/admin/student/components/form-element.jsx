@@ -5,18 +5,18 @@ export default function FormElementStudent() {
   return (
     <>
       <form>
-        <div class="grid gap-6 mb-6 md:grid-cols-2">
+        <div className="grid gap-6 mb-6 md:grid-cols-2">
           <div>
             <label
               for="first_name"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Full Name
             </label>
             <input
               type="text"
               id="first_name"
-              class="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
               placeholder="John"
               required
             />
@@ -24,14 +24,14 @@ export default function FormElementStudent() {
           <div>
             <label
               for="email"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Email address
             </label>
             <input
               type="email"
               id="email"
-              class="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
               placeholder="john.doe@company.com"
               required
             />
@@ -39,14 +39,14 @@ export default function FormElementStudent() {
           <div>
             <label
               for="phone"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Phone number
             </label>
             <input
               type="tel"
               id="phone"
-              class="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
               placeholder="123-45-678"
               pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
               required
@@ -55,14 +55,14 @@ export default function FormElementStudent() {
           <div>
             <label
               for="standerd"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Standard
             </label>
             <input
               type="text"
               id="standerd"
-              class="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
               placeholder="Flowbite"
               required
             />
@@ -70,14 +70,14 @@ export default function FormElementStudent() {
           <div>
             <label
               for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Password
             </label>
             <input
               type="password"
               id="password"
-              class="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
               placeholder="•••••••••"
               required
             />
@@ -85,14 +85,14 @@ export default function FormElementStudent() {
           <div>
             <label
               for="confirm_password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Confirm password
             </label>
             <input
               type="password"
               id="confirm_password"
-              class="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
               placeholder="•••••••••"
               required
             />
@@ -100,7 +100,7 @@ export default function FormElementStudent() {
           <div>
             <label
               for="address"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Address
             </label>
@@ -108,7 +108,7 @@ export default function FormElementStudent() {
               type="text"
               id="address"
               rows="7"
-              class="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
               placeholder="Write your address here..."
               required
             />
@@ -116,7 +116,7 @@ export default function FormElementStudent() {
           <div>
             <label
               for="studentimage"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Upload Student Image
             </label>

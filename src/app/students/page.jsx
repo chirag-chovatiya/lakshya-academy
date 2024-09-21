@@ -1,12 +1,9 @@
-import AppNavbar from "@/components/app-navbar/app-navbar";
-import HeroSection from "./components/hero-section";
+import StudentDashboard from "@/components/Dashboard/studentdashboard";
 
-export default function Students() {
+export default function StudentLists() {
   return (
     <>
-      <AppNavbar></AppNavbar>
-      <HeroSection />
-     
+      <StudentDashboard/>
     </>
   );
 }

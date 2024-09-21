@@ -1,19 +1,9 @@
-import ECommerce from "@/components/Dashboard/E-commerce";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import StudentDashboard from "@/components/Dashboard/studentdashboard";
 
-export const metadata = {
-  title: "MedEx Admin",
-  description: "MedEx Admin - Admin Dashboard",
-};
-
-export default function Home() {
+export default function StudentLists() {
   return (
     <>
-     
-          <DefaultLayout>
-            <ECommerce />
-          </DefaultLayout>
-
+      <StudentDashboard/>
     </>
   );
 }

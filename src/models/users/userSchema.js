@@ -33,7 +33,7 @@ const User = sequelize.define(
     },
     type: {
       type: DataTypes.ENUM("Student", "Admin"),
-      defaultValue: null,
+      defaultValue: "Student",
     },
     status: {
       type: DataTypes.ENUM("Active", "Inactive","Delete"),

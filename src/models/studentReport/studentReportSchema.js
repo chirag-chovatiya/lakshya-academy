@@ -27,11 +27,15 @@ const StudentReport = sequelize.define(
       defaultValue: null,
     },
     multiplicationMark: {
-      type: DataTypes.JSON,
-      defaultValue: [],
+      type: DataTypes.INTEGER,
+      defaultValue: null,
     },
     divisionMark: {
       type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
+    result: {
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     hwStatus: {

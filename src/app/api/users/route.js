@@ -55,9 +55,6 @@ export async function POST(req, res) {
     return sendResponse(NextResponse, 500, "Internal server error", { error: error.message });
   }
 }
-
-
-
 export async function GET (request) {
   try {
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
@@ -65,7 +62,6 @@ export async function GET (request) {
     parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
     const allUser = await getAllUser(page,
       pageSize,)
-      console.log(allUser)
     if (allUser) {
       return sendResponse(NextResponse, 200, 'All User are available', allUser)
     } else {

@@ -1,4 +1,5 @@
 import { InputField } from "@/components/app-inputfield/app-inputfield";
+import { SelectField } from "@/components/app-inputfield/app-selectedfield";
 import AppModal from "@/components/app-modal/modal.component";
 import SubmitButton from "@/components/Button/Submit-button";
 
@@ -8,6 +9,16 @@ export default function FormStudentAddition({
   id = null,
   data = {},
 }) {
+  const operationOptions = [
+    { label: "Addition", value: "addition" },
+    { label: "Subtraction", value: "subtraction" },
+    { label: "Multiplication", value: "multiplication" },
+    { label: "Division", value: "division" },
+  ];
+  const studentLevelOptions = Array.from({ length: 9 }, (v, i) => ({
+    label: `Level ${i + 1}`,
+    value: i + 1,
+  }));
   return (
     <AppModal
       key="Add Student Test"
@@ -15,11 +26,15 @@ export default function FormStudentAddition({
       component={
         <form>
           <div className="grid gap-6 mb-6 md:grid-cols-2">
-            <InputField
+            <SelectField
+              id="operationType"
+              label="Operation Type"
+              options={operationOptions}
+            />
+            <SelectField
               id="studentlevel"
               label="Student Level"
-              type="number"
-              placeholder="Select Your Student Level..."
+              options={studentLevelOptions}
             />
             <InputField
               id="rowdigits"
@@ -34,9 +49,15 @@ export default function FormStudentAddition({
               placeholder="Enter number of columns"
             />
             <InputField
+              id="verticaldigits"
+              label="Vertical Digits"
+              type="number"
+              placeholder="Enter vertical number of columns"
+            />
+            <InputField
               id="totaladdition"
               label="Total Addition"
-              type="text"
+              type="number"
               placeholder="Enter number of total addition"
             />
           </div>

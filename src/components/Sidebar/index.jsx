@@ -7,7 +7,7 @@ import SidebarLinkGroup from "./SidebarLinkGroup";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const pathname = usePathname();
-  
+
   const trigger = useRef(null);
   const sidebar = useRef(null);
 
@@ -144,7 +144,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         }}
                       >
                         <span>
-                        <i class="fa-solid fa-user"></i>
+                          <i class="fa-solid fa-user"></i>
                         </span>
                         Student List
                         <span>
@@ -182,7 +182,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Exam List --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/exam" || pathname.includes("exam")
+                  pathname === "/admin/addition" || pathname.includes("addition")
                 }
               >
                 {(handleClick, open) => {
@@ -191,8 +191,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/exam" ||
-                            pathname.includes("exam")) &&
+                          (pathname === "/admin/addition" ||
+                            pathname.includes("addition")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
                         onClick={(e) => {
@@ -203,7 +203,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         }}
                       >
                         <span>
-                        <i className="fa-solid fa-user"></i>
+                          <i className="fa-solid fa-user"></i>
                         </span>
                         Manage Exam
                         <span>
@@ -227,7 +227,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 pathname === "/admin/addition" && "text-white"
                               }`}
                             >
-                              Add Addition
+                              Student Exam
                             </Link>
                           </li>
                         </ul>
@@ -238,7 +238,72 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </SidebarLinkGroup>
               {/* <!-- Student End --> */}
 
-
+              <SidebarLinkGroup
+                activeCondition={
+                  pathname === "/admin/report" || pathname.includes("report")
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      <Link
+                        href="#"
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                          (pathname === "/admin/report" ||
+                            pathname.includes("report")) &&
+                          "bg-graydark dark:bg-meta-4"
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sidebarExpanded
+                            ? handleClick()
+                            : setSidebarExpanded(true);
+                        }}
+                      >
+                        <span>
+                          <i className="fa-solid fa-user"></i>
+                        </span>
+                        Student Report
+                        <span>
+                          <i
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
+                              open && "rotate-180"
+                            }`}
+                          ></i>
+                        </span>
+                      </Link>
+                      <div
+                        className={`translate transform overflow-hidden ${
+                          !open && "hidden"
+                        }`}
+                      >
+                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
+                          <li>
+                            <Link
+                              href="/admin/report"
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                pathname === "/admin/addition" && "text-white"
+                              }`}
+                            >
+                              Report
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/admin/monthlyreport"
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                pathname === "/admin/addition" && "text-white"
+                              }`}
+                            >
+                             Monthly Report
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </React.Fragment>
+                  );
+                }}
+              </SidebarLinkGroup>
             </ul>
           </div>
         </nav>

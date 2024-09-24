@@ -39,7 +39,7 @@ export default function StudentLists() {
         />
       )}
       <div>
-        <Breadcrumb pageName="Student Addition" />
+        <Breadcrumb pageName="Student Test" />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
@@ -92,13 +92,22 @@ export default function StudentLists() {
                     Student Level
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
+                    Sum Type
+                  </th>
+                  <th className="px-4 py-4 font-medium text-black dark:text-white">
                     Addition Row
+                  </th>
+                  <th className="px-4 py-4 font-medium text-black dark:text-white">
+                    Vertical Digits
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
                     Addition Column
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
                     Total Addition
+                  </th>
+                  <th className="px-4 py-4 font-medium text-black dark:text-white">
+                    Created Date
                   </th>
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
                     Actions
@@ -111,10 +120,16 @@ export default function StudentLists() {
                     <p className="text-sm text-black dark:text-white">1</p>
                   </td>
                   <td className="min-w-[150px] border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white">2</p>
+                    <p className="text-black dark:text-white">Level 2</p>
+                  </td>
+                  <td className="min-w-[150px] border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                    <p className="text-black dark:text-white">Addition</p>
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white line-clamp-3">3</p>
+                  </td>
+                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                    <p className="text-black dark:text-white line-clamp-3">5</p>
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white line-clamp-3">
@@ -124,6 +139,11 @@ export default function StudentLists() {
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <p className="text-black dark:text-white line-clamp-3">
                       10
+                    </p>
+                  </td>
+                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                    <p className="text-black dark:text-white line-clamp-3">
+                      20/10/2024
                     </p>
                   </td>
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">

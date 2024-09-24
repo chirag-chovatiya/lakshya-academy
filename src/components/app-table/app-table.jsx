@@ -39,9 +39,11 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler }) => {
                   ))}
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
-                      <Link href={`${editLinkPrefix}/${item.id}`} className="hover:text-primary">
-                        <i className="fa-regular fa-pen-to-square"></i>
-                      </Link>
+                    {editLinkPrefix && (
+                        <Link href={`${editLinkPrefix}/${item.id}`} className="hover:text-primary">
+                          <i className="fa-regular fa-pen-to-square"></i>
+                        </Link>
+                      )}
                       <DeleteButton onClick={() => deleteHandler(item.id)} />
                     </div>
                   </td>

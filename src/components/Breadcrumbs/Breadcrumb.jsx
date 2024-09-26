@@ -21,7 +21,7 @@ const Breadcrumb = ({ pageName, title = false }) => {
         <ol className="flex items-center gap-2">
           <li>
             <Link className="font-medium" href="/admin">
-            <i class="fa-solid fa-house"></i> /
+            <i className="fa-solid fa-house"></i> /
             </Link>
           </li>
           {

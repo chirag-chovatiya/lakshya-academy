@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import sendResponse from "@/utils/response";
-import { createReport, getAllReport } from "@/models/studentReport/studentReportModel";
+import {
+  createReport,
+  getAllReport,
+} from "@/models/studentReport/studentReportModel";
 
 export async function POST(request) {
   try {
@@ -20,9 +23,17 @@ export async function POST(request) {
 }
 export async function GET() {
   try {
-    const allReport = await getAllReport();
+    const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
+    const pageSize =
+      parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
+    const allReport = await getAllReport(page, pageSize);
     if (allReport) {
-      return sendResponse(NextResponse, 200, "All Report are available", allReport);
+      return sendResponse(
+        NextResponse,
+        200,
+        "All Report are available",
+        allReport
+      );
     } else {
       return sendResponse(NextResponse, 404, "No Report available");
     }

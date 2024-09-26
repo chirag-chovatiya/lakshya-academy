@@ -1,101 +1,65 @@
-export default function AppNavbar({ toggleSidebar }) {
-return (
-    <div class="px-3 py-3 lg:px-5 lg:pl-3">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center justify-start rtl:justify-end">
-        <button
-            onClick={toggleSidebar} 
-            type="button"
-            className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-          >
-            <span className="sr-only">Open sidebar</span>
-            <i class="fa-solid fa-bars"></i>
-          </button>
-          <a href="https://flowbite.com" class="flex ms-2 md:me-24">
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              class="h-8 me-3"
-              alt="FlowBite Logo"
-            />
-            <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-              Flowbite
-            </span>
-          </a>
+"use client";
+import { useState } from "react";
+import NavMenu from "./app-menu";
+import ProfileAvtara from "./app-profile";
+
+export default function AppNavbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  
+  return (
+    <nav
+      id="navbar"
+      className={`fixed top-0 w-full left-0 right-0 z-50 bg-custom-blue`}
+    >
+      <div className="flex flex-wrap items-center justify-between mx-auto px-8 py-3 gap-4">
+      <div className="flex items-center space-x-4">
+          <img
+            src="/assets/logo/logo-11.png"
+            className="h-10"
+            alt="Hospital Logo"
+          />
+          <span className="text-lg font-semibold text-white">
+          Acadamy
+          </span>
         </div>
-        <div class="flex items-center">
-          <div class="flex items-center ms-3">
-            <div>
-              <button
-                type="button"
-                class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300"
-                aria-expanded="false"
-                data-dropdown-toggle="dropdown-user"
-              >
-                <span class="sr-only">Open user menu</span>
-                <img
-                  class="w-8 h-8 rounded-full"
-                  src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                  alt="user photo"
-                />
-              </button>
-            </div>
-            <div
-              class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow"
-              id="dropdown-user"
-            >
-              <div class="px-4 py-3" role="none">
-                <p class="text-sm text-gray-900" role="none">
-                  Neil Sims
-                </p>
-                <p
-                  class="text-sm font-medium text-gray-900 truncate"
-                  role="none"
-                >
-                  neil.sims@flowbite.com
-                </p>
-              </div>
-              <ul class="py-1" role="none">
-                <li>
-                  <a
-                    href="#"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    role="menuitem"
-                  >
-                    Dashboard
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    role="menuitem"
-                  >
-                    Settings
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    role="menuitem"
-                  >
-                    Earnings
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    role="menuitem"
-                  >
-                    Sign out
-                  </a>
-                </li>
-              </ul>
-            </div>
+        <div className="flex md:order-2 space-x-4 md:space-x-0 rtl:space-x-reverse">
+          <div className="hidden md:flex space-x-5">
+            <ProfileAvtara/>
           </div>
+          <button
+            data-collapse-toggle="navbar-sticky"
+            type="button"
+            onClick={toggleMenu}
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm md:hidden text-white"
+            aria-controls="navbar-sticky"
+            aria-expanded={isMenuOpen ? "true" : "false"}
+          >
+            <svg className="w-5 h-5" aria-hidden="true" viewBox="0 0 16 16">
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 2h14M1 8h14M1 14h14"
+              />
+            </svg>
+          </button>
+        </div>
+        <div
+          className={`items-center justify-center w-full md:flex md:w-auto md:order-1 ${
+            isMenuOpen ? "block" : "hidden"
+          }`}
+          id="navbar-sticky"
+        >
+          <NavMenu />
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

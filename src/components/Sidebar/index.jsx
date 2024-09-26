@@ -144,7 +144,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         }}
                       >
                         <span>
-                          <i class="fa-solid fa-user"></i>
+                          <i className="fa-solid fa-user"></i>
                         </span>
                         Student List
                         <span>

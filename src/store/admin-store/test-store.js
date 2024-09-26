@@ -1,4 +1,4 @@
-import { getAllUserData } from "@/service/auth-api";
+import { getAllTestData } from "@/service/test-api";
 import { createStore } from "zustand/vanilla";
 
 export const defaultInitState = {
@@ -19,7 +19,7 @@ async function fetchDataAndSetState(set, get) {
 
   try {
     const url = `?page=${page}&pageSize=${pageSize}`;
-    const { data, code } = await getAllUserData(url);
+    const { data, code } = await getAllTestData(url);
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
@@ -45,7 +45,7 @@ async function fetchDataAndSetState(set, get) {
   }
 }
 
-export const createtestStore = (initState = defaultInitState) =>
+export const createTestStore = (initState = defaultInitState) =>
   createStore((set, get) => ({
     ...initState,
     initialize: async (selected = "test") => {

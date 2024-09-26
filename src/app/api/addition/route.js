@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import sendResponse from "@/utils/response";
-import {
-  createTest,
-  getAllTest,
-} from "@/models/addition/studentAdditionModel";
+import { createTest, getAllTest } from "@/models/addition/studentAdditionModel";
 
 export async function POST(request) {
   try {
@@ -31,9 +28,12 @@ export async function POST(request) {
   }
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
-    const allTest = await getAllTest();
+    const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
+    const pageSize =
+      parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
+    const allTest = await getAllTest(page, pageSize);
     if (allTest) {
       return sendResponse(NextResponse, 200, "All Test are available", allTest);
     } else {

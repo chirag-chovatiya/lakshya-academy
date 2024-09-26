@@ -1,11 +1,32 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Pagination from "@/components/Pagination";
-import React, { useState } from "react";
-import DeleteButton from "@/components/Switchers/DeleteButton";
+import React, { useEffect, useState } from "react";
 import FormStudentAddition from "./components/form-element";
+import { useTestAdminStore } from "@/providers/test-store-provider";
+import Table from "@/components/app-table/app-table";
 
 export default function StudentLists() {
+  const { test, changePage, onPageSizeChange, onSelectionChange, initialize } =
+  useTestAdminStore((state) => state);
+
+  useEffect(() => {
+    onSelectionChange("test");
+    if (Object.keys(test.data).length === 0) {
+      initialize();
+    }
+  }, []);
+
+  const columns = [
+    { key: "id", title: "ID" },
+    { key: "level", title: "Student Level" },
+    { key: "type", title: "Sum Type" },
+    { key: "horizontalDigits", title: "Addition Row" },
+    { key: "verticalDigits", title: "Vertical Digits" },
+    { key: "totalQuestion", title: "Total Addition" },
+    { key: "createdAt", title: "Created Date" },
+  ];
+
   const [studentAdditionObj, setStudentAdditionObj] = useState({
     visible: false,
     displayHeader: true,
@@ -52,13 +73,11 @@ export default function StudentLists() {
               <select
                 id="pagesizeForBlog"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                onChange={(e) => onPageSizeChange(e.target.value)}
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
               </select>
             </div>
             <div className="flex-grow mt-4 sm:mt-0">
@@ -80,89 +99,13 @@ export default function StudentLists() {
             </div>
           </div>
         </div>
-        <div className="rounded-xl border border-stroke bg-white p-2 shadow-default dark:border-strokedark dark:bg-boxdark">
-          <div className="max-w-full overflow-x-auto">
-            <table className="w-full table-auto">
-              <thead>
-                <tr className="bg-gray-2 bg text-left dark:bg-meta-4">
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    ID
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Student Level
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Sum Type
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Addition Row
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Vertical Digits
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Addition Column
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Total Addition
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Created Date
-                  </th>
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-sm text-black dark:text-white">1</p>
-                  </td>
-                  <td className="min-w-[150px] border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white">Level 2</p>
-                  </td>
-                  <td className="min-w-[150px] border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white">Addition</p>
-                  </td>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white line-clamp-3">3</p>
-                  </td>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white line-clamp-3">5</p>
-                  </td>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white line-clamp-3">
-                      4
-                    </p>
-                  </td>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white line-clamp-3">
-                      10
-                    </p>
-                  </td>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <p className="text-black dark:text-white line-clamp-3">
-                      20/10/2024
-                    </p>
-                  </td>
-                  <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                    <div className="flex items-center space-x-3.5">
-                      <div
-                        onClick={() => handleAddNewStudent(1)} 
-                        className="cursor-pointer hover:text-primary"
-                      >
-                        <i className="fa-regular fa-pen-to-square"></i>
-                      </div>
-                      <DeleteButton />
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          {/* <Pagination /> */}
-        </div>
+        <Table
+          columns={columns}
+          data={test.data[test.page] || []}
+          editLinkPrefix={() => handleAddNewStudent(1)} 
+          // deleteHandler={handleDelete}
+        />
+        <Pagination data={test} changePage={changePage} />
       </div>
     </>
   );

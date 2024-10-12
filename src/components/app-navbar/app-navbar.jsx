@@ -15,7 +15,7 @@ export default function AppNavbar() {
   return (
     <nav
       id="navbar"
-      className={`fixed top-0 w-full left-0 right-0 z-50 bg-custom-blue`}
+      className={`sticky top-0 w-full left-0 right-0 z-50 bg-custom-blue`}
     >
       <div className="flex flex-wrap items-center justify-between mx-auto px-8 py-3 gap-4">
       <div className="flex items-center space-x-4">
@@ -29,7 +29,7 @@ export default function AppNavbar() {
           </span>
         </div>
         <div className="flex md:order-2 space-x-4 md:space-x-0 rtl:space-x-reverse">
-          <div className="hidden md:flex space-x-5">
+          <div className="md:flex space-x-5">
             <ProfileAvtara/>
           </div>
           <button

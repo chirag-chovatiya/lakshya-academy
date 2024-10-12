@@ -2,10 +2,10 @@
 const nextConfig = {
       async rewrites() {
           return [
-            // {
-            //   source: "/",
-            //   destination: "/students/auth/login",
-            // },
+            {
+              source: "/",
+              destination: "/home",
+            },
             // {
             //   source: "/admin/login",
             //   destination: "/admin/auth/login",

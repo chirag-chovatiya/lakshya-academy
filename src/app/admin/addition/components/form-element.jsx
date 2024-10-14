@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { InputField } from "@/components/app-inputfield/app-inputfield";
 import { SelectField } from "@/components/app-inputfield/app-selectedfield";
 import AppModal from "@/components/app-modal/modal.component";
@@ -9,16 +10,24 @@ export default function FormStudentAddition({
   id = null,
   data = {},
 }) {
+
   const operationOptions = [
     { label: "Addition", value: "addition" },
     { label: "Subtraction", value: "subtraction" },
     { label: "Multiplication", value: "multiplication" },
     { label: "Division", value: "division" },
   ];
+
   const studentLevelOptions = Array.from({ length: 9 }, (v, i) => ({
     label: `Level ${i + 1}`,
     value: i + 1,
   }));
+
+  // Function to handle operation type change
+  const handleOperationChange = (event) => {
+    setSelectedOperation(event.target.value);
+  };
+
   return (
     <AppModal
       key="Add Student Test"
@@ -30,6 +39,7 @@ export default function FormStudentAddition({
               id="operationType"
               label="Operation Type"
               options={operationOptions}
+              onChange={handleOperationChange}
             />
             <SelectField
               id="studentlevel"

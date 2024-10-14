@@ -1,13 +1,14 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/app-table/app-table";
+import debounce from "lodash/debounce";
 
 export default function StudentLists() {
-  const { users, changePage, onPageSizeChange, onSelectionChange, initialize } =
+  const { users, changePage, onPageSizeChange, search, onSelectionChange, initialize } =
     useUserAdminStore((state) => state);
 
   useEffect(() => {
@@ -27,6 +28,12 @@ export default function StudentLists() {
     { key: 'level', title: 'Standerd' },
   ];
 
+  const handleSearch = useCallback(
+    debounce((query) => {
+      search(query);
+    }, 300),
+    [search]
+  );
   const handleDelete = (id) => {
     // Implement delete functionality here
   };
@@ -60,6 +67,7 @@ export default function StudentLists() {
             <div className="flex-grow mt-4 sm:mt-0">
               <input
                 type="text"
+                onChange={(e) => handleSearch(e.target.value)}
                 id="search"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 placeholder="Search Here"

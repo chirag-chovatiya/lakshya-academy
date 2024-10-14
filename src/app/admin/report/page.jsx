@@ -1,10 +1,9 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useUserAdminStore } from "@/providers/user-store-provider";
-import Pagination from "@/components/Pagination";
 import Table from "@/components/app-table/app-table";
+import * as XLSX from "xlsx";
 
 export default function StudentLists() {
   // Dummy data for students
@@ -70,6 +69,13 @@ export default function StudentLists() {
     console.log(`Page size changed to: ${value}`);
   };
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(dummyData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
+    XLSX.writeFile(workbook, "student_data.xlsx");
+  };
+
   return (
     <>
       <div>
@@ -77,13 +83,19 @@ export default function StudentLists() {
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
-              <button className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white">
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                onClick={() => window.location.reload()}
+              >
                 <span>
                   <i className="fa-solid fa-arrows-rotate"></i>
                 </span>
                 <span>Refresh</span>
               </button>
-              <button className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white">
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                onClick={exportToExcel}
+              >
                 <span>Export</span>
               </button>
               <select
@@ -146,7 +158,6 @@ export default function StudentLists() {
           data={dummyData} // Use dummyData here
           deleteHandler={handleDelete}
         />
-        {/* <Pagination /> */}
       </div>
     </>
   );

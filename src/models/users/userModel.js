@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { User } from "./userSchema";
 
 export const createUser = async (data) => {
@@ -16,18 +17,27 @@ export const getUserByEmail = async (email) => {
     throw error;
   }
 };
-export const getAllUser = async (page = 1, pageSize = 10) => {
+export const getAllUser = async (page = 1, pageSize = 10, searchQuery=null) => {
   try {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
     const offset = (parsedPage - 1) * parsedPageSize;
+
+    const whereClause = {};
 
     if (!page && !pageSize) {
       const getUsers = await User.findAll();
       return getUsers;
     }
 
+    if (searchQuery) {
+      whereClause[Op.or] = [
+        { name: { [Op.like]: `%${searchQuery}%` } },
+        { email: { [Op.like]: `%${searchQuery}%` } },
+      ];
+    }
     const getAllData = await User.findAndCountAll({
+      where: whereClause,
       offset,
       limit: parsedPageSize,
     });

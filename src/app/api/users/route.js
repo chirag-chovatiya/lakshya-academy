@@ -60,8 +60,10 @@ export async function GET (request) {
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
     const pageSize =
     parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
+  const searchQuery = request.nextUrl.searchParams.get("searchQuery");
+
     const allUser = await getAllUser(page,
-      pageSize,)
+      pageSize,searchQuery)
     if (allUser) {
       return sendResponse(NextResponse, 200, 'All User are available', allUser)
     } else {

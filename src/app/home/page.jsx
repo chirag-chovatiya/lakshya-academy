@@ -1,9 +1,10 @@
-import HeroSection from "../home/components/test-card";
+import HeroSection from "./components/hero-section";
 
-export default function StudentLists() {
+export default function Home() {
   return (
     <>
-    <HeroSection/>
+      <HeroSection />
+     
     </>
   );
 }

@@ -10,10 +10,10 @@ import { authenticateAdminToken } from "@/middlewares/auth";
 connectDb();
 
 export async function GET(request, { params }) {
-  const authResponse = await authenticateAdminToken(request);
-  if (authResponse) {
-    return authResponse;
-  }
+  // const authResponse = await authenticateAdminToken(request);
+  // if (authResponse) {
+  //   return authResponse;
+  // }
 
   try {
     const { userId } = params;
@@ -54,6 +54,8 @@ export async function POST(request, { params }) {
     const userData = {
       name: newData.name,
       phone_number: newData.phone_number,
+      level:newData.level,
+      images:newData.images
     };
 
     const userResult = await updateUserById(userId, userData);

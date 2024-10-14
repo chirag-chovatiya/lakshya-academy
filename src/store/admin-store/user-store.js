@@ -4,6 +4,7 @@ import { createStore } from "zustand/vanilla";
 export const defaultInitState = {
   users: {
     data: {},
+    searchQuery:null,
     page: 1,
     totalPages: 0,
     totalData: 0,
@@ -15,11 +16,15 @@ export const defaultInitState = {
 };
 
 async function fetchDataAndSetState(set, get) {
-  const { page, pageSize } = get().users;
-
+  const { page, pageSize} = get().users;
+  const searchQuery = get().users.searchQuery;
   try {
-    const url = `?page=${page}&pageSize=${pageSize}`;
-    const { data, code } = await getAllUserData(url);
+    let url = `?page=${page}&pageSize=${pageSize}`;
+    if (searchQuery && searchQuery !== "") {
+      url += `&searchQuery=${encodeURIComponent(searchQuery)}`;
+    }
+    const { data, code } = await getAllUserData(url+'&');
+    console.log(url)
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
@@ -52,7 +57,7 @@ export const createUsersStore = (initState = defaultInitState) =>
       set((state) => ({
         [selected]: {
           ...state[selected],
-          data: [],
+          data: {},
           page: 1,
           hasMoreData: true,
           loading: true,
@@ -82,22 +87,19 @@ export const createUsersStore = (initState = defaultInitState) =>
       });
       await fetchDataAndSetState(set, get);
     },
-    createUser: async (createData) => {
-      set((state) => ({ ...state, loading: true }));
-      try {
-        const { code } = await createUserData(createData);
-        if (code === 200 || code === 201) {
-          await fetchDataAndSetState(set, get);
-          toast.success("User created successfully!");
-        } else {
-          toast.error("Failed to create user.");
-        }
-        set({ loading: false, error: null });
-      } catch (error) {
-        toast.error(error.message || "Failed to create user.");
-        set({ loading: false, error: error.message || "Failed to create user." });
-      }
+    search: async (searchQuery) => {
+      set((state) => ({
+        users: {
+          ...state.users,
+          searchQuery: searchQuery ? searchQuery : null,
+          page: 1,
+          hasMoreData: true,
+          loading: true,
+        },
+      }));
+      await fetchDataAndSetState(set, get);
     },
+   
     onError: (error) => set({ users: { ...get().users, error } }),
     noMoreData: () => set({ users: { ...get().users, hasMoreData: false } }),
   }));

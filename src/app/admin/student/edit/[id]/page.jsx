@@ -24,7 +24,6 @@ export default function StudentEdit({ params }) {
           API.getAllUser + `/${params.id}`,
           formData
         );
-        console.log(response);
         if (response.code == 200 && response.data && response.data) {
           setFormData(response.data);
         }

@@ -21,7 +21,7 @@ export async function POST(request) {
     return sendResponse(NextResponse, 500, "Internal server error");
   }
 }
-export async function GET() {
+export async function GET(request) {
   try {
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
     const pageSize =

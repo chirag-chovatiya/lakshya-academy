@@ -25,23 +25,10 @@ export default function StudentCreate() {
       const response = await post(API.getAllUser, data || formData);
       if (response.code === 201) {
         router.replace("/admin/student");
-        resetFormData();
       }
     } catch (error) {
       console.error("There was an error submitting the form:", error);
     }
-  };
-
-  const resetFormData = () => {
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-      phone_number: "",
-      level: 0,
-      status: true,
-      images: null,
-    });
   };
   return (
     <div className="">

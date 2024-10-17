@@ -4,6 +4,10 @@ import { createStore } from "zustand/vanilla";
 export const defaultInitState = {
   report: {
     data: {},
+    hwStatus: null,
+    level:null,
+    createdAt:null,
+    studentName:null,
     page: 1,
     totalPages: 0,
     totalData: 0,
@@ -16,10 +20,25 @@ export const defaultInitState = {
 
 async function fetchDataAndSetState(set, get) {
   const { page, pageSize } = get().report;
-
+  const hwStatus = get().report.hwStatus;
+  const level = get().report.level;
+  const createdAt = get().report.createdAt;
+  const studentName = get().report.studentName;
   try {
-    const url = `?page=${page}&pageSize=${pageSize}`;
-    const { data, code } = await getAllReportData(url);
+    let url = `?page=${page}&pageSize=${pageSize}`;
+    if (hwStatus && hwStatus !== "") {
+      url += `&hwStatus=${encodeURIComponent(hwStatus)}`;
+    }
+    if (level && level !== "") {
+      url += `&level=${encodeURIComponent(level)}`;
+    }
+    if (createdAt && createdAt !== "") {
+      url += `&createdAt=${encodeURIComponent(createdAt)}`;
+    }
+    if (studentName && studentName !== "") {
+      url += `&studentName=${encodeURIComponent(studentName)}`;
+    }
+    const { data, code } = await getAllReportData(url+'&');
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
@@ -80,6 +99,30 @@ export const createReportStore = (initState = defaultInitState) =>
           loading: true,
         },
       });
+      await fetchDataAndSetState(set, get);
+    },
+    selectedData: async (hwStatus, level, createdAt) => {
+      set((state) => ({
+        ...state.report,
+        report: {
+          ...state.report,
+          hwStatus: hwStatus || null,
+          level: level || null,
+          createdAt: createdAt || null,
+        },
+      }));
+      await fetchDataAndSetState(set, get);
+    },
+    search: async (studentName) => {
+      set((state) => ({
+        report: {
+          ...state.report,
+          studentName: studentName ? studentName : null,
+          page: 1,
+          hasMoreData: true,
+          loading: true,
+        },
+      }));
       await fetchDataAndSetState(set, get);
     },
     onError: (error) => set({ report: { ...get().report, error } }),

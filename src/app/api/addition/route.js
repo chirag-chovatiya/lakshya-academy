@@ -6,11 +6,11 @@ export async function POST(request) {
   try {
     const data = await request.json();
 
-    if (data.subDigits < 1 || data.subDigits > 9) {
+    if (data.subDigits !== null && (data.subDigits < 1 || data.subDigits > 9)) {
       return sendResponse(
         NextResponse,
-        500,
-        "subDigits must be between 1 and 9."
+        400,
+        "subDigits must be between 1 and 9 or null."
       );
     }
 

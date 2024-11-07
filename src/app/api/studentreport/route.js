@@ -32,6 +32,8 @@ export async function GET(request) {
     const studentName = request.nextUrl.searchParams.get("studentName");
 
     const allReport = await getAllReport(page, pageSize, hwStatus, level, createdAt, studentName);
+    console.log(allReport);
+
     if (allReport) {
       return sendResponse(
         NextResponse,

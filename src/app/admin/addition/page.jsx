@@ -8,7 +8,7 @@ import Table from "@/components/app-table/app-table";
 
 export default function StudentLists() {
   const { test, changePage, onPageSizeChange, onSelectionChange, initialize } =
-  useTestAdminStore((state) => state);
+    useTestAdminStore((state) => state);
 
   useEffect(() => {
     onSelectionChange("test");
@@ -24,8 +24,14 @@ export default function StudentLists() {
     { key: "horizontalDigits", title: "Addition Row" },
     { key: "verticalDigits", title: "Vertical Digits" },
     { key: "totalQuestion", title: "Total Addition" },
-    { key: "createdAt", title: "Created Date" },
+    { key: "createdAt", title: "Created Date", render: (row) => formatDate(row.createdAt) },
   ];
+
+  const formatDate = (dateString) => {
+    if (!dateString) return ""; 
+    const date = new Date(dateString);
+    return date.toLocaleDateString(); 
+  };
 
   const [studentAdditionObj, setStudentAdditionObj] = useState({
     visible: false,
@@ -64,7 +70,12 @@ export default function StudentLists() {
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
-              <button className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white">
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                onClick={() => {
+                  initialize("test");
+                }}
+              >
                 <span>
                   <i className="fa-solid fa-arrows-rotate"></i>
                 </span>
@@ -102,7 +113,7 @@ export default function StudentLists() {
         <Table
           columns={columns}
           data={test.data[test.page] || []}
-          editLinkPrefix={() => handleAddNewStudent(1)} 
+          editLinkPrefix={() => handleAddNewStudent(1)}
           // deleteHandler={handleDelete}
         />
         <Pagination data={test} changePage={changePage} />

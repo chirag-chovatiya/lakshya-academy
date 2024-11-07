@@ -8,8 +8,14 @@ import Table from "@/components/app-table/app-table";
 import debounce from "lodash/debounce";
 
 export default function StudentLists() {
-  const { users, changePage, onPageSizeChange, search, onSelectionChange, initialize } =
-    useUserAdminStore((state) => state);
+  const {
+    users,
+    changePage,
+    onPageSizeChange,
+    search,
+    onSelectionChange,
+    initialize,
+  } = useUserAdminStore((state) => state);
 
   useEffect(() => {
     onSelectionChange("users");
@@ -19,13 +25,12 @@ export default function StudentLists() {
   }, []);
 
   const columns = [
-    { key: 'id', title: 'ID' },
-    { key: 'images', title: 'Images', type: 'image'},
-    { key: 'name', title: 'FullName' },
-    { key: 'email', title: 'Email' },
-    { key: 'phone_number', title: 'Phone' },
-    { key: 'address', title: 'Address' },
-    { key: 'level', title: 'Standerd' },
+    { key: "id", title: "ID" },
+    { key: "images", title: "Images", type: "image" },
+    { key: "name", title: "FullName" },
+    { key: "email", title: "Email" },
+    { key: "phone_number", title: "Phone" },
+    { key: "level", title: "Standerd" },
   ];
 
   const handleSearch = useCallback(
@@ -45,7 +50,12 @@ export default function StudentLists() {
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
-              <button className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white">
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                onClick={() => {
+                  initialize("users");
+                }}
+              >
                 <span>
                   <i className="fa-solid fa-arrows-rotate"></i>
                 </span>

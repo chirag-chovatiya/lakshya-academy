@@ -1,9 +1,48 @@
-const StatusButton = () => {
+"use client";
+
+import { useEffect, useState } from "react";
+
+const StatusButton = ({ defaultChecked = false, value, onValueChange }) => {
+  const [enabled, setEnabled] = useState(defaultChecked);
+  useEffect(() => {
+    setEnabled(value);
+  }, [value]);
+  const toggleSwitch = () => {
+    setEnabled((prevEnabled) => {
+      const newEnabled = !prevEnabled;
+      setTimeout(() => {
+        onValueChange(newEnabled);
+      }, 100);
+      return newEnabled;
+    });
+  };
+
   return (
     <div>
-      <label className="inline-flex items-center cursor-pointer">
-        <input type="checkbox" className="hidden peer" />
-        <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-al peer-checked:bg-custom-blue"></div>
+      <label
+        htmlFor="toggle1"
+        className="flex cursor-pointer select-none items-center"
+      >
+        <div className="relative">
+          <input
+            type="checkbox"
+            id="toggle1"
+            className="sr-only"
+            checked={enabled}
+            onChange={toggleSwitch}
+          />
+          <div
+            className={
+              "block h-8 w-14 rounded-full " +
+              (enabled ? "bg-primary" : "dark:bg-[#5A616B] bg-gray-400")
+            }
+          ></div>
+          <div
+            className={`absolute left-1 top-1 h-6 w-6 rounded-full transition ${
+              enabled ? "right-1 translate-x-full bg-white" : "bg-white"
+            }`}
+          ></div>
+        </div>
       </label>
     </div>
   );

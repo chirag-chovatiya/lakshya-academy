@@ -42,42 +42,42 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
 
   return (
     <div className="fixed z-9999 inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-strokedark p-4 rounded shadow-lg max-w-lg w-full relative">
-        <button className="absolute top-2 right-2 rounded-full" onClick={onClose}>
-          <i className="las la-times"></i>
-        </button>
-        <div className="w-full">
-          <div className="block mb-2 text-xl font-bold text-gray-900 dark:text-white">
-            {title}
-          </div>
-          {currentQuestion && (
-            <div className="p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded w-full">
-              <div>
-                {currentQuestion.question.map((num, index) => (
-                  <p key={index} className="text-center text-4xl">
-                    {num} {index < currentQuestion.question.length - 1 && '+'}
-                  </p>
-                ))}
-              </div>
-              <input
-                type="number"
-                value={inputAnswer}
-                onChange={(e) => setInputAnswer(e.target.value)}
-                className="w-full mt-2 p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded"
-                placeholder="Your answer"
-              />
-            </div>
-          )}
-          <button
-            className="mt-4 p-2 bg-blue-500 text-white rounded"
-            onClick={handleNext}
-            disabled={!inputAnswer}
-          >
-            {currentQuestionIndex === filteredQuestions.length - 1 ? 'Submit' : 'Next'}
-          </button>
+    <div className="bg-white dark:bg-strokedark p-4 rounded shadow-lg max-w-screen-md max-h-[90vh] overflow-auto w-full relative">
+      <button className="absolute top-2 right-2 rounded-full" onClick={onClose}>
+        <i className="las la-times"></i>
+      </button>
+      <div className="w-full">
+        <div className="block mb-2 text-xl font-bold text-gray-900 dark:text-white">
+          {title}
         </div>
+        {currentQuestion && (
+          <div className="p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded w-full">
+            <div>
+              {currentQuestion.question.map((num, index) => (
+                <p key={index} className="text-center text-4xl">
+                  {index < currentQuestion.question.length - 1 && '+'} {num}
+                </p>
+              ))}
+            </div>
+            <input
+              type="number"
+              value={inputAnswer}
+              onChange={(e) => setInputAnswer(e.target.value)}
+              className="w-full mt-2 p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded"
+              placeholder="Your answer"
+            />
+          </div>
+        )}
+        <button
+          className="mt-4 p-2 bg-blue-500 text-white rounded"
+          onClick={handleNext}
+          disabled={!inputAnswer}
+        >
+          {currentQuestionIndex === filteredQuestions.length - 1 ? 'Submit' : 'Next'}
+        </button>
       </div>
     </div>
+  </div>
   );
 };
 

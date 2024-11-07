@@ -9,7 +9,7 @@ dotenv.config();
 
 export async function POST(req, res) {
   try {
-    const { email, password, name, phone_number, level , images } = await req.json();
+    const { email, password, name, phone_number, level , images, status } = await req.json();
 
     if (!email || !password) {
       return sendResponse(NextResponse, 400, "Email and password are required");
@@ -41,7 +41,7 @@ export async function POST(req, res) {
         type: "Student", 
         level,
         images,
-        status: "Active", 
+        status, 
       };
 
       user = await createUser(newUser);

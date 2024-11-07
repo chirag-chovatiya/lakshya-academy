@@ -32,12 +32,12 @@ const User = sequelize.define(
       defaultValue: null,
     },
     type: {
-      type: DataTypes.ENUM("Student", "Admin"),
+      type: DataTypes.ENUM("Student", "Admin", "Teacher"),
       defaultValue: "Student",
     },
     status: {
-      type: DataTypes.ENUM("Active", "Inactive","Delete"),
-      defaultValue: "Active",
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     images: {
       type: DataTypes.STRING,

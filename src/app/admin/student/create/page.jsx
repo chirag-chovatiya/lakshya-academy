@@ -5,6 +5,7 @@ import FormElementStudent from "../components/form-element";
 import { useRouter } from "next/navigation";
 import { post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
+import { useUserAdminStore } from "@/providers/user-store-provider";
 
 export default function StudentCreate() {
   const [formData, setFormData] = useState({
@@ -13,18 +14,20 @@ export default function StudentCreate() {
     password: "",
     phone_number: "",
     level: 0,
-    type: 0,
-    status: true,
+    type: "Student",
+    status: false,
     images: null,
   });
   const router = useRouter();
+  const { initialize } = useUserAdminStore((state) => state);
 
   const handleSubmit = async (e, data) => {
     e.preventDefault();
     try {
       const response = await post(API.getAllUser, data || formData);
-      if (response.code === 201) {
+      if (response.code === 201 || response.code === 200) {
         router.replace("/admin/student");
+        initialize();
       }
     } catch (error) {
       console.error("There was an error submitting the form:", error);
@@ -33,7 +36,7 @@ export default function StudentCreate() {
   return (
     <div className="">
       <Breadcrumb pageName="Student/create" title="Register New Student" />
-      <FormElementStudent  data={formData} handleSubmit={handleSubmit}/>
+      <FormElementStudent data={formData} handleSubmit={handleSubmit} />
     </div>
   );
 }

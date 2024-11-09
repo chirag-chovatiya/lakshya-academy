@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const trigger = useRef(null);
   const dropdown = useRef(null);
 
@@ -23,6 +25,12 @@ const DropdownUser = () => {
     return () => document.removeEventListener("click", clickHandler);
   }, [dropdownOpen]);
 
+  const handleSignOut = async () => {
+    if (confirm("Are you sure you want to logout?")) {
+      await signOut({ callbackUrl: window.location.pathname });
+      localStorage.removeItem("token");
+    }
+  };
 
   return (
     <div className="relative">
@@ -33,7 +41,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-base font-medium text-black dark:text-white">
-           userName
+            userName
           </span>
         </span>
         <span className="h-12 w-12 rounded-full overflow-hidden">
@@ -83,6 +91,7 @@ const DropdownUser = () => {
             </li>
           </ul>
           <button
+            onClick={handleSignOut}
             className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
           >
             <i className="fa-solid fa-right-from-bracket"></i>

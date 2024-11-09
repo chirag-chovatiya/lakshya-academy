@@ -7,7 +7,7 @@ const nextConfig = {
               destination: "/home",
             },
             {
-              source: "/login",
+              source: "/admin/login",
               destination: "/admin/auth/login",
             },
           ];

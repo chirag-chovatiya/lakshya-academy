@@ -17,6 +17,8 @@ export default function StudentLists() {
     }
   }, []);
 
+  
+
   const columns = [
     { key: "id", title: "ID" },
     { key: "level", title: "Student Level" },
@@ -24,14 +26,10 @@ export default function StudentLists() {
     { key: "horizontalDigits", title: "Addition Row" },
     { key: "verticalDigits", title: "Vertical Digits" },
     { key: "totalQuestion", title: "Total Addition" },
-    { key: "createdAt", title: "Created Date", render: (row) => formatDate(row.createdAt) },
+    { key: "createdAt", title: "Created Date" },
   ];
 
-  const formatDate = (dateString) => {
-    if (!dateString) return ""; 
-    const date = new Date(dateString);
-    return date.toLocaleDateString(); 
-  };
+  
 
   const [studentAdditionObj, setStudentAdditionObj] = useState({
     visible: false,

@@ -21,18 +21,18 @@ export default withAuth(
     const token = req.nextauth.token;
     const isPathStartWithAI = req.nextUrl.pathname.startsWith("/admin");
     if (isPathStartWithAI && !token) {
-      const loginUrl = new URL("/login", req.url);
+      const loginUrl = new URL("/admin/login", req.url);
       return NextResponse.rewrite(loginUrl);
     }
   },
   {
     pages: {
-      signIn: "/login",
+      signIn: "/admin/login",
     },
   }
 );
 
 export const config = {
-  matcher: ["/login","/admin"],
+  matcher: ["/admin/login","/admin"],
 };
 

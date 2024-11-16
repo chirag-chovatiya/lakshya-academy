@@ -14,7 +14,7 @@ export default function StudentCreate() {
     password: "",
     phone_number: "",
     level: 0,
-    type: "Student",
+    user_type: "Student",
     status: false,
     images: null,
   });

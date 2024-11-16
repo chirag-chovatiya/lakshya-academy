@@ -63,7 +63,7 @@ export const authenticateAdminToken = async (req, next) => {
     req.userId = decoded.id;
 
     const user = await getUserById(req.userId);
-    if (user && user.type === "Admin") {
+    if (user && user.user_type === "Admin") {
       req.user = user;
       return NextResponse.next();
     } else {

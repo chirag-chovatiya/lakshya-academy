@@ -55,7 +55,7 @@ export async function POST(request, { params }) {
       name: newData.name,
       phone_number: newData.phone_number,
       level:newData.level,
-      type:newData.type,
+      user_type:newData.user_type,
       images:newData.images,
       status: newData.status,
     };

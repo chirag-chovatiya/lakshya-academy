@@ -15,7 +15,7 @@ export default function StudentEdit({ params }) {
     password: "",
     phone_number: "",
     level: 0,
-    type: "",
+    user_type: "",
     status: false,
     images: null,
   });

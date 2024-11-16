@@ -83,7 +83,7 @@ export default function FormElementStudent({
             id="operationType"
             label="Account Type"
             options={operationOptions}
-            value={formData.type || ""}
+            value={formData.user_type || ""}
             onChange={(value) =>
               setFormData({ ...formData, operationType: value })
             }

@@ -2,27 +2,30 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { login } from "@/service/auth-api";
 
 export const authOptions = {
-  debug: false,
+  debug: true,
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, user }) {
       if (account) {
         token.accessToken = account.access_token;
       }
+      if (user) {
+        token.userType = user.user_type; 
+      }
       return token;
     },
-    async redirect({ baseUrl, url }) {
-      try {
-        const validUrl = new URL(url, baseUrl);
-        const callbackUrl = validUrl.searchParams.get("callbackUrl") || "/admin";
-        return callbackUrl.startsWith("/") ? `${baseUrl}${callbackUrl}` : callbackUrl;
-      } catch (error) {
-        console.log("Invalid URL:", error);
-        return `${baseUrl}/admin`;
+    async redirect({ url, baseUrl, token }) {
+
+      const defaultRedirect = token?.userType === "Student" ? "/" : "/admin";
+
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
       }
+
+      return defaultRedirect;
     },
   },
   pages: {
-    signIn: "/admin/login",
+    signIn: "/login",
   },
   providers: [
     CredentialsProvider({
@@ -31,16 +34,15 @@ export const authOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      type: "credentials",
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (credentials) {
           try {
             const data = await login(credentials.email, credentials.password);
             if (data.code === 200 && data.data.user) {
-              return { ...data.data.user, token: data.data.token };
-            } else {
-              console.error("Invalid credentials");
-              return null;
+              return {
+                ...data.data.user,
+                token: data.data.token,
+              };
             }
           } catch (error) {
             console.error("Authorization error:", error);

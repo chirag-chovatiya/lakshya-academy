@@ -38,7 +38,7 @@ export async function POST(req, res) {
         email,
         phone_number,
         password: hashPassword,
-        type: "Student", 
+        user_type: "Student", 
         level,
         images,
         status, 

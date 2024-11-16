@@ -1,37 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-const additionArray = [
-  { answer: 1649, question: [809, 285, 555], type: 'addition' },
-  { answer: 1570, question: [745, 583, 242], type: 'addition' },
-  { answer: 1152, question: [109, 418, 625], type: 'addition' },
-  { answer: 1431, question: [476, 844, 111], type: 'subtraction' },
-  { answer: 2038, question: [525, 914, 599], type: 'addition' }
-];
+const additionArray = {
+  data: [
+    {
+      type: "addition",
+      question: [
+        {
+          answer: 140,
+          question: [74, 66],
+        },
+        {
+          answer: 61,
+          question: [19, 42],
+        },
+      ],
+    },
+    {
+      type: "multiplication",
+      question: [
+        {
+          answer: 3599,
+          question: [61, 59],
+        },
+        {
+          answer: 3450,
+          question: [69, 50],
+        },
+      ],
+    },
+    {
+      type: "subtraction",
+      question: [],
+    },
+    {
+      type: "division",
+      question: [],
+    },
+  ],
+};
 
 const TestModel = ({ isOpen, onClose, title, questionType }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState([]);
-  const [inputAnswer, setInputAnswer] = useState('');
+  const [inputAnswer, setInputAnswer] = useState("");
   const [showResults, setShowResults] = useState(false);
+
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+    setUserAnswers([]);
+    setInputAnswer("");
+    setShowResults(false);
+  }, [questionType]);
 
   if (!isOpen) return null;
 
-  // Filter questions based on the questionType (addition, subtraction)
-  const filteredQuestions = additionArray.filter(q => q.type === questionType);
+  const filteredQuestions =
+    additionArray.data.filter((q) => q.type === questionType)[0]?.question ||
+    [];
   const currentQuestion = filteredQuestions[currentQuestionIndex];
 
   const handleNext = () => {
     const answer = parseInt(inputAnswer);
     const updatedAnswers = [...userAnswers];
-    updatedAnswers[currentQuestionIndex] = { 
-      question: currentQuestion.question, 
-      userAnswer: answer 
+    updatedAnswers[currentQuestionIndex] = {
+      question: currentQuestion.question,
+      userAnswer: answer,
     };
     setUserAnswers(updatedAnswers);
-    localStorage.setItem('userAnswers', JSON.stringify(updatedAnswers));
-    setInputAnswer('');
+    localStorage.setItem(questionType, JSON.stringify(updatedAnswers));
+    setInputAnswer("");
 
-    // Move to the next question or show results
     if (currentQuestionIndex < filteredQuestions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -42,37 +80,49 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
-      const previousAnswer = userAnswers[currentQuestionIndex - 1]?.userAnswer || '';
+      const previousAnswer =
+        userAnswers[currentQuestionIndex - 1]?.userAnswer || "";
       setInputAnswer(previousAnswer.toString());
     }
   };
 
   const renderResults = () => {
-    const correctAnswersCount = userAnswers.filter((ans, index) => ans.userAnswer === filteredQuestions[index].answer).length;
-    const totalScore = `${correctAnswersCount}/${filteredQuestions.length} (${((correctAnswersCount / filteredQuestions.length) * 100).toFixed(2)}%)`;
-  
+    const correctAnswersCount = userAnswers.filter(
+      (ans, index) => ans.userAnswer === filteredQuestions[index].answer
+    ).length;
+    const totalScore = `${correctAnswersCount}/${filteredQuestions.length} (${(
+      (correctAnswersCount / filteredQuestions.length) *
+      100
+    ).toFixed(2)}%)`;
+
     return (
       <div className="mt-4">
-        <h2 className="text-xl font-semibold py-5">Total Score: {totalScore}</h2>
+        <h2 className="text-xl font-semibold py-5">
+          Total Score: {totalScore}
+        </h2>
         <ul>
           {filteredQuestions.map((q, index) => {
             const userAnswer = userAnswers[index]?.userAnswer || null;
             const isCorrect = userAnswer === q.answer;
-            const questionText = q.question.join(' + ') ;
+            const questionText = q.question.join(
+              " " + getOperatorSymbol(questionType) + " "
+            ); // Adjust based on type
             return (
               <li key={index} className="mt-2">
                 <p className="text-3xl font-semibold">
-                  Q {index + 1}: {questionText}
+                  Q {index + 1}.  {questionText}
                 </p>
                 <div className="flex justify-between items-center text-xl py-2">
                   <span className="flex-1 text-green-500">
                     <strong>Correct Answer:</strong> {q.answer}
                   </span>
                   <span
-                    className={`flex-1 text-lg font-semibold ${isCorrect ? 'text-green-500' : 'text-red'}`}
+                    className={`flex-1 text-lg font-semibold ${
+                      isCorrect ? "text-green-500" : "text-red"
+                    }`}
                   >
-                    <strong>Your Answer:</strong> {userAnswer} 
-                    {isCorrect ? '(Correct)' : '(Incorrect)'}
+                    <strong>Your Answer:</strong> {userAnswer}
+                    {isCorrect ? "(Correct)" : "(Incorrect)"}
                   </span>
                 </div>
               </li>
@@ -83,10 +133,28 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
     );
   };
 
+  const getOperatorSymbol = (type) => {
+    switch (type) {
+      case "addition":
+        return "+";
+      case "multiplication":
+        return "x";
+      case "subtraction":
+        return "-";
+      case "division":
+        return "/";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="fixed z-9999 inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white dark:bg-strokedark p-4 rounded shadow-lg max-w-screen-md max-h-[90vh] overflow-auto w-full relative">
-        <button className="absolute top-2 right-2 rounded-full" onClick={onClose}>
+        <button
+          className="absolute top-2 right-2 rounded-full"
+          onClick={onClose}
+        >
           <i className="las la-times"></i>
         </button>
         <div className="w-full">
@@ -102,7 +170,7 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
                   <div>
                     {currentQuestion.question.map((num, index) => (
                       <p key={index} className="text-center text-4xl">
-                        {index > 0 && '+'} {num}
+                        {index > 0 && getOperatorSymbol(questionType)} {num}
                       </p>
                     ))}
                   </div>
@@ -128,7 +196,9 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
                   onClick={handleNext}
                   disabled={!inputAnswer}
                 >
-                  {currentQuestionIndex === filteredQuestions.length - 1 ? 'Submit' : 'Next'}
+                  {currentQuestionIndex === filteredQuestions.length - 1
+                    ? "Submit"
+                    : "Next"}
                 </button>
               </div>
             </>

@@ -8,13 +8,12 @@ import { useRouter } from "next/navigation";
 
 export default function StudentCreate() {
   const [formData, setFormData] = useState({
-    horizontalDigits: 0,
-    verticalDigits: 0,
-    totalQuestion: 0,
-    question: [],
+    addition: [],
+    subtraction: [],
+    multiplication: [],
+    division: [],
     level: 0,
-    type: "",
-    subDigits: 0,
+    totalQuestion: 0,
   });
   const router = useRouter();
 

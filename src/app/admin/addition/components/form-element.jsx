@@ -14,26 +14,35 @@ export default function FormStudentAddition({
   handleCloseStudentForm,
   studentAdditionObj,
   data = {
-    horizontalDigits: null,
-    verticalDigits: null,
-    totalQuestion: null,
-    question: [],
     level: 0,
-    type: "",
-    subDigits: null,
+    totalQuestion: 0,
+    additionSettings: { horizontalDigits: 0, verticalDigits: 0, totalQuestion: 0 },
+    subtractionSettings: { horizontalDigits: 0, subDigits: 0, totalQuestion: 0 },
+    multiplicationSettings: { horizontalDigits: 0, subDigits: 0, totalQuestion: 0 },
+    divisionSettings: { horizontalDigits: 0, subDigits: 0, totalQuestion: 0 },
   },
 }) {
   const [formData, setFormData] = useState(data);
   const [loading, setLoading] = useState(false);
+  const [visibleFields, setVisibleFields] = useState([]);
 
-  const { initialize } =
-    useTestAdminStore((state) => state);
+  const { initialize } = useTestAdminStore((state) => state);
 
-  const handleChange = (e) => {
+  const handleToggleField = (type) => {
+    setVisibleFields((prev) =>
+      prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type]
+    );
+  };
+
+  const handleChange = (e, type) => {
     const { name, value } = e.target;
+    const parsedValue = value === '' ? '' : parseInt(value);
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [`${type}Settings`]: {
+        ...prevData[`${type}Settings`],
+        [name]: parsedValue,
+      },
     }));
   };
 
@@ -44,7 +53,7 @@ export default function FormStudentAddition({
       const response = await post(API.getAllTest, formData);
       if (response.code === 201 || response.code === 200) {
         toast.success("Form submitted successfully!");
-        handleCloseStudentForm()
+        handleCloseStudentForm();
         initialize();
       } else {
         toast.error("Failed to submit form.");
@@ -67,20 +76,6 @@ export default function FormStudentAddition({
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <SelectField
-                id="operationType"
-                label="Operation Type"
-                options={[
-                  { label: "Addition", value: "addition" },
-                  { label: "Subtraction", value: "subtraction" },
-                  { label: "Multiplication", value: "multiplication" },
-                  { label: "Division", value: "division" },
-                ]}
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                required
-              />
-              <SelectField
                 id="studentLevel"
                 label="Student Level"
                 options={Array.from({ length: 9 }, (_, i) => ({
@@ -89,36 +84,10 @@ export default function FormStudentAddition({
                 }))}
                 name="level"
                 value={formData.level}
-                onChange={handleChange}
+                onChange={(e) =>
+                  setFormData((prevData) => ({ ...prevData, level: e.target.value }))
+                }
                 required
-              />
-              <InputField
-                id="rowDigits"
-                label="Row Digits For (A, S, M, D)"
-                type="number"
-                name="horizontalDigits"
-                value={formData.horizontalDigits}
-                onChange={handleChange}
-                placeholder="Enter number of rows"
-                required
-              />
-              <InputField
-                id="colDigits"
-                label="Column Digits Only For (Addition)"
-                type="number"
-                name="verticalDigits"
-                value={formData.verticalDigits}
-                onChange={handleChange}
-                placeholder="Enter number of columns"
-              />
-              <InputField
-                id="subDigits"
-                label="Sub Digits Only For (S, M, D)"
-                type="number"
-                name="subDigits"
-                value={formData.subDigits}
-                onChange={handleChange}
-                placeholder="Enter sub digits"
               />
               <InputField
                 id="totalQuestion"
@@ -127,15 +96,80 @@ export default function FormStudentAddition({
                 name="totalQuestion"
                 value={formData.totalQuestion}
                 onChange={handleChange}
-                placeholder="Enter number of total question"
-                required
+                placeholder="Enter number of total questions"
               />
             </div>
+
+            <div className="grid gap-6 mb-6 md:grid-cols-2">
+              {["addition", "subtraction", "multiplication", "division"].map((type) => (
+                <div key={type}>
+                  <div className="flex items-center justify-between">
+                    <label className="text-gray-700 capitalize">{type}</label>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleField(type)}
+                      className="bg-custom-blue text-white px-2 py-1 rounded"
+                    >
+                      {visibleFields.includes(type) ? "Remove" : "Add"} +
+                    </button>
+                  </div>
+                  {visibleFields.includes(type) && (
+                    <div className="mt-4 grid gap-4">
+                      <InputField
+                        id={`${type}RowDigits`}
+                        label={`Row Digits For ${type}`}
+                        type="number"
+                        name="horizontalDigits"
+                        value={formData[`${type}Settings`].horizontalDigits}
+                        onChange={(e) => handleChange(e, type)}
+                        placeholder="Enter number of rows"
+                        required
+                      />
+                      {type === "addition" && (
+                        <InputField
+                          id={`${type}ColDigits`}
+                          label={`Column Digits For ${type}`}
+                          type="number"
+                          name="verticalDigits"
+                          value={formData[`${type}Settings`].verticalDigits}
+                          onChange={(e) => handleChange(e, type)}
+                          placeholder="Enter number of columns"
+                        />
+                      )}
+                      {(type === "subtraction" ||
+                        type === "multiplication" ||
+                        type === "division") && (
+                        <InputField
+                          id={`${type}SubDigits`}
+                          label={`Sub Digits For ${type}`}
+                          type="number"
+                          name="subDigits"
+                          value={formData[`${type}Settings`].subDigits}
+                          onChange={(e) => handleChange(e, type)}
+                          placeholder="Enter sub digits"
+                        />
+                      )}
+                      <InputField
+                        id={`${type}TotalQuestion`}
+                        label={`Total Questions For ${type}`}
+                        type="number"
+                        name="totalQuestion"
+                        value={formData[`${type}Settings`].totalQuestion}
+                        onChange={(e) => handleChange(e, type)}
+                        placeholder="Enter total questions"
+                        required
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
             <SubmitButton loading={loading} />
           </form>
         </>
       }
       onCloseModal={handleCloseStudentForm}
-    ></AppModal>
+    />
   );
 }

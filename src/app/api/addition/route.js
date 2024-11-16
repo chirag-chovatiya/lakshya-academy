@@ -5,15 +5,6 @@ import { createTest, getAllTest } from "@/models/addition/studentAdditionModel";
 export async function POST(request) {
   try {
     const data = await request.json();
-
-    if (data.subDigits !== null && (data.subDigits < 1 || data.subDigits > 9)) {
-      return sendResponse(
-        NextResponse,
-        400,
-        "subDigits must be between 1 and 9 or null."
-      );
-    }
-
     const newAddition = await createTest(data);
 
     return sendResponse(

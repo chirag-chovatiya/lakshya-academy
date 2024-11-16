@@ -9,12 +9,12 @@ export const SelectField = ({ id, label, options, name, value, onChange }) => (
     <select
       id={id}
       name={name}
-      value={value} // Set the current value of the select
-      onChange={onChange} // Handle the change event
+      value={value} 
+      onChange={onChange} 
       className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full focus:outline-none focus:border-gray-300"
       required
     >
-      <option value="" disabled>Select an option</option> {/* Default option */}
+      <option value="">Select an option</option> 
       {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}

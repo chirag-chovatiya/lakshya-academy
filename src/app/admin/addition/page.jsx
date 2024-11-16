@@ -1,10 +1,12 @@
-"use client";
+"use client"
+import React, { useEffect, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Pagination from "@/components/Pagination";
-import React, { useEffect, useState } from "react";
 import FormStudentAddition from "./components/form-element";
 import { useTestAdminStore } from "@/providers/test-store-provider";
 import Table from "@/components/app-table/app-table";
+import { del } from "@/service/api";
+import { API } from "@/service/constant/api-constant";
 
 export default function StudentLists() {
   const { test, changePage, onPageSizeChange, onSelectionChange, initialize } =
@@ -17,19 +19,29 @@ export default function StudentLists() {
     }
   }, []);
 
-  
-
   const columns = [
     { key: "id", title: "ID" },
     { key: "level", title: "Student Level" },
-    { key: "type", title: "Sum Type" },
-    { key: "horizontalDigits", title: "Addition Row" },
-    { key: "verticalDigits", title: "Vertical Digits" },
-    { key: "totalQuestion", title: "Total Addition" },
+    { key: "addition", title: "Addition" },
+    { key: "subtraction", title: "Subtraction" },
+    { key: "multiplication", title: "Multiplication" },
+    { key: "division", title: "Division" },
+    { key: "totalQuestion", title: "Total Questions" },
     { key: "createdAt", title: "Created Date" },
   ];
 
-  
+  const formatTestData = (data) => {
+    return data.map((item) => ({
+      ...item,
+      addition: item.addition.length,
+      subtraction: item.subtraction.length,
+      multiplication: item.multiplication.length,
+      division: item.division.length,
+      totalQuestion: item.addition.length + item.subtraction.length + item.multiplication.length + item.division.length,
+    }));
+  };
+
+  const formattedData = formatTestData(test.data[test.page] || []);
 
   const [studentAdditionObj, setStudentAdditionObj] = useState({
     visible: false,
@@ -53,6 +65,16 @@ export default function StudentLists() {
       ...prevState,
       visible: false,
     }));
+  };
+
+  const deleteTest = async (id) => {
+    try {
+      const response = await del(API.getAllTest + `/${id}`);
+      initialize("test")
+      return response;
+    } catch (error) {
+      console.error("Error deleting test data:", error);
+    }
   };
 
   return (
@@ -110,9 +132,10 @@ export default function StudentLists() {
         </div>
         <Table
           columns={columns}
-          data={test.data[test.page] || []}
+          data={formattedData}
           editLinkPrefix={() => handleAddNewStudent(1)}
-          // deleteHandler={handleDelete}
+          deleteHandler={deleteTest}
+          
         />
         <Pagination data={test} changePage={changePage} />
       </div>

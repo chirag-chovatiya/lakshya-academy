@@ -11,18 +11,17 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const onSubmit = async (email, password) => {
     try {
-      const result = await signIn("credentials", { email, password, redirect: false });
+      const result = await signIn("credentials", { email, password, redirect: true });
+
       if (result.error) {
-        handelError(result.error); 
-      } else {
-        window.location.href = "/admin";
+        handleError(result.error); 
       }
     } catch (error) {
-      handelError(error);
+      handleError(error);
     }
   };
 
-  const handelError = (error) => {
+  const handleError = (error) => {
     switch (error) {
       case "CredentialsSignin":
         toast.error("Invalid credentials!");
@@ -32,10 +31,12 @@ export default function LoginForm() {
         break;
     }
   };
+
   useEffect(() => {
     if (searchParams && searchParams.has("error"))
-      handelError(searchParams.get("error"));
+      handleError(searchParams.get("error"));
   }, [searchParams]);
+
   return (
     <>
       <ToastContainer />
@@ -44,7 +45,7 @@ export default function LoginForm() {
           try {
             await onSubmit(formData.get("email"), formData.get("password"));
           } catch (error) {
-            handelError(error);
+            handleError(error);
           }
         }}
       >

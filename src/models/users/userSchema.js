@@ -16,8 +16,8 @@ const User = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
-      defaultValue: null,
+      allowNull: true,
+      unique: false,
     },
     password: {
       type: DataTypes.STRING,
@@ -31,7 +31,7 @@ const User = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    type: {
+    user_type: {
       type: DataTypes.ENUM("Student", "Admin", "Teacher"),
       defaultValue: "Student",
     },

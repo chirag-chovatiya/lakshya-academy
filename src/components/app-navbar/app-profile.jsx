@@ -1,4 +1,12 @@
+import { signOut } from "next-auth/react";
+
 export default function ProfileAvtara() {
+  const handleSignOut = async () => {
+    if (confirm("Are you sure you want to logout?")) {
+      await signOut({ callbackUrl: window.location.pathname });
+      localStorage.removeItem("token");
+    }
+  };
   return (
     <div>
       <div className="relative group inline-block">
@@ -24,6 +32,7 @@ export default function ProfileAvtara() {
               Profile
             </button>
             <button
+              onClick={handleSignOut}
               type="button"
               className="flex text-left w-full bg-white hover:bg-gray-200 p-3 rounded-lg"
             >

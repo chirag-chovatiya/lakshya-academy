@@ -8,50 +8,87 @@ import { StudentAddition } from "./studentAdditionSchema";
 
 export const createTest = async (data) => {
   try {
-    const { horizontalDigits, verticalDigits, subDigits, totalQuestion, type } =
-      data;
-    const questionAnswerSet = [];
+    const {
+      additionSettings,
+      subtractionSettings,
+      multiplicationSettings,
+      divisionSettings,
+      totalQuestion, 
+    } = data;
 
-    for (let i = 0; i < totalQuestion; i++) {
-      let question, answer;
-      if (type === "addition") {
-        const additionResult = generateAdditionQuestion(
-          horizontalDigits,
-          verticalDigits
-        );
-        question = additionResult.question;
-        answer = additionResult.answer;
-      } else if (type === "multiplication") {
-        const multiplicationResult = generateMultiplicationQuestion(
-          horizontalDigits,
-          subDigits
-        );
-        question = multiplicationResult.question;
-        answer = multiplicationResult.answer;
-      } else if (type === "subtraction") {
-        const subtractionResult = generateSubtractionQuestion(
-          horizontalDigits,
-          subDigits
-        );
-        question = subtractionResult.question;
-        answer = subtractionResult.answer;
-      } else if (type === "division") {
-        const divisionResult = generateDivisionQuestion(
-          horizontalDigits,
-          subDigits
-        );
-        question = divisionResult.question;
-        answer = divisionResult.answer;
-      }
-      questionAnswerSet.push({ question, answer });
+    const questionAnswerSet = {
+      addition: [],
+      subtraction: [],
+      multiplication: [],
+      division: [],
+    };
+
+    const additionTotal = additionSettings?.totalQuestion || totalQuestion;
+    for (let i = 0; i < additionTotal; i++) {
+      const additionResult = generateAdditionQuestion(
+        additionSettings?.horizontalDigits,
+        additionSettings?.verticalDigits
+      );
+      questionAnswerSet.addition.push({
+        question: additionResult.question,
+        answer: additionResult.answer,
+      });
     }
-    const updatedData = { ...data, question: questionAnswerSet };
+
+    const subtractionTotal = subtractionSettings?.totalQuestion || totalQuestion;
+    for (let i = 0; i < subtractionTotal; i++) {
+      const subtractionResult = generateSubtractionQuestion(
+        subtractionSettings?.horizontalDigits,
+        subtractionSettings?.subDigits
+      );
+      questionAnswerSet.subtraction.push({
+        question: subtractionResult.question,
+        answer: subtractionResult.answer,
+      });
+    }
+
+    const multiplicationTotal = multiplicationSettings?.totalQuestion || totalQuestion;
+    for (let i = 0; i < multiplicationTotal; i++) {
+      const multiplicationResult = generateMultiplicationQuestion(
+        multiplicationSettings?.horizontalDigits,
+        multiplicationSettings?.subDigits
+      );
+      questionAnswerSet.multiplication.push({
+        question: multiplicationResult.question,
+        answer: multiplicationResult.answer,
+      });
+    }
+
+    const divisionTotal = divisionSettings?.totalQuestion || totalQuestion;
+    for (let i = 0; i < divisionTotal; i++) {
+      const divisionResult = generateDivisionQuestion(
+        divisionSettings?.horizontalDigits,
+        divisionSettings?.subDigits
+      );
+      questionAnswerSet.division.push({
+        question: divisionResult.question,
+        answer: divisionResult.answer,
+      });
+    }
+
+    const updatedData = {
+      ...data,
+      addition: questionAnswerSet.addition,
+      subtraction: questionAnswerSet.subtraction,
+      multiplication: questionAnswerSet.multiplication,
+      division: questionAnswerSet.division,
+    };
+
     const createData = await StudentAddition.create(updatedData);
     return createData;
   } catch (error) {
     throw error;
   }
 };
+
+
+
+
 export const getAllTest = async (page = 1, pageSize = 10) => {
   try {
     const parsedPage = parseInt(page);
@@ -154,3 +191,7 @@ export const deleteTestById = async function (testId) {
     throw error;
   }
 };
+
+
+
+

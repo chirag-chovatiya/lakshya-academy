@@ -1,23 +1,47 @@
 "use client";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import InputPassword from "../../components/inputPassword";
+import jwt from "jsonwebtoken";
+import InputPassword from "./inputPassword";
 import LoginBtn from "./LoginBtn";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { login } from "@/service/auth-api";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginForm() {
-  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const onSubmit = async (email, password) => {
+    setLoading(true);
     try {
-      const result = await signIn("credentials", { email, password, redirect: true });
+      const result = await login(email, password);
 
-      if (result.error) {
-        handleError(result.error); 
+      if (result.code === 200 || result.code === 201) {
+        const token = result.data.token;
+        if (token) {
+          localStorage.setItem("t", token);
+          document.cookie = `t=${token}; path=/`;
+          const decoded = jwt.decode(token);
+          if (decoded.user_type === "Student") {
+            router.replace("/");
+          } else if (
+            decoded.user_type === "Admin" ||
+            decoded.user_type === "Teacher"
+          ) {
+            router.replace("/admin");
+          }
+        } else {
+          router.replace("/login");
+          toast.error("Authentication token missing!");
+        }
+      } else if (result.error) {
+        toast.error("Something went wrong!");
       }
     } catch (error) {
+      console.log(error);
       handleError(error);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -32,23 +56,16 @@ export default function LoginForm() {
     }
   };
 
-  useEffect(() => {
-    if (searchParams && searchParams.has("error"))
-      handleError(searchParams.get("error"));
-  }, [searchParams]);
-
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    await onSubmit(email, password);
+  };
   return (
     <>
       <ToastContainer />
-      <form
-        action={async (formData) => {
-          try {
-            await onSubmit(formData.get("email"), formData.get("password"));
-          } catch (error) {
-            handleError(error);
-          }
-        }}
-      >
+      <form onSubmit={handleFormSubmit}>
         <div>
           <h3 className="font-semibold text-[30px] py-4">
             Welcome to <span className="text-custom-blue">Academy</span>
@@ -72,7 +89,7 @@ export default function LoginForm() {
         </div>
         <InputPassword />
         <div className="my-5">
-          <LoginBtn></LoginBtn>
+        <LoginBtn loading={loading} />
         </div>
       </form>
     </>

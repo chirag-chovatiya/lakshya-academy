@@ -6,10 +6,6 @@ const nextConfig = {
               source: "/",
               destination: "/home",
             },
-            {
-              source: "/login",
-              destination: "/auth/login",
-            },
           ];
         },
   };

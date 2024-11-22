@@ -1,51 +1,40 @@
-// import { NextResponse } from "next/server";
-
-// export default function middleware(req) {
-//   const sessionToken = req.cookies.get("next-auth.session-token");
-
-//   if (!sessionToken) {
-//     return NextResponse.redirect(new URL("/login", req.url));
-//   }
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//   matcher: ["/admin"],
-// };
-
 import { NextResponse } from "next/server";
-import { withAuth } from "next-auth/middleware";
+import { getUserDetailsFromToken } from "./utils/getUserTypeFromToken";
 
-export default withAuth(
-  function middleware(req) {
-    const token = req.nextauth.token;
+export function middleware(req) {
+  const token = req.cookies.get("t");
 
-    const isAdminPath = req.nextUrl.pathname.startsWith("/admin");
-    const isHomePath = req.nextUrl.pathname.startsWith("/home");
+  const protectedRoutes = ["/admin", "/"];
 
-    if ((isAdminPath || isHomePath) && !token) {
-      const loginUrl = new URL("/login", req.url);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    if (token) {
-      if (isAdminPath && !["Admin", "Teacher"].includes(token.userType)) {
-        return NextResponse.redirect(new URL("/", req.url));
-      }
-      if (isHomePath && token.userType !== "Student") {
-        return NextResponse.redirect(new URL("/admin", req.url));
-      }
-    }
-  },
-  {
-    pages: {
-      signIn: "/login",
-    },
+  if (protectedRoutes.includes(req.nextUrl.pathname) && !token) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
-);
+  let user_type;
+  if (token) {
+    try {
+      const userDetails = getUserDetailsFromToken(token);
+      user_type = userDetails?.user_type;
+    } catch (error) {
+      console.error("Error getting user details from token:", error);
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+  }
+
+  const isAdminPath = req.nextUrl.pathname.startsWith("/admin");
+  const isHomePath = req.nextUrl.pathname === "/";
+
+  if (user_type) {
+    if (isAdminPath && !["Admin", "Teacher"].includes(user_type)) {
+      return NextResponse.redirect(new URL("/", req.url)); 
+    }
+    if (isHomePath && user_type !== "Student") {
+      return NextResponse.redirect(new URL("/admin", req.url)); 
+    }
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/admin", "/", "/login"], 
+  matcher: ["/admin/:path*", "/:path*"], 
 };
-
-

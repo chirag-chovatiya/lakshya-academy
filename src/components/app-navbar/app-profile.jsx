@@ -1,10 +1,14 @@
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function ProfileAvtara() {
+  const router = useRouter();
   const handleSignOut = async () => {
     if (confirm("Are you sure you want to logout?")) {
-      await signOut({ callbackUrl: window.location.pathname });
-      localStorage.removeItem("token");
+      localStorage.removeItem("t");
+      document.cookie = "t=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+      window.location.href = "/login";
+
     }
   };
   return (

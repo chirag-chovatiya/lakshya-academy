@@ -20,19 +20,19 @@ const StudentReport = sequelize.define(
       defaultValue: null,
     },
     additionMark: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     subtractionMark: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     multiplicationMark: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     divisionMark: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     result: {
@@ -50,6 +50,8 @@ const StudentReport = sequelize.define(
   }
 );
 
+StudentReport.belongsTo(User, { foreignKey: "studentId", as: "student" });
+
+
 export { StudentReport };
 
-StudentReport.belongsTo(User, { foreignKey: "studentId", as: "student" });

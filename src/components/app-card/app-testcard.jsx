@@ -1,62 +1,49 @@
+"use client";
+import { get, post } from "@/service/api";
+import { API } from "@/service/constant/api-constant";
 import React, { useState, useEffect } from "react";
-
-const additionArray = {
-  data: [
-    {
-      type: "addition",
-      question: [
-        {
-          answer: 140,
-          question: [74, 66],
-        },
-        {
-          answer: 61,
-          question: [19, 42],
-        },
-      ],
-    },
-    {
-      type: "multiplication",
-      question: [
-        {
-          answer: 3599,
-          question: [61, 59],
-        },
-        {
-          answer: 3450,
-          question: [69, 50],
-        },
-      ],
-    },
-    {
-      type: "subtraction",
-      question: [],
-    },
-    {
-      type: "division",
-      question: [],
-    },
-  ],
-};
+import jwt from "jsonwebtoken";
 
 const TestModel = ({ isOpen, onClose, title, questionType }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState([]);
   const [inputAnswer, setInputAnswer] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [formData, setFormData] = useState({
+    testId: 0,
+    additionMark: 0,
+    subtractionMark: 0,
+    multiplicationMark: 0,
+    divisionMark: 0,
+  });
 
   useEffect(() => {
     setCurrentQuestionIndex(0);
     setUserAnswers([]);
     setInputAnswer("");
     setShowResults(false);
+    fetchQuestions();
   }, [questionType]);
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await get(
+        `${API.getAllTest}?questionType=${questionType}`
+      );
+      if (response.code === 200 && response.data) {
+        const testData = response.data[0];
+        setQuestions(testData[questionType] || []);
+        setFormData((prev) => ({ ...prev, testId: testData.id }));
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
 
   if (!isOpen) return null;
 
-  const filteredQuestions =
-    additionArray.data.filter((q) => q.type === questionType)[0]?.question ||
-    [];
+  const filteredQuestions = questions;
   const currentQuestion = filteredQuestions[currentQuestionIndex];
 
   const handleNext = () => {
@@ -74,6 +61,7 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setShowResults(true);
+      submitTestResults();
     }
   };
 
@@ -106,11 +94,11 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
             const isCorrect = userAnswer === q.answer;
             const questionText = q.question.join(
               " " + getOperatorSymbol(questionType) + " "
-            ); // Adjust based on type
+            );
             return (
               <li key={index} className="mt-2">
                 <p className="text-3xl font-semibold">
-                  Q {index + 1}.  {questionText}
+                  Q {index + 1}. {questionText}
                 </p>
                 <div className="flex justify-between items-center text-xl py-2">
                   <span className="flex-1 text-green-500">
@@ -145,6 +133,52 @@ const TestModel = ({ isOpen, onClose, title, questionType }) => {
         return "/";
       default:
         return "";
+    }
+  };
+
+  const submitTestResults = async () => {
+    try {
+
+      const token = localStorage.getItem("t");
+      if (!token) {
+        console.error("No token found in localStorage");
+        return;
+      }
+      const decoded = jwt.decode(token);
+      console.log(decoded.id); 
+    const studentId = decoded.id;
+
+      const correctAnswersCount = userAnswers.filter(
+        (ans, index) => ans.userAnswer === filteredQuestions[index].answer
+      ).length;
+
+      const questionCount = `${correctAnswersCount}/${filteredQuestions.length}`;
+
+      const updatedFormData = {
+        studentId: studentId,
+        testId: formData.testId,
+        additionMark:
+          questionType === "addition" ? questionCount : formData.additionMark,
+        subtractionMark:
+          questionType === "subtraction"
+            ? questionCount
+            : formData.subtractionMark,
+        multiplicationMark:
+          questionType === "multiplication"
+            ? questionCount
+            : formData.multiplicationMark,
+        divisionMark:
+          questionType === "division" ? questionCount : formData.divisionMark,
+      };
+
+      const response = await post(API.getReport, updatedFormData, token);
+      if (response.code === 200) {
+        console.log("Test results submitted successfully:", response.data);
+      } else {
+        console.error("Error submitting test results:", response.message);
+      }
+    } catch (error) {
+      console.error("Error submitting test results:", error);
     }
   };
 

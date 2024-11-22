@@ -34,6 +34,10 @@ const StudentAddition = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     timestamps: true,

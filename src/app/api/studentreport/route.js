@@ -4,10 +4,23 @@ import {
   createReport,
   getAllReport,
 } from "@/models/studentReport/studentReportModel";
+import { authenticateToken } from "@/middlewares/auth";
 
 export async function POST(request) {
   try {
+    const authResponse = await authenticateToken(request);
+    if (authResponse.status && authResponse.status !== 200) {
+      return sendResponse(
+        NextResponse,
+        authResponse.status,
+        authResponse.message
+      );
+    }
+    const { userId } = authResponse;
+
     const data = await request.json();
+
+    data.studentId = userId;
     const newAddition = await createReport(data);
 
     return sendResponse(
@@ -31,7 +44,14 @@ export async function GET(request) {
     const createdAt = request.nextUrl.searchParams.get("createdAt");
     const studentName = request.nextUrl.searchParams.get("studentName");
 
-    const allReport = await getAllReport(page, pageSize, hwStatus, level, createdAt, studentName);
+    const allReport = await getAllReport(
+      page,
+      pageSize,
+      hwStatus,
+      level,
+      createdAt,
+      studentName
+    );
     console.log(allReport);
 
     if (allReport) {

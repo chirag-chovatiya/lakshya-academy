@@ -23,13 +23,15 @@ export async function get(endpoint) {
   }
 }
 
-export async function post(endpoint, body, formdata = false) {
+export async function post(endpoint, body, formdata = false, token = null) {
   const url = `${BASE_URl}${endpoint}`;
+  
   const options = {
     method: "POST",
     headers: {
       "Cache-Control": "no-store",
       Pragma: "no-cache",
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: formdata ? body : JSON.stringify(body),
   };
@@ -42,6 +44,7 @@ export async function post(endpoint, body, formdata = false) {
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
+
   return await response.json();
 }
 

@@ -55,7 +55,9 @@ export async function POST(request, { params }) {
       name: newData.name,
       phone_number: newData.phone_number,
       level:newData.level,
-      images:newData.images
+      user_type:newData.user_type,
+      images:newData.images,
+      status: newData.status,
     };
 
     const userResult = await updateUserById(userId, userData);

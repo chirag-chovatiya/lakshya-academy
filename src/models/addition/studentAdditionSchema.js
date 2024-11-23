@@ -10,23 +10,23 @@ const StudentAddition = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    horizontalDigits : {
-      type: DataTypes.INTEGER,
-      defaultValue: null,
-    },
-    subDigits : {
-      type: DataTypes.INTEGER,
-      defaultValue: null,
-    },
-    verticalDigits : {
-      type: DataTypes.INTEGER,
-      defaultValue: null,
-    },
     totalQuestion : {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    question: {
+    addition: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
+    subtraction: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
+    multiplication: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
+    division: {
       type: DataTypes.JSON,
       defaultValue: [],
     },
@@ -34,9 +34,9 @@ const StudentAddition = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    type: {
-      type: DataTypes.ENUM("addition","subtraction","multiplication", "division"),
-      defaultValue: null,
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
@@ -46,3 +46,6 @@ const StudentAddition = sequelize.define(
 );
 
 export { StudentAddition };
+
+
+

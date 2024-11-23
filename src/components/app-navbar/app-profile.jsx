@@ -1,4 +1,18 @@
+
+import jwt from "jsonwebtoken";
 export default function ProfileAvtara() {
+
+  const token = localStorage.getItem("t");
+  const decoded = jwt.decode(token);
+  const user = decoded?.name;
+  const handleSignOut = async () => {
+    if (confirm("Are you sure you want to logout?")) {
+      localStorage.removeItem("t");
+      document.cookie = "t=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+      window.location.href = "/login";
+
+    }
+  };
   return (
     <div>
       <div className="relative group inline-block">
@@ -14,7 +28,7 @@ export default function ProfileAvtara() {
             className="h-8 w-8 rounded-full shadow"
           />
           <div className="hidden md:block ">
-            <p className="">Lax</p>
+            <p className="">{user}</p>
           </div>
           <i className="las la-angle-down text-[15px]"></i>
         </button>
@@ -24,6 +38,7 @@ export default function ProfileAvtara() {
               Profile
             </button>
             <button
+              onClick={handleSignOut}
               type="button"
               className="flex text-left w-full bg-white hover:bg-gray-200 p-3 rounded-lg"
             >

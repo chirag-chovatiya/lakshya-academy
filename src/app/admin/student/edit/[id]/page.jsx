@@ -5,6 +5,8 @@ import FormElementStudent from "../../components/form-element";
 import { API } from "@/service/constant/api-constant";
 import { get, post } from "@/service/api";
 import { toast } from "react-toastify";
+import { useUserAdminStore } from "@/providers/user-store-provider";
+import { useRouter } from "next/navigation";
 
 export default function StudentEdit({ params }) {
   const [formData, setFormData] = useState({
@@ -13,10 +15,12 @@ export default function StudentEdit({ params }) {
     password: "",
     phone_number: "",
     level: 0,
-    type: 0,
-    status: true,
+    user_type: "",
+    status: false,
     images: null,
   });
+  const router = useRouter();
+  const { initialize } = useUserAdminStore((state) => state);
   useEffect(() => {
     const studentData = async () => {
       try {
@@ -24,7 +28,6 @@ export default function StudentEdit({ params }) {
           API.getAllUser + `/${params.id}`,
           formData
         );
-        console.log(response);
         if (response.code == 200 && response.data && response.data) {
           setFormData(response.data);
         }

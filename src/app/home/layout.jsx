@@ -9,7 +9,6 @@ export default function RootLayout({ children }) {
       <div className="flex-grow">
         {children}
       </div>
-      <AppFooter />
     </div>
   );
 }

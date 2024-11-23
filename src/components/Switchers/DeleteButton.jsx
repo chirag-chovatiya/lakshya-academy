@@ -6,12 +6,12 @@ export default function DeleteButton (props){
   const handleClick = () => {
     if (!isDeleted) {
       if (window.confirm("Are you sure you want to delete this?")) {
-        props.deleteAction(isDeleted);
+        props.deleteAction?.(isDeleted);
         setIsDeleted(!isDeleted)
       }
     } else {
       if (window.confirm("Are you sure you want to restore this?")) {
-        props.deleteAction(isDeleted);
+        props.deleteAction?.(isDeleted);
         setIsDeleted(!isDeleted)
 
       }
@@ -19,11 +19,10 @@ export default function DeleteButton (props){
   };
   return (
     <button
-      title={isDeleted ? "Restore" : "Delete"}
-      className={`hover:text-${isDeleted ? "green" : "red"}`}
+      title="Delete"
       onClick={handleClick}
     >
-      <i className={`fa-solid fa-${isDeleted ? "undo" : "trash"}`}></i>
+      <i className="fa-solid fa-trash"></i>
     </button>
   );
 };

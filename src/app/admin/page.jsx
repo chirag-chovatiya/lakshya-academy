@@ -4,7 +4,7 @@ import { TestStoreProvider } from "@/providers/test-store-provider";
 import { UserStoreProvider } from "@/providers/user-store-provider";
 
 export const metadata = {
-  title: "MedEx Admin",
+  title: "Lakshya Admin",
   description: "MedEx Admin - Admin Dashboard",
 };
 

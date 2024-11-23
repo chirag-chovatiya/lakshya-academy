@@ -23,13 +23,15 @@ export async function get(endpoint) {
   }
 }
 
-export async function post(endpoint, body, formdata = false) {
+export async function post(endpoint, body, formdata = false, token = null) {
   const url = `${BASE_URl}${endpoint}`;
+  
   const options = {
     method: "POST",
     headers: {
       "Cache-Control": "no-store",
       Pragma: "no-cache",
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: formdata ? body : JSON.stringify(body),
   };
@@ -38,11 +40,20 @@ export async function post(endpoint, body, formdata = false) {
     options.headers["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error response:", errorText);
+      throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.log("Error in POST request:", error);
+    throw error; 
   }
-  return await response.json();
 }
 
 export async function del(endpoint) {

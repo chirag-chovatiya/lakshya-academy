@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import DeleteButton from "@/components/Switchers/DeleteButton";
 
-const Table = ({ columns, data, editLinkPrefix, deleteHandler }) => {
+const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible }) => {
   return (
     <div className="rounded-xl border border-stroke bg-white p-2 shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto">
@@ -47,22 +47,24 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler }) => {
                   ))}
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
-                      {typeof editLinkPrefix === "string" ? (
-                        <Link
-                          href={`${editLinkPrefix}/${item.id}`}
-                          className="hover:text-primary"
-                        >
-                          <i className="fa-regular fa-pen-to-square"></i>
-                        </Link>
-                      ) : (
-                        <button
-                          onClick={() => editLinkPrefix(item.id)}
-                          className="hover:text-primary"
-                        >
-                          <i className="fa-regular fa-pen-to-square"></i>
-                        </button>
+                      {editButtonVisible && ( 
+                        typeof editLinkPrefix === "string" ? (
+                          <Link
+                            href={`${editLinkPrefix}/${item.id}`}
+                            className="hover:text-primary"
+                          >
+                            <i className="fa-regular fa-pen-to-square"></i>
+                          </Link>
+                        ) : (
+                          <button
+                            onClick={() => editLinkPrefix(item.id)}
+                            className="hover:text-primary"
+                          >
+                            <i className="fa-regular fa-pen-to-square"></i>
+                          </button>
+                        )
                       )}
-                      <DeleteButton onClick={() => deleteHandler(item.id)} />
+                      <DeleteButton key={item.id} deleteAction={() => deleteHandler(item.id)} />
                     </div>
                   </td>
                 </tr>

@@ -1,5 +1,6 @@
 import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
+import { User } from "../users/userSchema";
 
 const StudentReport = sequelize.define(
   "StudenReport",
@@ -10,28 +11,28 @@ const StudentReport = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    studentId : {
+    studentId: {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    testId : {
+    testId: {
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
-    additionMark : {
-      type: DataTypes.INTEGER,
+    additionMark: {
+      type: DataTypes.STRING,
       defaultValue: null,
     },
-    subtractionMark : {
-      type: DataTypes.INTEGER,
+    subtractionMark: {
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     multiplicationMark: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     divisionMark: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     result: {
@@ -49,4 +50,8 @@ const StudentReport = sequelize.define(
   }
 );
 
+StudentReport.belongsTo(User, { foreignKey: "studentId", as: "student" });
+
+
 export { StudentReport };
+

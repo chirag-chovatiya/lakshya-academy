@@ -8,13 +8,9 @@ export default function HeroSection() {
 
   const openModal = (cardType) => {
     setSelectedCard(cardType);
-    setIsModalOpen(true);  // Open modal
+    setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false); // Close modal
-    setSelectedCard(null);
-  };
 
   return (
     <>

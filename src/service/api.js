@@ -40,12 +40,20 @@ export async function post(endpoint, body, formdata = false, token = null) {
     options.headers["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
+  try {
+    const response = await fetch(url, options);
 
-  return await response.json();
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error response:", errorText);
+      throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.log("Error in POST request:", error);
+    throw error; 
+  }
 }
 
 export async function del(endpoint) {

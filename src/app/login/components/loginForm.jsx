@@ -22,12 +22,11 @@ export default function LoginForm() {
           localStorage.setItem("t", token);
           document.cookie = `t=${token}; path=/`;
           const decoded = jwt.decode(token);
+  
           if (decoded.user_type === "Student") {
-            router.replace("/");
-          } else if (
-            decoded.user_type === "Admin" ||
-            decoded.user_type === "Teacher"
-          ) {
+            toast.error("Access restricted to admin area for students!");
+            router.replace("/"); 
+          } else if (decoded.user_type === "Admin" || decoded.user_type === "Teacher") {
             router.replace("/admin");
           }
         } else {

@@ -6,9 +6,9 @@ import {
 } from "@/models/studentReport/studentReportModel";
 import { authenticateToken } from "@/middlewares/auth";
 
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const authResponse = await authenticateToken(request);
+    const authResponse = await authenticateToken(req);
     if (authResponse.status && authResponse.status !== 200) {
       return sendResponse(
         NextResponse,
@@ -18,7 +18,7 @@ export async function POST(request) {
     }
     const { userId } = authResponse;
 
-    const data = await request.json();
+    const data = await req.json();
 
     data.studentId = userId;
     const newAddition = await createReport(data);
@@ -30,7 +30,7 @@ export async function POST(request) {
       newAddition
     );
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return sendResponse(NextResponse, 500, "Internal server error");
   }
 }

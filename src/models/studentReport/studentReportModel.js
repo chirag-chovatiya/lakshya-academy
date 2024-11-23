@@ -8,7 +8,6 @@ export const createReport = async (data) => {
       return { obtained, total };
     };
 
-    // Parse each subject marks
     const subjectMarks = {
       additionMark: parseMarks(data.additionMark),
       subtractionMark: parseMarks(data.subtractionMark),
@@ -36,6 +35,7 @@ export const createReport = async (data) => {
       return createData;
     }
   } catch (error) {
+    console.log(error)
     throw error;
   }
 };

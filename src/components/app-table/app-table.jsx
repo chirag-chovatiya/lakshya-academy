@@ -2,8 +2,9 @@
 import React from "react";
 import Link from "next/link";
 import DeleteButton from "@/components/Switchers/DeleteButton";
+import { hasPermission } from "@/utils/permissions";
 
-const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible }) => {
+const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible, onRowClick }) => {
   return (
     <div className="rounded-xl border border-stroke bg-white p-2 shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto">
@@ -26,7 +27,11 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible
           <tbody>
             {data.length > 0 &&
               data.map((item, key) => (
-                <tr key={key}>
+                <tr
+                  key={key}
+                  onClick={() => onRowClick(item.id)} // Trigger row click action
+                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-meta-4" // Add hover effect
+                >
                   {columns.map((col) => (
                     <td
                       key={col.key}
@@ -47,7 +52,7 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible
                   ))}
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
-                      {editButtonVisible && ( 
+                      {editButtonVisible && hasPermission("StudentEdit") && (
                         typeof editLinkPrefix === "string" ? (
                           <Link
                             href={`${editLinkPrefix}/${item.id}`}
@@ -64,7 +69,9 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible
                           </button>
                         )
                       )}
-                      <DeleteButton key={item.id} deleteAction={() => deleteHandler(item.id)} />
+                      {hasPermission("StudentDelete") && (
+                        <DeleteButton key={item.id} deleteAction={() => deleteHandler(item.id)} />
+                      )}
                     </div>
                   </td>
                 </tr>

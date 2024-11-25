@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import { User } from "./userSchema";
+import { StudentReport } from "../studentReport/studentReportSchema";
 
 export const createUser = async (data) => {
   try {
@@ -62,6 +63,35 @@ export const getUserById = async (userId) => {
     throw error;
   }
 };
+export const getUserByIdWithReports = async (userId) => {
+  try {
+    const userData = await User.findOne({
+      where: { id: userId },
+      include: [
+        {
+          model: StudentReport, 
+          as: "reports",
+          attributes: [
+            "id",
+            "testId",
+            "additionMark",
+            "subtractionMark",
+            "multiplicationMark",
+            "divisionMark",
+            "result",
+            "hwStatus",
+            "createdAt",
+          ],
+        },
+      ],
+    });
+
+    return userData;
+  } catch (error) {
+    console.error("Error fetching user and reports:", error);
+    throw error;
+  }
+};
 export const updateUserById = async (userId, newData) => {
   try {
     const findUser = await User.findOne({ where: { id: userId } });
@@ -79,8 +109,8 @@ export const deleteUserById = async function (userId) {
   try {
     const deleteUser = await User.findOne({ where: { id: userId } });
     if (deleteUser) {
-      const UserDelete = await deleteUser.update({ status: "Delete" });
-      return UserDelete;
+      await deleteUser.destroy();
+      return true;
     } else {
       return null;
     }
@@ -88,3 +118,4 @@ export const deleteUserById = async function (userId) {
     throw error;
   }
 };
+

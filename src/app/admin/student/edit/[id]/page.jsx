@@ -7,6 +7,7 @@ import { get, post } from "@/service/api";
 import { toast } from "react-toastify";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import { useRouter } from "next/navigation";
+import { hasPermission } from "@/utils/permissions";
 
 export default function StudentEdit({ params }) {
   const [formData, setFormData] = useState({
@@ -21,6 +22,14 @@ export default function StudentEdit({ params }) {
   });
   const router = useRouter();
   const { initialize } = useUserAdminStore((state) => state);
+  const hasCreatePermission = hasPermission("StudentEdit");
+
+  if (!hasCreatePermission) {
+    useEffect(() => {
+      router.replace("/admin");
+    }, [router]);
+    return null; 
+  }
   useEffect(() => {
     const studentData = async () => {
       try {

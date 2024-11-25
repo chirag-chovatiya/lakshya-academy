@@ -54,7 +54,6 @@ export default function StudentLists() {
   const columns = [
     { key: "id", title: "ID" },
     { key: "createdAt", title: "Date" },
-    // { key: "standerd", title: "Standerd" },
     { key: "addition", title: "Addition" },
     { key: "subtraction", title: "Subtraction" },
     { key: "multiplication", title: "Multiplication" },

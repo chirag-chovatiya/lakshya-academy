@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Pagination from "@/components/Pagination";
@@ -7,10 +7,13 @@ import { useTestAdminStore } from "@/providers/test-store-provider";
 import Table from "@/components/app-table/app-table";
 import { del } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
+import { hasPermission } from "@/utils/permissions";
 
 export default function StudentLists() {
   const { test, changePage, onPageSizeChange, onSelectionChange, initialize } =
     useTestAdminStore((state) => state);
+
+  const hasCreatePermission = hasPermission("ExamCreate");
 
   useEffect(() => {
     onSelectionChange("test");
@@ -37,7 +40,12 @@ export default function StudentLists() {
       subtraction: item.subtraction.length,
       multiplication: item.multiplication.length,
       division: item.division.length,
-      totalQuestion: item.addition.length + item.subtraction.length + item.multiplication.length + item.division.length,
+      totalQuestion:
+        item.addition.length +
+        item.subtraction.length +
+        item.multiplication.length +
+        item.division.length,
+      createdAt: new Date(item.createdAt).toLocaleDateString("en-GB"),
     }));
   };
 
@@ -70,7 +78,7 @@ export default function StudentLists() {
   const deleteTest = async (id) => {
     try {
       const response = await del(API.getAllTest + `/${id}`);
-      initialize("test")
+      initialize("test");
       return response;
     } catch (error) {
       console.error("Error deleting test data:", error);
@@ -89,44 +97,40 @@ export default function StudentLists() {
         <Breadcrumb pageName="Student Test" />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
-            <div className="flex items-center gap-4">
-              <button
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
-                onClick={() => {
-                  initialize("test");
-                }}
-              >
-                <span>
-                  <i className="fa-solid fa-arrows-rotate"></i>
-                </span>
-                <span>Refresh</span>
-              </button>
-              <select
-                id="pagesizeForBlog"
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                onChange={(e) => onPageSizeChange(e.target.value)}
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-              </select>
-            </div>
-            <div className="flex-grow mt-4 sm:mt-0">
-              <input
-                type="text"
-                id="search"
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                placeholder="Search Here"
-              />
-            </div>
-            <div
-              onClick={() => handleAddNewStudent()}
-              className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white cursor-pointer"
-            >
-              <span>
-                <i className="fa-solid fa-plus"></i>
-              </span>
-              <span>Add New</span>
+            <div className="flex items-center gap-4 justify-between w-full">
+              <div className="flex items-center gap-4">
+                <button
+                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                  onClick={() => {
+                    initialize("test");
+                  }}
+                >
+                  <span>
+                    <i className="fa-solid fa-arrows-rotate"></i>
+                  </span>
+                  <span>Refresh</span>
+                </button>
+                <select
+                  id="pagesizeForBlog"
+                  className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                  onChange={(e) => onPageSizeChange(e.target.value)}
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+              {hasCreatePermission && (
+                <div
+                  onClick={() => handleAddNewStudent()}
+                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white cursor-pointer"
+                >
+                  <span>
+                    <i className="fa-solid fa-plus"></i>
+                  </span>
+                  <span>Add New</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -135,7 +139,6 @@ export default function StudentLists() {
           data={formattedData}
           editLinkPrefix={() => handleAddNewStudent(1)}
           deleteHandler={deleteTest}
-          
         />
         <Pagination data={test} changePage={changePage} />
       </div>

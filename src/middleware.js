@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export function middleware(request) {
   const token = request.cookies.get("t")?.value; 
-  console.log(token);
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -15,12 +14,12 @@ export function middleware(request) {
     return NextResponse.redirect(new URL("/", request.url));
   }
   if (decoded.user_type === "Teacher" && request.nextUrl.pathname.startsWith("/admin")) {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    return NextResponse.next(); 
   }
 
   return NextResponse.next(); 
 }
 
 export const config = {
-  matcher: ["/admin/:path*"], 
+  matcher: ["/admin/:path*", "/"], 
 };

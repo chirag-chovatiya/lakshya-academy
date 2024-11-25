@@ -13,20 +13,62 @@ export default function FormElementStudent({
 
   useEffect(() => setFormData(data), [data]);
 
-  const handleSubmit2 = async (e) => {
-    setLoading(true);
-    await handleSubmit(e, formData);
-    setLoading(false);
-  };
-
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const operationOptions = [
+  const userTypeOptions = [
     { label: "Student", value: "Student" },
     { label: "Admin", value: "Admin" },
     { label: "Teacher", value: "Teacher" },
   ];
+  const teacherPermissionOptions = [
+    { label: "Student create", value: "StudentCreate" },
+    { label: "Student delete", value: "StudentDelete" },
+    { label: "Student edit", value: "StudentEdit" },
+    { label: "Exam create", value: "ExamCreate" },
+    { label: "Exam delete", value: "ExamDelete" },
+    { label: "Report delete", value: "ReportDelete" },
+    { label: "Report export", value: "ReportExport" },
+
+  ];
+
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!formData.name || !formData.email || !formData.password) {
+      alert("Please fill all required fields.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await handleSubmit(e, formData);
+    } catch (error) {
+      console.error("Error during submission:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePermissionChange = (e) => {
+  const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+  setFormData((prevFormData) => {
+    const updatedPermissions = [
+      ...prevFormData.teacher_permission.filter((permission) => !selectedOptions.includes(permission)),
+      ...selectedOptions,
+    ];
+    return { ...prevFormData, teacher_permission: updatedPermissions };
+  });
+};
+const handleRemovePermission = (permissionToRemove) => {
+  setFormData((prevFormData) => {
+    const updatedPermissions = prevFormData.teacher_permission.filter(
+      (permission) => permission !== permissionToRemove
+    );
+    return { ...prevFormData, teacher_permission: updatedPermissions };
+  });
+};
 
   return (
     <form onSubmit={handleSubmit2}>
@@ -54,7 +96,7 @@ export default function FormElementStudent({
             label: "Student Level",
             name: "level",
             type: "text",
-            placeholder: "Flowbite",
+            placeholder: "Student Level",
           },
           {
             label: "Password",
@@ -80,15 +122,42 @@ export default function FormElementStudent({
           </div>
         ))}
         <SelectField
-            id="operationType"
-            label="Account Type"
-            options={operationOptions}
-            value={formData.user_type || ""}
-            onChange={(value) =>
-              setFormData({ ...formData, operationType: value })
-            }
-          />
+          id="userType"
+          label="User Type"
+          options={userTypeOptions}
+          value={formData.user_type || ""}
+          onChange={(e) =>
+            setFormData({ ...formData, user_type: e.target.value })
+          }
+        />
         <div>
+          <SelectField
+            id="teacher_permission"
+            label="Teacher Permission"
+            options={teacherPermissionOptions}
+            value={formData.teacher_permission || []}
+            onChange={handlePermissionChange}
+          />
+          <div className="flex flex-wrap gap-2 mt-2">
+            {formData.teacher_permission?.map((permission, index) => (
+              <div
+                key={index}
+                className="flex items-center bg-gray-200 dark:bg-gray-700 text-sm px-3 py-1 rounded-full"
+              >
+                {permission}
+                <button
+                  type="button"
+                  onClick={() => handleRemovePermission(permission)}
+                  className="ml-2 text-red-500 hover:text-red-700"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* <div>
           <label
             htmlFor="studentimage"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -100,7 +169,7 @@ export default function FormElementStudent({
             multiple={false}
             maxImageSize={{ width: 1365, height: 250 }}
           />
-        </div>
+        </div> */}
 
         <div>
           <label

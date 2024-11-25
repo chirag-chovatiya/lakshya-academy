@@ -5,6 +5,7 @@ import FormElementStudent from "../components/form-element";
 import { post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import { useRouter } from "next/navigation";
+import { hasPermission } from "@/utils/permissions";
 
 export default function StudentCreate() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,15 @@ export default function StudentCreate() {
     totalQuestion: 0,
   });
   const router = useRouter();
+
+  const hasCreatePermission = hasPermission("ExamCreate");
+
+  if (!hasCreatePermission) {
+    useEffect(() => {
+      router.replace("/admin");
+    }, [router]);
+    return null; 
+  }
 
   const handleSubmit = async (e, data) => {
     e.preventDefault();

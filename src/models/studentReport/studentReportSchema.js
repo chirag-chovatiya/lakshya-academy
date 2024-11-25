@@ -1,9 +1,8 @@
 import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
-import { User } from "../users/userSchema";
 
 const StudentReport = sequelize.define(
-  "StudenReport",
+  "StudentReport",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -50,7 +49,6 @@ const StudentReport = sequelize.define(
   }
 );
 
-StudentReport.belongsTo(User, { foreignKey: "studentId", as: "student" });
 
 
 export { StudentReport };

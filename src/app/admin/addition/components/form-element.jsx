@@ -27,6 +27,7 @@ export default function FormStudentAddition({
   const [visibleFields, setVisibleFields] = useState([]);
 
   const { initialize } = useTestAdminStore((state) => state);
+  
 
   const handleToggleField = (type) => {
     setVisibleFields((prev) =>
@@ -74,7 +75,7 @@ export default function FormStudentAddition({
         <>
           <ToastContainer />
           <form onSubmit={handleSubmit}>
-            <div className="grid gap-6 mb-6 md:grid-cols-2">
+            <div className="grid mb-6 md:grid-cols-1">
               <SelectField
                 id="studentLevel"
                 label="Student Level"
@@ -89,7 +90,7 @@ export default function FormStudentAddition({
                 }
                 required
               />
-              <InputField
+              {/* <InputField
                 id="totalQuestion"
                 label="Total Question"
                 type="number"
@@ -97,7 +98,7 @@ export default function FormStudentAddition({
                 value={formData.totalQuestion}
                 onChange={handleChange}
                 placeholder="Enter number of total questions"
-              />
+              /> */}
             </div>
 
             <div className="grid gap-6 mb-6 md:grid-cols-2">

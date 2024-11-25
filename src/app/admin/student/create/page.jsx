@@ -1,11 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import FormElementStudent from "../components/form-element";
 import { useRouter } from "next/navigation";
 import { post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import { useUserAdminStore } from "@/providers/user-store-provider";
+import { hasPermission } from "@/utils/permissions";
 
 export default function StudentCreate() {
   const [formData, setFormData] = useState({
@@ -17,9 +18,21 @@ export default function StudentCreate() {
     user_type: "Student",
     status: false,
     images: null,
+    teacher_permission: [],
   });
   const router = useRouter();
   const { initialize } = useUserAdminStore((state) => state);
+
+  const hasCreatePermission = hasPermission("StudentCreate");
+
+  if (!hasCreatePermission) {
+    useEffect(() => {
+      router.replace("/admin");
+    }, [router]);
+    return null; 
+  }
+
+
 
   const handleSubmit = async (e, data) => {
     e.preventDefault();

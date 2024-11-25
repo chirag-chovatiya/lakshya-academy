@@ -1,11 +1,14 @@
-"use client";
+"use client"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Link from "next/link";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/app-table/app-table";
 import debounce from "lodash/debounce";
+import { del, get } from "@/service/api";
+import { API } from "@/service/constant/api-constant";
+import { hasPermission } from "@/utils/permissions";
 
 export default function StudentLists() {
   const {
@@ -16,6 +19,9 @@ export default function StudentLists() {
     onSelectionChange,
     initialize,
   } = useUserAdminStore((state) => state);
+
+  const hasCreatePermission = hasPermission("StudentCreate");
+  const [selectedUserReports, setSelectedUserReports] = useState([]);
 
   useEffect(() => {
     onSelectionChange("users");
@@ -39,8 +45,27 @@ export default function StudentLists() {
     }, 300),
     [search]
   );
-  const handleDelete = (id) => {
-    // Implement delete functionality here
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await del(API.getAllUser + `/${id}`);
+      if (response.success) {
+        initialize();
+      }
+    } catch (error) {
+      console.error("Error deleting student:", error);
+    }
+  };
+
+  const handleRowClick = async (id) => {
+    try {
+      const response = await get(API.getAllUser + `/${id}`);
+      if (response.code === 200 && response.data && response.data.reports) {
+        setSelectedUserReports(response.data.reports);
+      }
+    } catch (error) {
+      console.error("Error fetching user reports:", error);
+    }
   };
 
   return (
@@ -83,15 +108,17 @@ export default function StudentLists() {
                 placeholder="Search Here"
               />
             </div>
-            <Link
-              href="./student/create"
-              className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
-            >
-              <span>
-                <i className="fa-solid fa-plus"></i>
-              </span>
-              <span>Add New</span>
-            </Link>
+            {hasCreatePermission && (
+              <Link
+                href="./student/create"
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+              >
+                <span>
+                  <i className="fa-solid fa-plus"></i>
+                </span>
+                <span>Add New</span>
+              </Link>
+            )}
           </div>
         </div>
         <Table
@@ -99,7 +126,10 @@ export default function StudentLists() {
           data={users.data[users.page] || []}
           editLinkPrefix="./student/edit"
           deleteHandler={handleDelete}
+          editButtonVisible={true}
+          onRowClick={handleRowClick} 
         />
+        
         <Pagination data={users} changePage={changePage} />
       </div>
     </>

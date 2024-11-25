@@ -13,7 +13,7 @@ dotenv.config();
 
 export async function POST(req, res) {
   try {
-    const { email, password, name, phone_number, level, images, status } =
+    const { email, password, name, phone_number, level, images, status, teacher_permission } =
       await req.json();
 
     if (!email || !password) {
@@ -35,6 +35,7 @@ export async function POST(req, res) {
           email: user.email,
           user_type: user.user_type,
           level: user.level,
+          teacher_permission: user.teacher_permission || null,
         },
         process.env.JWT_SECRET,
         { expiresIn: "7d" }
@@ -64,6 +65,7 @@ export async function POST(req, res) {
         level,
         images,
         status,
+        teacher_permission
       };
 
       user = await createUser(newUser);

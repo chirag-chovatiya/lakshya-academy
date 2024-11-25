@@ -1,6 +1,6 @@
 // middlewares/auth.js
 import jwt from "jsonwebtoken";
-import { getUserById } from "@/models/users/userModel";
+import { getUserById} from "@/models/users/userModel";
 import { NextResponse } from "next/server";
 
 const sendResponse = (func, statusCode, message, data) => {

@@ -1,5 +1,6 @@
 import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
+import { StudentReport } from "../studentReport/studentReportSchema";
 
 const User = sequelize.define(
   "students",
@@ -43,11 +44,25 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: null,
     },
+    teacher_permission: {
+      type: DataTypes.JSON,
+      defaultValue: null,
+    },
   },
   {
     timestamps: true,
     underscored: false,
   }
 );
+
+User.hasMany(StudentReport, {
+  foreignKey: "studentId",
+  as: "reports",
+});
+
+StudentReport.belongsTo(User, {
+  foreignKey: "studentId",
+  as: "student",
+});
 
 export { User };

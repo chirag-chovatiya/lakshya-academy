@@ -3,24 +3,18 @@ import { connectDb } from "@/config/database";
 import sendResponse from "@/utils/response";
 import {
   deleteUserById,
-  getUserById,
+  getUserByIdWithReports,
   updateUserById,
 } from "@/models/users/userModel";
-import { authenticateAdminToken } from "@/middlewares/auth";
 connectDb();
 
 export async function GET(request, { params }) {
-  // const authResponse = await authenticateAdminToken(request);
-  // if (authResponse) {
-  //   return authResponse;
-  // }
-
   try {
     const { userId } = params;
     let userResult;
 
     if (userId) {
-      userResult = await getUserById(userId);
+      userResult = await getUserByIdWithReports(userId);
     } else if (request.user) {
       request.user.password = null;
       request.user.otp = null;

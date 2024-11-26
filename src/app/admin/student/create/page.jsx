@@ -15,7 +15,7 @@ export default function StudentCreate() {
     password: "",
     phone_number: "",
     level: 0,
-    user_type: "Student",
+    user_type: "",
     status: false,
     images: null,
     teacher_permission: [],

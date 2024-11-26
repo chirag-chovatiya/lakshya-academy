@@ -13,7 +13,7 @@ dotenv.config();
 
 export async function POST(req, res) {
   try {
-    const { email, password, name, phone_number, level, images, status, teacher_permission } =
+    const { email, password, name, phone_number,user_type, level, images, status, teacher_permission } =
       await req.json();
 
     if (!email || !password) {
@@ -61,7 +61,7 @@ export async function POST(req, res) {
         email,
         phone_number,
         password: hashPassword,
-        user_type: "Student",
+        user_type,
         level,
         images,
         status,

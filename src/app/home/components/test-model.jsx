@@ -42,7 +42,7 @@ export default function TestModel({
         const token = localStorage.getItem("t");
         const decoded = jwt.decode(token);
         const studentLevel = decoded?.level;
-        console.log("Student Level:", studentLevel);
+        console.log("Student test:", response.data);
 
         const activeTestData = response.data.filter(
           (test) => test.status === true && test.level === studentLevel

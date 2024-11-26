@@ -31,13 +31,13 @@ export default function ProfileAvtara() {
           type="button"
           className="inline-flex gap-2 m-0 md:border md:border-gray-300 md:bg-gray-100 items-center px-3 py-2 md:rounded-lg cursor-pointer text-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
         >
-          <img
+          {/* <img
             height={100}
             width={100}
             src="dummy.png"
             alt="Profile"
             className="h-8 w-8 rounded-full shadow"
-          />
+          /> */}
           <div className="hidden md:block">
             <p className="">{user || "Guest"}</p>
           </div>

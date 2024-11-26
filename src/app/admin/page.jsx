@@ -5,7 +5,7 @@ import { UserStoreProvider } from "@/providers/user-store-provider";
 
 export const metadata = {
   title: "Lakshya Admin",
-  description: "MedEx Admin - Admin Dashboard",
+  description: "Lakshya Admin - Admin Dashboard",
 };
 
 export default function Home() {

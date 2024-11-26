@@ -12,7 +12,6 @@ export const SelectField = ({ id, label, options, name, value, onChange }) => (
       value={value} 
       onChange={onChange} 
       className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full focus:outline-none focus:border-gray-300"
-      required
     >
       <option value="">Select an option</option> 
       {options.map((option) => (

@@ -85,10 +85,6 @@ export const createTest = async (data) => {
     throw error;
   }
 };
-
-
-
-
 export const getAllTest = async (page = 1, pageSize = 10) => {
   try {
     const parsedPage = parseInt(page);
@@ -97,18 +93,43 @@ export const getAllTest = async (page = 1, pageSize = 10) => {
 
     if (!page && !pageSize) {
       const getTest = await StudentAddition.findAll();
-      return getTest;
+      const formattedResult = getTest.map((entry) => ({
+        id: entry.id,
+        totalQuestion: entry.totalQuestion || null,
+        addition: JSON.parse(entry.addition || []),
+        subtraction: JSON.parse(entry.subtraction || []),
+        multiplication: JSON.parse(entry.multiplication || []),
+        division: JSON.parse(entry.division || []),
+        level: entry.level,
+        status: entry.status,
+        createdAt: entry.createdAt,
+        updatedAt: entry.updatedAt,
+      }));
+      return formattedResult
+      
     }
-    const getAddition = await StudentAddition.findAndCountAll({
+    const {rows, count} = await StudentAddition.findAndCountAll({
       offset,
       limit: parsedPageSize,
     });
-    const totalPages = Math.ceil(getAddition.count / parsedPageSize);
+    const totalPages = Math.ceil(count / parsedPageSize);
+    const pageResult = rows.map((entry) => ({
+      id: entry.id,
+      totalQuestion: entry.totalQuestion || null,
+      addition: JSON.parse(entry.addition || '[]'),
+      subtraction: JSON.parse(entry.subtraction || '[]'),
+      multiplication: JSON.parse(entry.multiplication || '[]'),
+      division: JSON.parse(entry.division || '[]'),
+      level: entry.level,
+      status: entry.status,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
+    }));
     return {
-      data: getAddition.rows,
+      data: pageResult,
       currentPage: parsedPage,
       totalPages: totalPages,
-      totalData: getAddition.count,
+      totalData: count,
     }
   } catch (error) {
     throw error;

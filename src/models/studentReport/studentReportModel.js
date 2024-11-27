@@ -25,7 +25,9 @@ export const createReport = async (data) => {
 
     data.result = `${percentage}%`;
 
-    const existingReport = await StudentReport.findOne({ where: { testId: data.testId } });
+    const existingReport = await StudentReport.findOne({
+      where: { testId: data.testId, studentId: data.studentId },
+    });
     
     if (existingReport) {
       const updatedReport = await existingReport.update(data);

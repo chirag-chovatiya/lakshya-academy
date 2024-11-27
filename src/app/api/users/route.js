@@ -20,6 +20,19 @@ export async function POST(req, res) {
       return sendResponse(NextResponse, 400, "Email and password are required");
     }
 
+    const jwtSecret = process.env.JWT_SECRET;
+
+    if (!jwtSecret) {
+      console.error("JWT_SECRET is not defined in environment variables");
+      return sendResponse(
+        NextResponse,
+        500,
+        "Server misconfiguration: JWT secret not found"
+      );
+    }
+
+
+
     let user = await getUserByEmail(email);
 
     if (user) {
@@ -37,7 +50,7 @@ export async function POST(req, res) {
           level: user.level,
           teacher_permission: user.teacher_permission || null,
         },
-        process.env.JWT_SECRET,
+        jwtSecret || 'a1sdf25rfdd5g863892fdg25ttf',
         { expiresIn: "7d" }
       );
       setCookie("tkn", token, { expire: new Date() + 9999 });
@@ -69,7 +82,7 @@ export async function POST(req, res) {
       };
 
       user = await createUser(newUser);
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ id: user.id }, jwtSecret, {
         expiresIn: "7d",
       });
       setCookie("tkn", token, { expire: new Date() + 9999 });

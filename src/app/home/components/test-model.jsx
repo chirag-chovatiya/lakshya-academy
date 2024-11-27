@@ -42,7 +42,6 @@ export default function TestModel({
         const token = localStorage.getItem("t");
         const decoded = jwt.decode(token);
         const studentLevel = decoded?.level;
-        console.log("Student test:", response.data);
 
         const activeTestData = response.data.filter(
           (test) => test.status === true && test.level === studentLevel
@@ -104,7 +103,6 @@ export default function TestModel({
         testId: testId,
         [fieldToUpdate]: totalScore,
       };
-      console.log("jjj", payload);
 
       try {
         const response = await post(API.getReport, payload, false, token);

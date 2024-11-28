@@ -1,74 +1,81 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { useUserAdminStore } from "@/providers/user-store-provider";
-import Pagination from "@/components/Pagination";
 import Table from "@/components/app-table/app-table";
+import { useSearchParams } from "next/navigation";
+import { del, get } from "@/service/api";
+import { API } from "@/service/constant/api-constant";
+import * as XLSX from "xlsx";
 
 export default function StudentLists() {
-  // Dummy data for students
-  const dummyData = [
-    {
-      id: 1,
-      createdAt: "20/05/2023",
-      standerd: "5th",
-      addition: 85,
-      subtraction: 90,
-      multiplication: 75,
-      division: 80,
-      hwstatus: "Complete",
-    },
-    {
-      id: 2,
-      createdAt: "22/05/2023",
-      standerd: "6th",
-      addition: 78,
-      subtraction: 85,
-      multiplication: 88,
-      division: 82,
-      hwstatus: "Incomplete",
-    },
-    {
-      id: 3,
-      createdAt: "28/05/2023",
-      standerd: "5th",
-      addition: 92,
-      subtraction: 89,
-      multiplication: 95,
-      division: 91,
-      hwstatus: "Complete",
-    },
-    {
-      id: 4,
-      createdAt: "26/05/2023",
-      standerd: "6th",
-      addition: 80,
-      subtraction: 84,
-      multiplication: 78,
-      division: 76,
-      hwstatus: "Incomplete",
-    },
-  ];
+  const searchParams = useSearchParams();
+  const studentId = searchParams.get("studentId");
+  const [studentData, setStudentData] = useState([]);
+
+  const fetchStudentData = async (id) => {
+    try {
+      const response = await get(`${API.getAllUser}/${id}`);
+      console.log(response.data);
+      if (response.code == 200 && response.data && response.data.reports) {
+        const formattedData = response.data.reports.map((report) => ({
+          ...report,
+          createdAt: new Date(report.createdAt).toLocaleDateString("en-GB"), 
+          hwstatus: report.hwstatus === 1 ? "Complete" : "Incomplete",
+        }));
+        setStudentData(formattedData);
+      } else {
+        console.error("Failed to fetch student data:", response.message);
+      }
+    } catch (error) {
+      console.error("Error fetching student data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (studentId) {
+      fetchStudentData(studentId);
+    } else {
+      console.error("No student ID provided in the URL.");
+    }
+  }, [studentId]);
 
   const columns = [
     { key: "id", title: "ID" },
     { key: "createdAt", title: "Date" },
-    { key: "addition", title: "Addition" },
-    { key: "subtraction", title: "Subtraction" },
-    { key: "multiplication", title: "Multiplication" },
-    { key: "division", title: "Division" },
+    { key: "additionMark", title: "Addition" },
+    { key: "subtractionMark", title: "Subtraction" },
+    { key: "multiplicationMark", title: "Multiplication" },
+    { key: "divisionMark", title: "Division" },
     { key: "hwstatus", title: "H W Status" },
     { key: "result", title: "Result" },
   ];
 
-  const handleDelete = (id) => {
-    console.log(`Delete student with ID: ${id}`);
+  const handleDelete = async (id) => {
+    try {
+      const response = await del(API.getReport + `/${id}`);
+      if (response.success) {
+        console.log("Report deleted successfully.");
+      }
+    } catch (error) {
+      console.error("Error deleting report:", error);
+    }
   };
 
-  const onPageSizeChange = (value) => {
-    console.log(`Page size changed to: ${value}`);
+  const exportToExcel = () => {
+    const transformedData = studentData.map((report) => {
+      return columns.reduce((acc, column) => {
+        acc[column.title] = report[column.key]; 
+        return acc;
+      }, {});
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(transformedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
+    XLSX.writeFile(workbook, "student_data.xlsx");
   };
+
+
 
   return (
     <>
@@ -83,13 +90,15 @@ export default function StudentLists() {
                 </span>
                 <span>Refresh</span>
               </button>
-              <button className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white">
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                onClick={exportToExcel} 
+              >
                 <span>Export</span>
               </button>
               <select
                 id="pagesizeForBlog"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                onChange={(e) => onPageSizeChange(e.target.value)}
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -131,10 +140,9 @@ export default function StudentLists() {
         </div>
         <Table
           columns={columns}
-          data={dummyData} // Use dummyData here
+          data={studentData}
           deleteHandler={handleDelete}
         />
-        {/* <Pagination /> */}
       </div>
     </>
   );

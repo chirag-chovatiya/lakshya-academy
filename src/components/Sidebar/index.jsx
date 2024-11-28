@@ -288,7 +288,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Report
                             </Link>
                           </li>
-                          <li>
+                          {/* <li>
                             <Link
                               href="/admin/monthlyreport"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
@@ -297,7 +297,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             >
                              Monthly Report
                             </Link>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </React.Fragment>

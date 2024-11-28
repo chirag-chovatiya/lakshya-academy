@@ -9,6 +9,7 @@ import debounce from "lodash/debounce";
 import { del, get } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import { hasPermission } from "@/utils/permissions";
+import { useRouter } from "next/navigation";
 
 export default function StudentLists() {
   const {
@@ -21,8 +22,7 @@ export default function StudentLists() {
   } = useUserAdminStore((state) => state);
 
   const hasCreatePermission = hasPermission("StudentCreate");
-  const [selectedUserReports, setSelectedUserReports] = useState([]);
-
+  const router = useRouter();
   useEffect(() => {
     onSelectionChange("users");
     if (Object.keys(users.data).length === 0) {
@@ -57,15 +57,8 @@ export default function StudentLists() {
     }
   };
 
-  const handleRowClick = async (id) => {
-    try {
-      const response = await get(API.getAllUser + `/${id}`);
-      if (response.code === 200 && response.data && response.data.reports) {
-        setSelectedUserReports(response.data.reports);
-      }
-    } catch (error) {
-      console.error("Error fetching user reports:", error);
-    }
+  const handleRowClick = (id) => {
+    router.push(`/admin/monthlyreport?studentId=${id}`);
   };
 
   return (

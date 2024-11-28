@@ -45,7 +45,7 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible
                         />
                       ) : (
                         <p className="text-black dark:text-white line-clamp-3">
-                          {item[col.key] || "N/A"}
+                          {item[col.key] || "-----"}
                         </p>
                       )}
                     </td>

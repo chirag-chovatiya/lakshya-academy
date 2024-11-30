@@ -5,7 +5,7 @@ import Pagination from "@/components/Pagination";
 import FormStudentAddition from "./components/form-element";
 import { useTestAdminStore } from "@/providers/test-store-provider";
 import Table from "@/components/app-table/app-table";
-import { del } from "@/service/api";
+import { del, post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import { hasPermission } from "@/utils/permissions";
 
@@ -30,6 +30,7 @@ export default function StudentLists() {
     { key: "multiplication", title: "Multiplication" },
     { key: "division", title: "Division" },
     { key: "totalQuestion", title: "Total Questions" },
+    { key: "status", title: "Test Status" },
     { key: "createdAt", title: "Created Date" },
   ];
 
@@ -82,6 +83,21 @@ export default function StudentLists() {
       return response;
     } catch (error) {
       console.error("Error deleting test data:", error);
+    }
+  };
+
+  const updateStatusById = async (id, newStatus) => {
+    try {
+      const response = await post(API.getAllTest + `/${id}`, { status: newStatus });
+      console.log(response)
+      if (response.code === 200) {
+        initialize("test");
+        console.log("Status updated successfully");
+      } else {
+        console.error("Failed to update status");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
     }
   };
 
@@ -139,6 +155,8 @@ export default function StudentLists() {
           data={formattedData}
           editLinkPrefix={() => handleAddNewStudent(1)}
           deleteHandler={deleteTest}
+          isStatusActive={true}
+          updateStatusById={updateStatusById}
         />
         <Pagination data={test} changePage={changePage} />
       </div>

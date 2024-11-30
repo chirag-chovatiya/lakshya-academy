@@ -65,7 +65,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <Link href="/admin/">
           <div className="flex space-x-3">
             <h1 className="uppercase text-xl font-semibold text-white">
-            lakshya academy
+            {/* lakshya academy */}
             </h1>
           </div>
         </Link>

@@ -4,7 +4,20 @@ import Link from "next/link";
 import DeleteButton from "@/components/Switchers/DeleteButton";
 import { hasPermission } from "@/utils/permissions";
 
-const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible, onRowClick }) => {
+const Table = ({
+  columns,
+  data,
+  editLinkPrefix,
+  deleteHandler,
+  editButtonVisible,
+  isStatusActive=false,
+  updateStatusById,
+}) => {
+
+  const handleStatusChange = (id, newStatus) => {
+    updateStatusById(id, newStatus);
+  };
+
   return (
     <div className="rounded-xl border border-stroke bg-white p-2 shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto">
@@ -27,17 +40,49 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible
           <tbody>
             {data.length > 0 &&
               data.map((item, key) => (
-                <tr
-                  key={key}
-                  onClick={() => onRowClick(item.id)} // Trigger row click action
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-meta-4" // Add hover effect
-                >
+                <tr key={key}>
                   {columns.map((col) => (
                     <td
                       key={col.key}
                       className="border-b border-[#eee] px-4 py-5 dark:border-strokedark"
                     >
-                      {col.type === "image" ? (
+                      {col.key === "status" ? (
+                        isStatusActive ? (
+                          <label className="relative inline-block w-10 h-6">
+                            <input
+                              type="checkbox"
+                              checked={item[col.key]}
+                              onChange={() => handleStatusChange(item.id, !item[col.key])}
+                              className="absolute w-0 h-0 opacity-0"
+                            />
+                            <span
+                              className={`block w-10 h-6 rounded-full bg-gray-400 ${
+                                item[col.key] ? "bg-green-500" : "bg-red-500"
+                              } transition-all`}
+                            />
+                            <span
+                              className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all ${
+                                item[col.key] ? "translate-x-4" : ""
+                              }`}
+                            />
+                          </label>
+                        ) : (
+                          <p
+                            className={`font-medium ${
+                              item[col.key] ? "text-green-600" : "text-red"
+                            }`}
+                          >
+                            {item[col.key] ? "Active" : "Inactive"}
+                          </p>
+                        )
+                      ) : col.key === "name" ? (
+                        <Link
+                          href={`/admin/monthlyreport?studentId=${item.id}`}
+                          className="text-custom-blue font-semibold hover:underline"
+                        >
+                          {item[col.key] || "-----"}
+                        </Link>
+                      ) : col.type === "image" ? (
                         <img
                           src={item[col.key] || "/default-image.jpg"}
                           alt={item[col.key] ? "Image" : "No Image"}
@@ -52,8 +97,9 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible
                   ))}
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
-                      {editButtonVisible && hasPermission("StudentEdit") && (
-                        typeof editLinkPrefix === "string" ? (
+                      {editButtonVisible &&
+                        hasPermission("StudentEdit") &&
+                        (typeof editLinkPrefix === "string" ? (
                           <Link
                             href={`${editLinkPrefix}/${item.id}`}
                             className="hover:text-primary"
@@ -67,10 +113,12 @@ const Table = ({ columns, data, editLinkPrefix, deleteHandler, editButtonVisible
                           >
                             <i className="fa-regular fa-pen-to-square"></i>
                           </button>
-                        )
-                      )}
+                        ))}
                       {hasPermission("StudentDelete") && (
-                        <DeleteButton key={item.id} deleteAction={() => deleteHandler(item.id)} />
+                        <DeleteButton
+                          key={item.id}
+                          deleteAction={() => deleteHandler(item.id)}
+                        />
                       )}
                     </div>
                   </td>

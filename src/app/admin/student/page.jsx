@@ -32,11 +32,12 @@ export default function StudentLists() {
 
   const columns = [
     { key: "id", title: "ID" },
-    { key: "images", title: "Images", type: "image" },
     { key: "name", title: "FullName" },
     { key: "email", title: "Email" },
     { key: "phone_number", title: "Phone" },
     { key: "level", title: "Standerd" },
+    { key: "user_type", title: "UserType" },
+    { key: "status", title: "Status" },
   ];
 
   const handleSearch = useCallback(
@@ -57,9 +58,7 @@ export default function StudentLists() {
     }
   };
 
-  const handleRowClick = (id) => {
-    router.push(`/admin/monthlyreport?studentId=${id}`);
-  };
+
 
   return (
     <>
@@ -120,7 +119,6 @@ export default function StudentLists() {
           editLinkPrefix="./student/edit"
           deleteHandler={handleDelete}
           editButtonVisible={true}
-          onRowClick={handleRowClick} 
         />
         
         <Pagination data={users} changePage={changePage} />

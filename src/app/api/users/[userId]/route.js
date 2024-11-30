@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDb } from "@/config/database";
 import sendResponse from "@/utils/response";
+import bcrypt from "bcrypt";
 import {
   deleteUserById,
   getUserByIdWithReports,
@@ -54,6 +55,10 @@ export async function POST(request, { params }) {
       status: newData.status,
     };
 
+    if (newData.password) {
+      const hashedPassword = await bcrypt.hash(newData.password, 10);
+      userData.password = hashedPassword;
+    }
     const userResult = await updateUserById(userId, userData);
 
     if (userResult) {

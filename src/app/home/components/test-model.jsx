@@ -48,13 +48,36 @@ export default function TestModel({
         );
 
         if (activeTestData.length > 0) {
-          const selectedTestData =
-            (activeTestData[0] && activeTestData[0][selectedCard]) || [];
-          setFilteredData(selectedTestData);
-          const testDataId = activeTestData[0].id;
-          setTestId(testDataId);
+          const newTestId = activeTestData[0].id;
+  
+          const savedTestData = JSON.parse(localStorage.getItem(selectedCard)) || {};
+          const {
+            submitted,
+            testId: savedTestId,
+            userAnswers: savedAnswers,
+            studentId: savedStudentId,
+          } = savedTestData;
+  
+          if (
+            newTestId === savedTestId &&
+            submitted &&
+            savedStudentId === decoded.id
+          ) {
+            setTestId(newTestId);
+            setUserAnswers(savedAnswers || []);
+            setFilteredData(activeTestData[0][selectedCard] || []);
+            setShowResults(true);
+          } else if (savedStudentId !== decoded.id || newTestId !== testId) {
+            setTestId(newTestId);
+            setFilteredData(activeTestData[0][selectedCard] || []);
+            setShowResults(false);
+            setCurrentIndex(0);
+            setUserAnswers([]);
+            localStorage.removeItem(selectedCard); 
+          }
         } else {
           console.log("No matching tests for the student's level.");
+          setFilteredData([]);
         }
       }
     } catch (error) {
@@ -64,15 +87,6 @@ export default function TestModel({
 
   useEffect(() => {
     if (isModalOpen) {
-      const savedAnswers = JSON.parse(localStorage.getItem(selectedCard)) || [];
-      if (savedAnswers.length > 0) {
-        setUserAnswers(savedAnswers);
-        setShowResults(true);
-      } else {
-        setUserAnswers(savedAnswers);
-        setCurrentIndex(0);
-        setShowResults(false);
-      }
       fetchData();
     }
   }, [isModalOpen, selectedCard]);
@@ -87,15 +101,19 @@ export default function TestModel({
     if (currentIndex < filteredData.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      localStorage.setItem(selectedCard, JSON.stringify(userAnswers));
+      const token = localStorage.getItem("t");
+      const decoded = typeof token === "string" ? jwt.decode(token) : token;
+
+      localStorage.setItem(
+        selectedCard,
+        JSON.stringify({ userAnswers, submitted: true, testId, studentId: decoded.id, })
+      );;
 
       const correctAnswersCount = userAnswers.filter(
         (ans, index) => ans.userAnswer === filteredData[index]?.answer
       ).length;
       const totalScore = `${correctAnswersCount}/${filteredData.length}`;
 
-      const token = localStorage.getItem("t");
-      const decoded = typeof token === "string" ? jwt.decode(token) : token;
       const fieldToUpdate = `${selectedCard}Mark`;
 
       const payload = {

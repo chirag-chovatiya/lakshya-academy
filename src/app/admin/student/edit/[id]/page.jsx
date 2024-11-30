@@ -18,7 +18,7 @@ export default function StudentEdit({ params }) {
     level: 0,
     user_type: "",
     status: false,
-    images: null,
+    teacher_permission: []
   });
   const router = useRouter();
   const { initialize } = useUserAdminStore((state) => state);
@@ -38,7 +38,12 @@ export default function StudentEdit({ params }) {
           formData
         );
         if (response.code == 200 && response.data && response.data) {
-          setFormData(response.data);
+          setFormData({
+            ...response.data,
+            teacher_permission: Array.isArray(response.data.teacher_permission)
+              ? response.data.teacher_permission
+              : [],
+          });
         }
       } catch (error) {
         console.error("There was an error geting data:", error);

@@ -6,6 +6,8 @@ import * as XLSX from "xlsx";
 import { useReportAdminStore } from "@/providers/report-store-provider";
 import Pagination from "@/components/Pagination";
 import debounce from "lodash/debounce";
+import { del } from "@/service/api";
+import { API } from "@/service/constant/api-constant";
 
 
 export default function StudentLists() {
@@ -59,13 +61,19 @@ export default function StudentLists() {
         studentname: item.student?.name || "N/A",
         standerd: item.student?.level || "N/A",
         hwStatus: item.hwStatus ? "Complete" : "Incomplete",
-        createdAt: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A"
+        createdAt: item.createdAt ? new Date(item.createdAt).toLocaleDateString("en-GB") : "N/A"
       })),
     [report.data, report.page]
   );
 
-  const handleDelete = (id) => {
-    console.log(`Delete student with ID: ${id}`);
+  const deleteTest = async (id) => {
+    try {
+      const response = await del(API.getReport + `/${id}`);
+      initialize("report");
+      return response;
+    } catch (error) {
+      console.error("Error deleting report data:", error);
+    }
   };
 
   const handleSearch = useCallback(
@@ -76,11 +84,21 @@ export default function StudentLists() {
   );
   
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(transformedData);
+    const filteredData = transformedData.map((item) => {
+      const row = {};
+      columns.forEach((column) => {
+        row[column.key] = item[column.key];
+      });
+      return row;
+    });
+    const currentDate = new Date().toLocaleDateString("en-GB");
+    const filename = `student_data_${currentDate}.xlsx`;
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
-    XLSX.writeFile(workbook, "student_data.xlsx");
+    XLSX.writeFile(workbook, filename);
   };
+  
 
   return (
     <>
@@ -92,6 +110,10 @@ export default function StudentLists() {
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
                 onClick={() => {
+                  setHwStatus("");
+                  setLevel("");
+                  setCreatedAt("");
+              
                   initialize("report");
                 }}
               >
@@ -167,7 +189,7 @@ export default function StudentLists() {
         <Table
           columns={columns}
           data={transformedData}
-          deleteHandler={handleDelete}
+          deleteHandler={deleteTest}
         />
         <Pagination data={report} changePage={changePage} />
       </div>

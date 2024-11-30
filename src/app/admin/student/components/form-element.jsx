@@ -1,6 +1,5 @@
 import { SelectField } from "@/components/app-inputfield/app-selectedfield";
 import SubmitButton from "@/components/Button/Submit-button";
-import ImageUploader from "@/components/ImageUploader/ImageUploader";
 import StatusButton from "@/components/Switchers/StatusButton";
 import { useEffect, useState } from "react";
 
@@ -10,8 +9,12 @@ export default function FormElementStudent({
 }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(data);
+  const [isPasswordEditable, setIsPasswordEditable] = useState(false);
 
-  useEffect(() => setFormData(data), [data]);
+  useEffect(() => {
+    setFormData(data);
+    setIsPasswordEditable(false);
+  }, [data]);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,7 +32,6 @@ export default function FormElementStudent({
     { label: "Exam delete", value: "ExamDelete" },
     { label: "Report delete", value: "ReportDelete" },
     { label: "Report export", value: "ReportExport" },
-
   ];
 
   const handleSubmit2 = async (e) => {
@@ -41,9 +43,13 @@ export default function FormElementStudent({
       setLoading(false);
       return;
     }
-
+  
     try {
-      await handleSubmit(e, formData);
+      const submissionData = isPasswordEditable
+        ? formData
+        : { ...formData, password: undefined };
+
+      await handleSubmit(e, submissionData);
     } catch (error) {
       console.error("Error during submission:", error);
     } finally {
@@ -52,23 +58,28 @@ export default function FormElementStudent({
   };
 
   const handlePermissionChange = (e) => {
-  const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-  setFormData((prevFormData) => {
-    const updatedPermissions = [
-      ...prevFormData.teacher_permission.filter((permission) => !selectedOptions.includes(permission)),
-      ...selectedOptions,
-    ];
-    return { ...prevFormData, teacher_permission: updatedPermissions };
-  });
-};
-const handleRemovePermission = (permissionToRemove) => {
-  setFormData((prevFormData) => {
-    const updatedPermissions = prevFormData.teacher_permission.filter(
-      (permission) => permission !== permissionToRemove
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
     );
-    return { ...prevFormData, teacher_permission: updatedPermissions };
-  });
-};
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      teacher_permission: Array.isArray(prevFormData.teacher_permission)
+        ? [...new Set([...prevFormData.teacher_permission, ...selectedOptions])]
+        : selectedOptions,
+    }));
+  };
+
+  const handleRemovePermission = (permissionToRemove) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      teacher_permission: Array.isArray(prevFormData.teacher_permission)
+        ? prevFormData.teacher_permission.filter(
+            (permission) => permission !== permissionToRemove
+          )
+        : [],
+    }));
+  };
 
   return (
     <form onSubmit={handleSubmit2}>
@@ -92,18 +103,6 @@ const handleRemovePermission = (permissionToRemove) => {
             type: "tel",
             placeholder: "123-45-678",
           },
-          {
-            label: "Student Level",
-            name: "level",
-            type: "text",
-            placeholder: "Student Level",
-          },
-          {
-            label: "Password",
-            name: "password",
-            type: "text",
-            placeholder: "•••••••••",
-          },
         ].map((input, idx) => (
           <div key={idx}>
             <label
@@ -121,6 +120,51 @@ const handleRemovePermission = (permissionToRemove) => {
             />
           </div>
         ))}
+        <div>
+          <label
+            htmlFor="password"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Student Level
+          </label>
+          <input
+            type="number"
+            name="level"
+            value={formData.level || ""}
+            onChange={handleChange}
+            className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+            placeholder="Student Level"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="password"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Password
+          </label>
+          <div className="flex items-center">
+            <input
+              type="text"
+              name="password"
+              value={formData.password || ""}
+              onChange={handleChange}
+              className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              required={isPasswordEditable}
+              placeholder="•••••••••"
+              disabled={!isPasswordEditable}
+            />
+            {!isPasswordEditable && (
+              <button
+                type="button"
+                className="ml-2 px-3 py-1 bg-custom-blue text-white rounded"
+                onClick={() => setIsPasswordEditable(true)}
+              >
+                <span className="text-xl">+</span>
+              </button>
+            )}
+          </div>
+        </div>
         <SelectField
           id="userType"
           label="User Type"
@@ -139,7 +183,10 @@ const handleRemovePermission = (permissionToRemove) => {
             onChange={handlePermissionChange}
           />
           <div className="flex flex-wrap gap-2 mt-2">
-            {formData.teacher_permission?.map((permission, index) => (
+            {(Array.isArray(formData.teacher_permission)
+              ? formData.teacher_permission
+              : []
+            ).map((permission, index) => (
               <div
                 key={index}
                 className="flex items-center bg-gray-200 dark:bg-gray-700 text-sm px-3 py-1 rounded-full"
@@ -156,21 +203,6 @@ const handleRemovePermission = (permissionToRemove) => {
             ))}
           </div>
         </div>
-
-        {/* <div>
-          <label
-            htmlFor="studentimage"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Upload Student Image
-          </label>
-          <ImageUploader
-            labelName="ImageupLoaderBlog"
-            multiple={false}
-            maxImageSize={{ width: 1365, height: 250 }}
-          />
-        </div> */}
-
         <div>
           <label
             htmlFor="status"

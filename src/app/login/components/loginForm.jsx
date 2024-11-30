@@ -15,7 +15,6 @@ export default function LoginForm() {
     setLoading(true);
     try {
       const result = await login(email, password);
-
       if (result.code === 200 || result.code === 201) {
         const token = result.data.token;
         if (token) {
@@ -32,27 +31,19 @@ export default function LoginForm() {
           router.replace("/login");
           toast.error("Authentication token missing!");
         }
-      } else if (result.error) {
-        toast.error("Something went wrong!");
+      } else if (result.code === 403) {
+        toast.error("Your account is inactive. Please contact support.");
+      } else {
+        toast.error("Invalid Credentials");
       }
     } catch (error) {
       console.log(error);
-      handleError(error);
+      toast.error("Somthing went wrong");
     }finally {
       setLoading(false);
     }
   };
 
-  const handleError = (error) => {
-    switch (error) {
-      case "CredentialsSignin":
-        toast.error("Invalid credentials!");
-        break;
-      default:
-        toast.error("Something went wrong!");
-        break;
-    }
-  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();

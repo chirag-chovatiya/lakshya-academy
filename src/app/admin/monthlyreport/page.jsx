@@ -15,7 +15,6 @@ export default function StudentLists() {
   const fetchStudentData = async (id) => {
     try {
       const response = await get(`${API.getAllUser}/${id}`);
-      console.log(response.data);
       if (response.code == 200 && response.data && response.data.reports) {
         const formattedData = response.data.reports.map((report) => ({
           ...report,

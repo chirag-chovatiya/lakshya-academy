@@ -13,8 +13,17 @@ dotenv.config();
 
 export async function POST(req, res) {
   try {
-    const { email, password, name, phone_number,user_type, level, images, status, teacher_permission } =
-      await req.json();
+    const {
+      email,
+      password,
+      name,
+      phone_number,
+      user_type,
+      level,
+      images,
+      status,
+      teacher_permission,
+    } = await req.json();
 
     if (!email || !password) {
       return sendResponse(NextResponse, 400, "Email and password are required");
@@ -31,11 +40,12 @@ export async function POST(req, res) {
       );
     }
 
-
-
     let user = await getUserByEmail(email);
 
     if (user) {
+      if (!user.status) {
+        return sendResponse(NextResponse, 403, "Your account is inactive");
+      }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return sendResponse(NextResponse, 400, "Invalid password");
@@ -50,7 +60,7 @@ export async function POST(req, res) {
           level: user.level,
           teacher_permission: user.teacher_permission || null,
         },
-        jwtSecret || 'a1sdf25rfdd5g863892fdg25ttf',
+        jwtSecret || "a1sdf25rfdd5g863892fdg25ttf",
         { expiresIn: "7d" }
       );
       setCookie("tkn", token, { expire: new Date() + 9999 });
@@ -78,7 +88,7 @@ export async function POST(req, res) {
         level,
         images,
         status,
-        teacher_permission
+        teacher_permission,
       };
 
       user = await createUser(newUser);

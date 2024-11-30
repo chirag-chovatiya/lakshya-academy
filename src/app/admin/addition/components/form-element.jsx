@@ -90,15 +90,6 @@ export default function FormStudentAddition({
                 }
                 required
               />
-              {/* <InputField
-                id="totalQuestion"
-                label="Total Question"
-                type="number"
-                name="totalQuestion"
-                value={formData.totalQuestion}
-                onChange={handleChange}
-                placeholder="Enter number of total questions"
-              /> */}
             </div>
 
             <div className="grid gap-6 mb-6 md:grid-cols-2">

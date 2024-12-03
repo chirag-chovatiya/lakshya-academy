@@ -18,7 +18,11 @@ export const getUserByEmail = async (email) => {
     throw error;
   }
 };
-export const getAllUser = async (page = 1, pageSize = 10, searchQuery=null) => {
+export const getAllUser = async (
+  page = 1,
+  pageSize = 10,
+  searchQuery = null
+) => {
   try {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
@@ -63,35 +67,77 @@ export const getUserById = async (userId) => {
     throw error;
   }
 };
-export const getUserByIdWithReports = async (userId) => {
+export const getUserByIdWithReports = async (
+  userId,
+  page = 1,
+  pageSize = 10,
+  month = null,
+  year = null,
+  hwStatus = null
+) => {
   try {
     const userData = await User.findOne({
       where: { id: userId },
-      include: [
-        {
-          model: StudentReport, 
-          as: "reports",
-          attributes: [
-            "id",
-            "testId",
-            "additionMark",
-            "subtractionMark",
-            "multiplicationMark",
-            "divisionMark",
-            "result",
-            "hwStatus",
-            "createdAt",
-          ],
-        },
-      ],
     });
 
-    return userData;
+    if (!userData) {
+      throw new Error("User not found");
+    }
+
+    let dateCondition = {};
+    if (month && year) {
+      dateCondition = {
+        createdAt: {
+          [Op.between]: [
+            new Date(`${year}-${month}-01T00:00:00.000Z`),
+            new Date(`${year}-${month}-31T23:59:59.999Z`),
+          ],
+        },
+      };
+    }
+
+    let hwStatusCondition = {};
+    if (hwStatus !== null) {
+      hwStatusCondition = { hwStatus: hwStatus === 'true' }; 
+    }
+
+    const { count: totalData, rows: reports } =
+      await StudentReport.findAndCountAll({
+        where: {
+          studentId: userId,
+          ...dateCondition,
+          ...hwStatusCondition
+        },
+        attributes: [
+          "id",
+          "testId",
+          "additionMark",
+          "subtractionMark",
+          "multiplicationMark",
+          "divisionMark",
+          "result",
+          "hwStatus",
+          "createdAt",
+        ],
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+      });
+
+    const totalPages = Math.ceil(totalData / pageSize);
+
+    return {
+      ...userData.toJSON(),
+      reports,
+      currentPage: page,
+      totalPages,
+      totalData,
+    };
   } catch (error) {
     console.error("Error fetching user and reports:", error);
     throw error;
   }
 };
+
 export const updateUserById = async (userId, newData) => {
   try {
     const findUser = await User.findOne({ where: { id: userId } });
@@ -118,4 +164,3 @@ export const deleteUserById = async function (userId) {
     throw error;
   }
 };
-

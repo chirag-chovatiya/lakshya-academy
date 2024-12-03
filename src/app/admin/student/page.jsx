@@ -21,6 +21,8 @@ export default function StudentLists() {
     initialize,
   } = useUserAdminStore((state) => state);
 
+  console.log(users)
+
   const hasCreatePermission = hasPermission("StudentCreate");
   const router = useRouter();
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function StudentLists() {
   return (
     <>
       <div>
-        <Breadcrumb pageName="Student" />
+        <Breadcrumb pageName="Student" totalData={users.totalData} />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
@@ -102,7 +104,7 @@ export default function StudentLists() {
             </div>
             {hasCreatePermission && (
               <Link
-                href="./student/create"
+                href="./admin/student/create"
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
               >
                 <span>
@@ -116,7 +118,7 @@ export default function StudentLists() {
         <Table
           columns={columns}
           data={users.data[users.page] || []}
-          editLinkPrefix="./student/edit"
+          editLinkPrefix="./admin/student/edit"
           deleteHandler={handleDelete}
           editButtonVisible={true}
         />

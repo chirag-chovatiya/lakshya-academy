@@ -25,7 +25,7 @@ export default function AppNavbar() {
             alt="Hospital Logo"
           />
           <span className="text-lg font-semibold text-white">
-          {/* Lakshya Academy */}
+          Lakshya Academy
           </span>
         </div>
         <div className="flex md:order-2 space-x-4 md:space-x-0 rtl:space-x-reverse">

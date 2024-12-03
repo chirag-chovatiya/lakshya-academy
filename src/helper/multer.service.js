@@ -1,62 +1,48 @@
 import multer from "multer";
-import * as ftp from "basic-ftp";
-import { Readable } from "stream";
 import path from "path";
+import fs from "fs";
 
+// Set up multer storage to save files to memory (for later processing)
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// API config to disable default body parser for file uploads
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
+// Function to handle file upload and store locally
 const handleUpload = async (files, folderName) => {
-  const client = new ftp.Client();
-  
-  const ftpConfig = {
-    host: process.env.FTP_HOST,
-    user: process.env.FTP_USER,
-    password: process.env.FTP_PASSWORD,
-    port: parseInt(process.env.FTP_PORT, 10) || 21,
-  };
+  const uploadedUrls = [];
 
-  try {
-    await client.access(ftpConfig);
-    
-    const uploadedUrls = [];
-    
-    const folderPath = folderName ? `doctorImage/${folderName}/` : "doctorImage/";
-    await client.ensureDir(folderPath);
-    
-    for (const file of files) {
-      const remoteFileName = path.basename(file.originalname);
-      const remoteFilePath = path.join(folderPath, remoteFileName);
-      const newRemotePath = remoteFilePath
-        .replace(/\\/g, "/")
-        .replace("doctorImage/", "");
+  // Define the local folder path to store images
+  const folderPath = folderName ? `uploads/doctorImage/${folderName}/` : "uploads/doctorImage/";
 
-      const readableStream = new Readable();
-      readableStream.push(file.buffer);
-      readableStream.push(null);
+  // Ensure that the folder exists, create it if not
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath, { recursive: true });
+  }
 
-      await client.uploadFrom(readableStream, remoteFileName);
+  // Loop through the uploaded files
+  for (const file of files) {
+    // Generate the file path for local storage
+    const localFilePath = path.join(folderPath, file.originalname);
 
-      const imgUrl = `http://medaura.co.in/${newRemotePath}`;
-      uploadedUrls.push(imgUrl);
-    }
+    // Write the file to the local system
+    fs.writeFileSync(localFilePath, file.buffer);
 
-    if (uploadedUrls.length === 1) {
-      return uploadedUrls[0];
-    } else {
-      return uploadedUrls;
-    }
-  } catch (error) {
-    console.log("Error uploading to FTP:", error);
-    throw new Error("Error uploading to FTP");
-  } finally {
-    await client.close();
+    // Generate a URL or path to the uploaded image
+    const imgUrl = `http://yourdomain.com/${localFilePath.replace("uploads/", "")}`;
+    uploadedUrls.push(imgUrl);
+  }
+
+  // Return a single URL or an array of URLs based on the number of files uploaded
+  if (uploadedUrls.length === 1) {
+    return uploadedUrls[0];
+  } else {
+    return uploadedUrls;
   }
 };
 

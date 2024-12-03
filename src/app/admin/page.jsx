@@ -2,6 +2,7 @@ import ECommerce from "@/components/Dashboard/E-commerce";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { TestStoreProvider } from "@/providers/test-store-provider";
 import { UserStoreProvider } from "@/providers/user-store-provider";
+import StudentLists from "./student/page";
 
 export const metadata = {
   title: "Lakshya Admin",
@@ -14,7 +15,7 @@ export default function Home() {
       <UserStoreProvider>
         <TestStoreProvider>
           <DefaultLayout>
-            <ECommerce />
+            <StudentLists />
           </DefaultLayout>
         </TestStoreProvider>
       </UserStoreProvider>

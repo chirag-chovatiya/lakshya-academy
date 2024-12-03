@@ -48,7 +48,7 @@ const Table = ({
                     >
                       {col.key === "status" ? (
                         isStatusActive ? (
-                          <label className="relative inline-block w-10 h-6">
+                          <label className="relative inline-block w-10 h-6 cursor-pointer">
                             <input
                               type="checkbox"
                               checked={item[col.key]}
@@ -61,7 +61,7 @@ const Table = ({
                               } transition-all`}
                             />
                             <span
-                              className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all ${
+                              className={`absolute left-1 top-1 w-4 h-4  bg-white rounded-full transition-all ${
                                 item[col.key] ? "translate-x-4" : ""
                               }`}
                             />

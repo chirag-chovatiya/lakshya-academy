@@ -65,7 +65,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <Link href="/admin/">
           <div className="flex space-x-3">
             <h1 className="uppercase text-xl font-semibold text-white">
-            {/* lakshya academy */}
+            lakshya academy
             </h1>
           </div>
         </Link>
@@ -93,7 +93,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
-              <SidebarLinkGroup
+              {/* <SidebarLinkGroup
                 activeCondition={
                   pathname === "/admin/" || pathname.includes("dashboard")
                 }
@@ -117,7 +117,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup> */}
               {/* <!-- Menu Item Dashboard --> */}
 
               {/* <!-- Student --> */}
@@ -288,16 +288,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Report
                             </Link>
                           </li>
-                          {/* <li>
-                            <Link
-                              href="/admin/monthlyreport"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/addition" && "text-white"
-                              }`}
-                            >
-                             Monthly Report
-                            </Link>
-                          </li> */}
                         </ul>
                       </div>
                     </React.Fragment>

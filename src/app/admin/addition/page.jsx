@@ -110,7 +110,7 @@ export default function StudentLists() {
         />
       )}
       <div>
-        <Breadcrumb pageName="Student Test" />
+        <Breadcrumb pageName="Student Test" totalData={test.totalData} />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4 justify-between w-full">

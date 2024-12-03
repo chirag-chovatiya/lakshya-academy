@@ -12,10 +12,17 @@ connectDb();
 export async function GET(request, { params }) {
   try {
     const { userId } = params;
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get("page")) || 1; 
+    const pageSize = parseInt(url.searchParams.get("pageSize")) || 10; 
+    const month = parseInt(url.searchParams.get("month"));
+    const year = parseInt(url.searchParams.get("year"));
+    const hwStatus = url.searchParams.get("hwStatus");
+
     let userResult;
 
     if (userId) {
-      userResult = await getUserByIdWithReports(userId);
+      userResult = await getUserByIdWithReports(userId, page, pageSize, month, year, hwStatus);
     } else if (request.user) {
       request.user.password = null;
       request.user.otp = null;
@@ -41,6 +48,7 @@ export async function GET(request, { params }) {
     return sendResponse(NextResponse, 500, "Internal server error");
   }
 }
+
 export async function POST(request, { params }) {
   try {
     const { userId } = params;

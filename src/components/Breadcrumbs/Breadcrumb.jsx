@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const Breadcrumb = ({ pageName, title = false }) => {
+const Breadcrumb = ({ pageName, title = false,  totalData = 0 }) => {
   const [pagePath, setpagePath] = useState(pageName.split("/"));
   
   const linkMaker = (endElement) => {
@@ -15,6 +15,11 @@ const Breadcrumb = ({ pageName, title = false }) => {
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <h2 className="text-title-md2 font-semibold text-black dark:text-white capitalize">
       {title ? title : ((pagePath.length>1 ? pagePath[pagePath.length-2] : "") + " " + pagePath[pagePath.length-1])}
+      {totalData > 0 && (
+          <span className="ml-2 font-semibold text-black dark:text-white">
+            = {totalData}
+          </span>
+        )}
       </h2>
 
       <nav>

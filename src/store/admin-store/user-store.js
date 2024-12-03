@@ -99,9 +99,10 @@ export const createUsersStore = (initState = defaultInitState) =>
       }));
       await fetchDataAndSetState(set, get);
     },
-    
-
-   
+    getUserCount: () => {
+      const state = get();
+      return state.users.totalData; 
+    },
     onError: (error) => set({ users: { ...get().users, error } }),
     noMoreData: () => set({ users: { ...get().users, hasMoreData: false } }),
   }));

@@ -118,7 +118,7 @@ export default function StudentLists() {
         <Table
           columns={columns}
           data={users.data[users.page] || []}
-          editLinkPrefix="./student/edit"
+          editLinkPrefix="./admin/student/edit"
           deleteHandler={handleDelete}
           editButtonVisible={true}
         />

@@ -1,6 +1,7 @@
 import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
 import { StudentReport } from "../studentReport/studentReportSchema";
+import { UserWorkImage } from "../homeWorkImg/imageSchema";
 
 const User = sequelize.define(
   "students",
@@ -61,6 +62,10 @@ User.hasMany(StudentReport, {
 });
 
 StudentReport.belongsTo(User, {
+  foreignKey: "studentId",
+  as: "student",
+});
+UserWorkImage.belongsTo(User, {
   foreignKey: "studentId",
   as: "student",
 });

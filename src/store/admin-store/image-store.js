@@ -1,10 +1,9 @@
-import { getAllReportData } from "@/service/report-api";
+import { getAllImage } from "@/service/image-api";
 import { createStore } from "zustand/vanilla";
 
 export const defaultInitState = {
-  report: {
+  userImage: {
     data: {},
-    hwStatus: null,
     level:null,
     createdAt:null,
     studentName:null,
@@ -19,16 +18,12 @@ export const defaultInitState = {
 };
 
 async function fetchDataAndSetState(set, get) {
-  const { page, pageSize } = get().report;
-  const hwStatus = get().report.hwStatus;
-  const level = get().report.level;
-  const createdAt = get().report.createdAt;
-  const studentName = get().report.studentName;
+  const { page, pageSize } = get().userImage;
+  const level = get().userImage.level;
+  const createdAt = get().userImage.createdAt;
+  const studentName = get().userImage.studentName;
   try {
     let url = `?page=${page}&pageSize=${pageSize}`;
-    if (hwStatus && hwStatus != "") {
-      url += `&hwStatus=${encodeURIComponent(hwStatus)}`;
-    }
     if (level && level != "") {
       url += `&level=${encodeURIComponent(level)}`;
     }
@@ -38,14 +33,14 @@ async function fetchDataAndSetState(set, get) {
     if (studentName && studentName != "") {
       url += `&studentName=${encodeURIComponent(studentName)}`;
     }
-    const { data, code } = await getAllReportData(url+'&');
+    const { data, code } = await getAllImage(url+'&');
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
       set((state) => ({
-        report: {
-          ...state.report,
-          data: { ...state.report.data, [page]: data.data },
+        userImage: {
+          ...state.userImage,
+          data: { ...state.userImage.data, [page]: data.data },
           loading: false,
           totalPages: data.totalPages,
           totalData: data.totalData,
@@ -54,20 +49,20 @@ async function fetchDataAndSetState(set, get) {
       }));
     } else {
       set((state) => ({
-        report: { ...state.report, error: data.message },
+        userImage: { ...state.userImage, error: data.message },
       }));
     }
   } catch (error) {
     set((state) => ({
-      report: { ...state.report, error: error.message || error },
+      userImage: { ...state.userImage, error: error.message || error },
     }));
   }
 }
 
-export const createReportStore = (initState = defaultInitState) =>
+export const createImageStore = (initState = defaultInitState) =>
   createStore((set, get) => ({
     ...initState,
-    initialize: async (selected = "report") => {
+    initialize: async (selected = "userImage") => {
       set((state) => ({
         [selected]: {
           ...state[selected],
@@ -75,7 +70,6 @@ export const createReportStore = (initState = defaultInitState) =>
           page: 1,
           hasMoreData: true,
           loading: true,
-          hwStatus: null,
           level: null,
           createdAt: null,
           studentName: null,
@@ -85,32 +79,31 @@ export const createReportStore = (initState = defaultInitState) =>
     },
     changePage: async (page) => {
       const state = get();
-      if (!state.report.data[page]) {
+      if (!state.userImage.data[page]) {
         set({
-          report: { ...state.report, page, hasMoreData: true, loading: true },
+          userImage: { ...state.userImage, page, hasMoreData: true, loading: true },
         });
         await fetchDataAndSetState(set, get);
       } else {
-        set({ report: { ...state.report, page } });
+        set({ userImage: { ...state.userImage, page } });
       }
     },
     onSelectionChange: async (selected) => set({ selected }),
     onPageSizeChange: async (pageSize) => {
       set({
-        report: {
-          ...defaultInitState.report,
+        userImage: {
+          ...defaultInitState.userImage,
           pageSize,
           loading: true,
         },
       });
       await fetchDataAndSetState(set, get);
     },
-    selectedData: async (hwStatus, level, createdAt) => {
+    selectedData: async (level, createdAt) => {
       set((state) => ({
-        ...state.report,
-        report: {
-          ...state.report,
-          hwStatus: hwStatus || null,
+        ...state.userImage,
+        userImage: {
+          ...state.userImage,
           level: level || null,
           createdAt: createdAt || null,
         },
@@ -119,8 +112,8 @@ export const createReportStore = (initState = defaultInitState) =>
     },
     search: async (studentName) => {
       set((state) => ({
-        report: {
-          ...state.report,
+        userImage: {
+          ...state.userImage,
           studentName: studentName ? studentName : null,
           page: 1,
           hasMoreData: true,
@@ -129,6 +122,6 @@ export const createReportStore = (initState = defaultInitState) =>
       }));
       await fetchDataAndSetState(set, get);
     },
-    onError: (error) => set({ report: { ...get().report, error } }),
-    noMoreData: () => set({ report: { ...get().report, hasMoreData: false } }),
+    onError: (error) => set({ userImage: { ...get().userImage, error } }),
+    noMoreData: () => set({ userImage: { ...get().userImage, hasMoreData: false } }),
   }));

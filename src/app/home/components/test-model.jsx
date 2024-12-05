@@ -15,6 +15,7 @@ export default function TestModel({
   const [userAnswers, setUserAnswers] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [testId, setTestId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -101,6 +102,7 @@ export default function TestModel({
     if (currentIndex < filteredData.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
+      setLoading(true);
       const token = localStorage.getItem("t");
       const decoded = typeof token === "string" ? jwt.decode(token) : token;
 
@@ -135,6 +137,7 @@ export default function TestModel({
         console.error("Error submitting score:", error);
       }
       setShowResults(true);
+      setLoading(false); 
     }
   };
 
@@ -184,8 +187,8 @@ export default function TestModel({
             <div className="w-full flex flex-col justify-center items-center mb-20">
               <div className="text-center text-4xl">
                 {currentQuestion?.question?.map((num, index) => (
-                  <p key={index} className="text-center text-5xl">
-                    {index > 0 && getSign(selectedCard)} {num}
+                  <p key={index} className="text-center text-5xl relative">
+                    {index > 0 && <span className="absolute bottom-0 left-[-40px]">{getSign(selectedCard)}</span>} {num}
                   </p>
                 ))}
               </div>
@@ -204,18 +207,18 @@ export default function TestModel({
         {!showResults && filteredData.length > 0 && (
           <div className="flex justify-between">
             <button
-              className="p-2 bg-gray-500 text-white rounded disabled:opacity-50"
+              className="p-2 bg-gray-500 text-white rounded disabled:opacity-70"
               onClick={handlePrevious}
               disabled={currentIndex === 0}
             >
               Previous
             </button>
             <button
-              className="p-2 bg-blue-500 text-white rounded disabled:opacity-50"
+              className="p-2 bg-custom-blue text-white rounded disabled:opacity-50"
               onClick={handleNext}
-              disabled={false}
+              disabled={loading} 
             >
-              {currentIndex === filteredData.length - 1 ? "Submit" : "Next"}
+              {loading ? "Submitting..." : currentIndex === filteredData.length - 1 ? "Submit" : "Next"}
             </button>
           </div>
         )}

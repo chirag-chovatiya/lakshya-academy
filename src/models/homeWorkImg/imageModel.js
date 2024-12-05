@@ -1,3 +1,5 @@
+import { Op } from "sequelize";
+import { User } from "../users/userSchema";
 import { UserWorkImage } from "./imageSchema";
 
 export const createImage = async (data) => {
@@ -8,148 +10,84 @@ export const createImage = async (data) => {
     throw error;
   }
 };
-// export const getAllUser = async (
-//   page = 1,
-//   pageSize = 10,
-//   searchQuery = null
-// ) => {
-//   try {
-//     const parsedPage = parseInt(page);
-//     const parsedPageSize = parseInt(pageSize);
-//     const offset = (parsedPage - 1) * parsedPageSize;
+export const getAllImage = async (
+  page = 1,
+  pageSize = 10,
+  level = null,
+  createdAt=null,
+  studentName = null
+) => {
+  try {
+    const parsedPage = parseInt(page);
+    const parsedPageSize = parseInt(pageSize);
+    const offset = (parsedPage - 1) * parsedPageSize;
 
-//     const whereClause = {};
+    const includeClause = [
+      {
+        model: User,
+        as: "student",
+        attributes: ["name", "level"],
+        where: {
+          ...(level && { level }),
+          ...(studentName && { name: { [Op.like]: `%${studentName}%` } }),
+        },
+      },
+    ];
+    const whereClause = {};
 
-//     if (!page && !pageSize) {
-//       const getUsers = await User.findAll();
-//       return getUsers;
-//     }
+    if (!page && !pageSize) {
+      const getStudentImage = await UserWorkImage.findAll({
+        include: includeClause,
+      });
+      return getStudentImage;
+    }
 
-//     if (searchQuery) {
-//       whereClause[Op.or] = [
-//         { name: { [Op.like]: `%${searchQuery}%` } },
-//         { email: { [Op.like]: `%${searchQuery}%` } },
-//       ];
-//     }
-//     const getAllData = await User.findAndCountAll({
-//       where: whereClause,
-//       offset,
-//       limit: parsedPageSize,
-//     });
 
-//     const totalPages = Math.ceil(getAllData.count / parsedPageSize);
+    if (createdAt) {
+      const startOfDay = new Date(createdAt).setHours(0, 0, 0, 0);
+      const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
+      whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
+    }
 
-//     return {
-//       data: getAllData.rows,
-//       currentPage: parsedPage,
-//       totalPages: totalPages,
-//       totalData: getAllData.count,
-//     };
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-// export const getUserById = async (userId) => {
-//   try {
-//     const getData = await User.findOne({ where: { id: userId } });
-//     return getData;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-// export const getUserByIdWithReports = async (
-//   userId,
-//   page = 1,
-//   pageSize = 10,
-//   month = null,
-//   year = null,
-//   hwStatus = null
-// ) => {
-//   try {
-//     const userData = await User.findOne({
-//       where: { id: userId },
-//     });
+    
+    const { rows: images, count: totalCount} = await UserWorkImage.findAndCountAll({
+      where: whereClause,
+      offset,
+      limit: parsedPageSize,
+      include: includeClause,
+    });
 
-//     if (!userData) {
-//       throw new Error("User not found");
-//     }
+    const totalPages = Math.ceil(totalCount / parsedPageSize);
 
-//     let dateCondition = {};
-//     if (month && year) {
-//       dateCondition = {
-//         createdAt: {
-//           [Op.between]: [
-//             new Date(`${year}-${month}-01T00:00:00.000Z`),
-//             new Date(`${year}-${month}-31T23:59:59.999Z`),
-//           ],
-//         },
-//       };
-//     }
+    return {
+      data: images,
+      currentPage: parsedPage,
+      totalPages,
+      totalData: totalCount,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+export const getImageById = async (imageId) => {
+  try {
+    const getData = await UserWorkImage.findOne({ where: { id: imageId } });
+    return getData;
+  } catch (error) {
+    throw error;
+  }
+};
 
-//     let hwStatusCondition = {};
-//     if (hwStatus !== null) {
-//       hwStatusCondition = { hwStatus: hwStatus === 'true' }; 
-//     }
-
-//     const { count: totalData, rows: reports } =
-//       await StudentReport.findAndCountAll({
-//         where: {
-//           studentId: userId,
-//           ...dateCondition,
-//           ...hwStatusCondition
-//         },
-//         attributes: [
-//           "id",
-//           "testId",
-//           "additionMark",
-//           "subtractionMark",
-//           "multiplicationMark",
-//           "divisionMark",
-//           "result",
-//           "hwStatus",
-//           "createdAt",
-//         ],
-//         offset: (page - 1) * pageSize,
-//         limit: pageSize,
-//       });
-
-//     const totalPages = Math.ceil(totalData / pageSize);
-
-//     return {
-//       ...userData.toJSON(),
-//       reports,
-//       currentPage: page,
-//       totalPages,
-//       totalData,
-//     };
-//   } catch (error) {
-//     console.error("Error fetching user and reports:", error);
-//     throw error;
-//   }
-// };
-// export const updateUserById = async (userId, newData) => {
-//   try {
-//     const findUser = await User.findOne({ where: { id: userId } });
-//     if (findUser) {
-//       const userUpdated = await findUser.update(newData);
-//       return userUpdated;
-//     } else {
-//       return null;
-//     }
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-// export const deleteUserById = async function (userId) {
-//   try {
-//     const deleteUser = await User.findOne({ where: { id: userId } });
-//     if (deleteUser) {
-//       await deleteUser.destroy();
-//       return true;
-//     } else {
-//       return null;
-//     }
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+export const deleteImageById = async function (imageId) {
+  try {
+    const deleteImage = await UserWorkImage.findOne({ where: { id: imageId } });
+    if (deleteImage) {
+      await deleteImage.destroy();
+      return true;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    throw error;
+  }
+};

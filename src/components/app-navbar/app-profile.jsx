@@ -45,9 +45,9 @@ export default function ProfileAvtara() {
         </button>
         <div className="opacity-0 m-0 w-full invisible transition-opacity duration-300 transform scale-95 group-hover:opacity-100 group-hover:visible group-hover:transform group-hover:scale-100 absolute z-[20] right-0 space-y-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none min-w-[100px]">
           <div className="px-1 py-1">
-            <button className="flex text-left w-full bg-white hover:bg-gray-200 p-3 rounded-lg">
+            {/* <button className="flex text-left w-full bg-white hover:bg-gray-200 p-3 rounded-lg">
               Profile
-            </button>
+            </button> */}
             <button
               onClick={handleSignOut}
               type="button"

@@ -1,4 +1,3 @@
-// components/Table.js
 import React from "react";
 import Link from "next/link";
 import DeleteButton from "@/components/Switchers/DeleteButton";
@@ -10,10 +9,10 @@ const Table = ({
   editLinkPrefix,
   deleteHandler,
   editButtonVisible,
-  isStatusActive=false,
+  isStatusActive = false,
   updateStatusById,
+  onImageClick,
 }) => {
-
   const handleStatusChange = (id, newStatus) => {
     updateStatusById(id, newStatus);
   };
@@ -38,7 +37,7 @@ const Table = ({
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 &&
+            {data.length > 0 ? (
               data.map((item, key) => (
                 <tr key={key}>
                   {columns.map((col) => (
@@ -52,7 +51,9 @@ const Table = ({
                             <input
                               type="checkbox"
                               checked={item[col.key]}
-                              onChange={() => handleStatusChange(item.id, !item[col.key])}
+                              onChange={() =>
+                                handleStatusChange(item.id, !item[col.key])
+                              }
                               className="absolute w-0 h-0 opacity-0"
                             />
                             <span
@@ -86,7 +87,8 @@ const Table = ({
                         <img
                           src={item[col.key] || "/default-image.jpg"}
                           alt={item[col.key] ? "Image" : "No Image"}
-                          className="w-16 h-16 object-cover"
+                          className="w-16 h-16 object-cover border border-stroke dark:border-strokedark rounded-md cursor-pointer"
+                          onClick={() => onImageClick(item[col.key])}
                         />
                       ) : (
                         <p className="text-black dark:text-white line-clamp-3">
@@ -123,7 +125,17 @@ const Table = ({
                     </div>
                   </td>
                 </tr>
-              ))}
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={columns.length + 1}
+                  className="text-center py-4 text-gray-500"
+                >
+                  No Data Found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -3,47 +3,53 @@ import React, { useEffect, useState } from "react";
 
 export default function ImageUploader({
   labelName = "imageUploader",
-  handleImageChange = null,
   multiple = true,
   defaultImages = [],
   clear = false,
-  maxImageSize={}
+  maxImageSize={},
+  handleImageChange
 }) {
   const [imagePreviews, setImagePreviews] = useState([]);
 
   useEffect(() => {
     setImagePreviews([]);
-  }, [clear])
+  }, [clear]);
 
   useEffect(() => {
     if (!defaultImages.length) return;
-    setImagePreviews(typeof defaultImages === "string" ? [defaultImages] : defaultImages);
-  }, [defaultImages])
+    setImagePreviews(
+      typeof defaultImages === "string" ? [defaultImages] : defaultImages
+    );
+  }, [defaultImages]);
 
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
 
     const formData = new FormData();
-    Promise.all(
+    const previews = await Promise.all(
       files.map((file) => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onload = (e) => {
             formData.append("files", file, file.name.replace(" ", "_"));
-            resolve(e.target.result);
+            resolve({ file, preview: e.target.result });
           };
           reader.onerror = (error) => reject(error);
         });
       })
-    ).then(async (images) => {
-      setImagePreviews(multiple ? [...imagePreviews, ...images] : [...images]);
+    );
 
-      // const { urls } = await post(API.imgUpload, formData, true);
-      // console.log(urls);
-      // handleImageChange ? handleImageChange(urls) : "";
-    });
+    const newPreviews = previews.map(({ preview }) => preview);
+    const newFiles = previews.map(({ file }) => file);
+
+    setImagePreviews(multiple ? [...imagePreviews, ...newPreviews] : newPreviews);
+
+    if (handleImageChange) {
+      handleImageChange(multiple ? [...newFiles] : newFiles);
+    }
   };
+
   return (
     <div className="flex flex-col items-center justify-center w-full">
       {(!(imagePreviews && imagePreviews.length > 0 && !multiple && imagePreviews[0]) || (multiple)) && <label

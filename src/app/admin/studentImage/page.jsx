@@ -2,52 +2,47 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Table from "@/components/app-table/app-table";
-import * as XLSX from "xlsx";
-import { useReportAdminStore } from "@/providers/report-store-provider";
 import Pagination from "@/components/Pagination";
 import debounce from "lodash/debounce";
 import { del } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
+import { useImageAdminStore } from "@/providers/image-store-provider";
+import ImageModal from "@/components/app-modal/modal.component.image";
 
-export default function StudentLists() {
+export default function ImageLists() {
   const {
-    report,
+    userImage,
     changePage,
     onPageSizeChange,
     onSelectionChange,
     selectedData,
     search,
     initialize,
-  } = useReportAdminStore((state) => state);
+  } = useImageAdminStore((state) => state);
 
-  const [hwStatus, setHwStatus] = useState("");
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    onSelectionChange("report");
-    if (!report?.data?.[report.page]?.length) {
+    onSelectionChange("userImage");
+    if (!userImage?.data?.[userImage.page]?.length) {
       initialize();
     }
-  }, [report.page, onSelectionChange, initialize]);
+  }, [userImage.page, onSelectionChange, initialize]);
 
   useEffect(() => {
-    if (hwStatus || level || createdAt) {
-      selectedData(hwStatus, level, createdAt);
+    if (level || createdAt) {
+      selectedData(level, createdAt);
     }
-  }, [hwStatus, level, createdAt, selectedData]);
+  }, [level, createdAt, selectedData]);
 
   const columns = useMemo(
     () => [
       { key: "id", title: "ID" },
       { key: "studentname", title: "Student Name" },
       { key: "standerd", title: "Student Level" },
-      { key: "additionMark", title: "Addition" },
-      { key: "subtractionMark", title: "Subtraction" },
-      { key: "multiplicationMark", title: "Multiplication" },
-      { key: "divisionMark", title: "Division" },
-      { key: "hwStatus", title: "HW Status" },
-      { key: "result", title: "Result" },
+      { key: "imgUrl", title: "HW Image", type: "image" },
       { key: "createdAt", title: "Date" },
     ],
     []
@@ -55,25 +50,25 @@ export default function StudentLists() {
 
   const transformedData = useMemo(
     () =>
-      (report?.data?.[report.page] || []).map((item) => ({
+      (userImage?.data?.[userImage.page] || []).map((item) => ({
         ...item,
         studentname: item.student?.name || "N/A",
         standerd: item.student?.level || "N/A",
-        hwStatus: item.hwStatus ? "Complete" : "Incomplete",
+        imgUrl: item.imgUrl || "",
         createdAt: item.createdAt
           ? new Date(item.createdAt).toLocaleDateString("en-GB")
           : "N/A",
       })),
-    [report.data, report.page]
+    [userImage.data, userImage.page]
   );
 
-  const deleteTest = async (id) => {
+  const deleteImage = async (id) => {
     try {
-      const response = await del(API.getReport + `/${id}`);
-      initialize("report");
+      const response = await del(API.imageUpload + `/${id}`);
+      initialize("userImage");
       return response;
     } catch (error) {
-      console.error("Error deleting report data:", error);
+      console.error("Error deleting image data:", error);
     }
   };
 
@@ -84,37 +79,28 @@ export default function StudentLists() {
     [search]
   );
 
-  const exportToExcel = () => {
-    const filteredData = transformedData.map((item) => {
-      const row = {};
-      columns.forEach((column) => {
-        row[column.key] = item[column.key];
-      });
-      return row;
-    });
-    const currentDate = new Date().toLocaleDateString("en-GB");
-    const filename = `student_data_${currentDate}.xlsx`;
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
-    XLSX.writeFile(workbook, filename);
+  const handleImageClick = (imageSrc) => {
+    setSelectedImage(imageSrc);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
   };
 
   return (
     <>
       <div>
-        <Breadcrumb pageName="Student Report" totalData={report.totalData} />
+        <Breadcrumb pageName="Student Image" totalData={userImage.totalData} />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
                 onClick={() => {
-                  setHwStatus("");
                   setLevel("");
                   setCreatedAt("");
                   handleSearch("");
-                  initialize("report");
+                  initialize("userImage");
                 }}
               >
                 <span>
@@ -122,12 +108,7 @@ export default function StudentLists() {
                 </span>
                 <span>Refresh</span>
               </button>
-              <button
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
-                onClick={exportToExcel}
-              >
-                <span>Export</span>
-              </button>
+
               <select
                 id="pagesizeForReport"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -139,18 +120,6 @@ export default function StudentLists() {
                 <option value="30">30</option>
                 <option value="40">40</option>
                 <option value="50">50</option>
-              </select>
-            </div>
-            <div className="mt-4 sm:mt-0">
-              <select
-                id="hwStatusFilter"
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                value={hwStatus}
-                onChange={(e) => setHwStatus(e.target.value)}
-              >
-                <option value="">HW Status</option>
-                <option value="complete">Complete</option>
-                <option value="incomplete">Incomplete</option>
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
@@ -177,24 +146,26 @@ export default function StudentLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
-          </div>
-          <div className="flex-grow mt-4 sm:mt-0">
-            <input
-              type="text"
-              id="textSearch"
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-              placeholder="Search Here"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
+            <div className="flex-grow mt-4 sm:mt-0">
+              <input
+                type="text"
+                id="textSearch"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                placeholder="Search Here"
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
           </div>
         </div>
         <Table
           columns={columns}
           data={transformedData}
-          deleteHandler={deleteTest}
+          deleteHandler={deleteImage}
+          onImageClick={handleImageClick}
         />
-        <Pagination data={report} changePage={changePage} />
+        <Pagination data={userImage} changePage={changePage} />
       </div>
+      <ImageModal imageSrc={selectedImage} onClose={handleCloseModal} />
     </>
   );
 }

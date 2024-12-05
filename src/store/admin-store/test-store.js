@@ -19,7 +19,7 @@ async function fetchDataAndSetState(set, get) {
 
   try {
     const url = `?page=${page}&pageSize=${pageSize}`;
-    const { data, code } = await getAllTestData(url);
+    const { data, code } = await getAllTestData(url + '&');
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;

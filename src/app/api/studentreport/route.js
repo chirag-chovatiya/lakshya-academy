@@ -52,7 +52,6 @@ export async function GET(request) {
       createdAt,
       studentName
     );
-    console.log(allReport);
 
     if (allReport) {
       return sendResponse(

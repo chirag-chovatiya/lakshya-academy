@@ -8,5 +8,6 @@ export const API = {
   authusers : "users",
   getAllUser: "users",
   getAllTest:"addition",
-  getReport:"studentreport"
+  getReport:"studentreport",
+  imageUpload:"imageUpload"
 };

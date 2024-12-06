@@ -78,6 +78,7 @@ export const getUserByIdWithReports = async (
   try {
     const userData = await User.findOne({
       where: { id: userId },
+      attributes: { exclude: ['password'] },
     });
 
     if (!userData) {

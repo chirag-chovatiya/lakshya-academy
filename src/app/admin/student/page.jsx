@@ -37,7 +37,7 @@ export default function StudentLists() {
     { key: "name", title: "FullName" },
     { key: "email", title: "Email" },
     { key: "phone_number", title: "Phone" },
-    { key: "level", title: "Standerd" },
+    { key: "level", title: "Level" },
     { key: "user_type", title: "UserType" },
     { key: "status", title: "Status" },
   ];
@@ -70,7 +70,7 @@ export default function StudentLists() {
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
               <button
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={() => {
                   initialize("users");
                 }}
@@ -104,8 +104,8 @@ export default function StudentLists() {
             </div>
             {hasCreatePermission && (
               <Link
-                href="./admin/student/create"
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                href="../../admin/student/create"
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
               >
                 <span>
                   <i className="fa-solid fa-plus"></i>
@@ -118,7 +118,7 @@ export default function StudentLists() {
         <Table
           columns={columns}
           data={users.data[users.page] || []}
-          editLinkPrefix="./admin/student/edit"
+          editLinkPrefix="../../admin/student/edit"
           deleteHandler={handleDelete}
           editButtonVisible={true}
         />

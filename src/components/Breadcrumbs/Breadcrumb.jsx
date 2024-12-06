@@ -34,7 +34,7 @@ const Breadcrumb = ({ pageName, title = false,  totalData = 0 }) => {
               return (
                 <Link key={index} href={"/admin/"+ linkMaker(path)}>
                 <li  className="font-medium">
-                  <span className="text-primary capitalize">{path}</span> {(index < pagePath.length - 1) ? "/" : ""}
+                  <span className="text-custom-blue dark:text-white capitalize">{path}</span> {(index < pagePath.length - 1) ? "/" : ""}
                 </li>
                 </Link>
               );

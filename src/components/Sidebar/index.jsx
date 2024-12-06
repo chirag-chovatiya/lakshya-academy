@@ -63,9 +63,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <Link href="/admin/">
-          <div className="flex space-x-3">
-            <h1 className="uppercase text-xl font-semibold text-white">
-            lakshya academy
+          <div className="flex flex-col items-center space-y-2">
+            <img
+              src="/assets/logo/logo-11.png" // Replace with your image path
+              alt="Logo"
+              className="w-28 h-20" // Adjust size as needed
+            />
+            <h1 className="uppercase text-[23px] font-semibold text-white">
+              lakshya academy
             </h1>
           </div>
         </Link>
@@ -80,6 +85,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           <span>Icon</span>
         </button>
       </div>
+
       {/* <!-- SIDEBAR HEADER --> */}
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
@@ -123,7 +129,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Student --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/student" || pathname.includes("student")
+                  pathname === "/admin/" || pathname.includes("student")
                 }
               >
                 {(handleClick, open) => {
@@ -132,7 +138,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/student" ||
+                          (pathname === "/admin/" ||
                             pathname.includes("student")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
@@ -163,9 +169,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/admin/student"
+                              href="/admin/"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/student" && "text-white"
+                                pathname === "/admin/" && "text-white"
                               }`}
                             >
                               Student
@@ -182,7 +188,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Exam List --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/addition" || pathname.includes("addition")
+                  pathname === "/admin/addition" ||
+                  pathname.includes("addition")
                 }
               >
                 {(handleClick, open) => {
@@ -296,7 +303,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </SidebarLinkGroup>
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/studentImage" || pathname.includes("studentImage")
+                  pathname === "/admin/studentImage" ||
+                  pathname.includes("studentImage")
                 }
               >
                 {(handleClick, open) => {
@@ -338,7 +346,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <Link
                               href="/admin/studentImage"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/studentImage" && "text-white"
+                                pathname === "/admin/studentImage" &&
+                                "text-white"
                               }`}
                             >
                               Image List

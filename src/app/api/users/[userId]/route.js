@@ -35,6 +35,7 @@ export async function GET(request, { params }) {
     }
 
     if (userResult) {
+      userResult.password = null;
       return sendResponse(NextResponse, 200, "User is available", userResult);
     } else {
       return sendResponse(

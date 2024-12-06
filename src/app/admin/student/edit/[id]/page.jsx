@@ -26,7 +26,7 @@ export default function StudentEdit({ params }) {
 
   if (!hasCreatePermission) {
     useEffect(() => {
-      router.replace("/admin");
+      router.replace("/admin/");
     }, [router]);
     return null; 
   }
@@ -73,7 +73,7 @@ export default function StudentEdit({ params }) {
     <>
       <div>
         <Breadcrumb pageName={`Student/edit/1`} title={`Edit Student`} />
-        <FormElementStudent data={formData} handleSubmit={handleSubmit}/>
+        <FormElementStudent data={formData} handleSubmit={handleSubmit} isEditMode={true}/>
       </div>
     </>
   );

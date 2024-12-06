@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export default function FormElementStudent({
   data,
   handleSubmit = async () => {},
+  isEditMode = false,
 }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(data);
@@ -122,7 +123,7 @@ export default function FormElementStudent({
         ))}
         <div>
           <label
-            htmlFor="password"
+            htmlFor="studentlevel"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
             Student Level
@@ -150,11 +151,11 @@ export default function FormElementStudent({
               value={formData.password || ""}
               onChange={handleChange}
               className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
-              required={isPasswordEditable}
+              required={!isEditMode || isPasswordEditable} // Required only in create mode or when editing
               placeholder="•••••••••"
-              disabled={!isPasswordEditable}
+              disabled={isEditMode && !isPasswordEditable} // Editable only in edit mode
             />
-            {!isPasswordEditable && (
+            {isEditMode && !isPasswordEditable && ( // Show button only in edit mode
               <button
                 type="button"
                 className="ml-2 px-3 py-1 bg-custom-blue text-white rounded"

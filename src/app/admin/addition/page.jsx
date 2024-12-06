@@ -116,7 +116,7 @@ export default function StudentLists() {
             <div className="flex items-center gap-4 justify-between w-full">
               <div className="flex items-center gap-4">
                 <button
-                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                   onClick={() => {
                     initialize("test");
                   }}
@@ -139,7 +139,7 @@ export default function StudentLists() {
               {hasCreatePermission && (
                 <div
                   onClick={() => handleAddNewStudent()}
-                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white cursor-pointer"
+                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
                 >
                   <span>
                     <i className="fa-solid fa-plus"></i>

@@ -147,7 +147,7 @@ export default function StudentLists() {
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
               <button
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={handleRefresh}
               >
                 <span>
@@ -156,7 +156,7 @@ export default function StudentLists() {
                 <span>Refresh</span>
               </button>
               <button
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white"
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={exportToExcel}
               >
                 <span>Export</span>

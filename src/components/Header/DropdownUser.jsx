@@ -1,12 +1,27 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import jwt from "jsonwebtoken";
+
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userName, setUserName] = useState("");
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("t");
+    if (token) {
+      try {
+        const decoded = jwt.decode(token);
+        setUserName(decoded.name || "User");
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const clickHandler = (event) => {
@@ -42,10 +57,10 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-base font-medium text-black dark:text-white">
-            userName
+            {userName}
           </span>
         </span>
-        <span className="h-12 w-12 rounded-full overflow-hidden">
+        <span className="h-8 w-8 rounded-full overflow-hidden">
           <img
             src="https://ui-avatars.com/api/?name=ME&bold=true&format=png"
             alt="User"
@@ -60,9 +75,9 @@ const DropdownUser = () => {
       {dropdownOpen && (
         <div
           ref={dropdown}
-          className="absolute right-0 mt-2 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
+          className="absolute right-0 mt-2 flex w-44 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
         >
-          <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-4 dark:border-strokedark">
+          {/* <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-4 dark:border-strokedark">
             <li>
               <Link
                 href="/profile"
@@ -72,10 +87,10 @@ const DropdownUser = () => {
                 My Profile
               </Link>
             </li>
-          </ul>
+          </ul> */}
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+            className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-custom-blue lg:text-base"
           >
             <i className="fa-solid fa-right-from-bracket"></i>
             Log Out

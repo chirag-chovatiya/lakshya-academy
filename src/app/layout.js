@@ -1,4 +1,3 @@
-'use client'
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 
@@ -6,6 +5,15 @@ const inter = Montserrat({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
 });
+
+export const metadata = {
+  title: "Lakshya Academy",
+  openGraph: {
+    title: "Welcome To Lakshya Academy",
+    // url: "https://www.fishelly.com/",
+    // images: ["https://images.fishelly.com/medLineImage/hospitalLogo.png"],
+  }
+};
 
 export default function RootLayout({ children }) {
   return (

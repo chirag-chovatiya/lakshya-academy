@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
-import { createImage } from "@/models/homeWorkImg/imageModel";
+import { createImage, getAllImage } from "@/models/homeWorkImg/imageModel";
 import sendResponse from "@/utils/response";
 
 cloudinary.config({

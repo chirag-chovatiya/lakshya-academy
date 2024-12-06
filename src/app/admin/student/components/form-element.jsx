@@ -39,7 +39,7 @@ export default function FormElementStudent({
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || (!isEditMode && !formData.password)) {
       alert("Please fill all required fields.");
       setLoading(false);
       return;
@@ -48,7 +48,7 @@ export default function FormElementStudent({
     try {
       const submissionData = isPasswordEditable
         ? formData
-        : { ...formData, password: undefined };
+        : { ...formData, password: formData.password || undefined };
 
       await handleSubmit(e, submissionData);
     } catch (error) {
@@ -145,17 +145,17 @@ export default function FormElementStudent({
             Password
           </label>
           <div className="flex items-center">
-            <input
+          <input
               type="text"
               name="password"
               value={formData.password || ""}
               onChange={handleChange}
               className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
-              required={!isEditMode || isPasswordEditable} // Required only in create mode or when editing
+              required={!isEditMode || isPasswordEditable} 
               placeholder="•••••••••"
-              disabled={isEditMode && !isPasswordEditable} // Editable only in edit mode
+              disabled={isEditMode && !isPasswordEditable}
             />
-            {isEditMode && !isPasswordEditable && ( // Show button only in edit mode
+            {isEditMode && !isPasswordEditable && (
               <button
                 type="button"
                 className="ml-2 px-3 py-1 bg-custom-blue text-white rounded"

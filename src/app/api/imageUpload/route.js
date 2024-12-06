@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import { IMG_BASE_URl } from "@/service/constant/api-constant";
-import { createImage, getAllImage } from "@/models/homeWorkImg/imageModel";
+import { v2 as cloudinary } from "cloudinary";
+import { createImage } from "@/models/homeWorkImg/imageModel";
 import sendResponse from "@/utils/response";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const POST = async (req) => {
   try {
     const formData = await req.formData();
     const files = formData.getAll("files");
-    const folderName = formData.get("folderName");
     const studentId = formData.get("studentId");
     const studentLevel = formData.get("studentLevel");
 
@@ -26,23 +29,30 @@ export const POST = async (req) => {
 
     const uploadedFileUrls = [];
 
-    const publicDir = path.join(process.cwd(), "public", "lakshyAcadamy");
-
-    if (!fs.existsSync(publicDir)) {
-      await fs.promises.mkdir(publicDir, { recursive: true });
-    }
-
     for (const file of files) {
       const buffer = Buffer.from(await file.arrayBuffer());
       const filename = file.name.replace(/\\/g, "/").replace("/", "");
 
-      const filePath = path.join(publicDir, filename);
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "lakshyAcadamy",
+            resource_type: "image",
+            public_id: filename,
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
 
-      await fs.promises.writeFile(filePath, buffer);
+        uploadStream.end(buffer);
+      });
 
-      const fileUrl = `${IMG_BASE_URl}/lakshyAcadamy/${filename}`;
+      const fileUrl = result.secure_url;
       uploadedFileUrls.push(fileUrl);
 
+      // Save to database
       await createImage({ studentId, studentLevel, imgUrl: fileUrl });
     }
 
@@ -54,9 +64,13 @@ export const POST = async (req) => {
     });
   } catch (error) {
     console.error("Error occurred: ", error);
-    return sendResponse(NextResponse, 500, "Images Uploaded Failed");
+    console.log(error);
+    return sendResponse(NextResponse, 500, "Image Upload Failed");
   }
 };
+
+
+
 
 export async function GET(request) {
   try {

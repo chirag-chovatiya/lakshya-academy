@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "basic-ftp": "^5.0.5",
     "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
     "cookies-next": "^4.2.1",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.0",
     "next": "14.2.5",
+    "next-cloudinary": "^6.16.0",
     "react": "^18",
     "react-dom": "^18",
     "react-loader-spinner": "^6.1.6",

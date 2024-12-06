@@ -25,7 +25,7 @@ export const getAllImage = async (
     const includeClause = [
       {
         model: User,
-        as: "student",
+        as: "images",
         attributes: ["name", "level"],
         where: {
           ...(level && { level }),

@@ -67,7 +67,7 @@ StudentReport.belongsTo(User, {
 });
 UserWorkImage.belongsTo(User, {
   foreignKey: "studentId",
-  as: "student",
+  as: "images",
 });
 
 export { User };

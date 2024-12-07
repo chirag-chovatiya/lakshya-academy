@@ -8,11 +8,20 @@ export const createReport = async (data) => {
       return { obtained, total };
     };
 
+    const existingReport = await StudentReport.findOne({
+      where: { testId: data.testId, studentId: data.studentId },
+    });
+
+    let reportData = { ...data };
+    if (existingReport) {
+      reportData = { ...existingReport.dataValues, ...data };
+    }
+
     const subjectMarks = {
-      additionMark: parseMarks(data.additionMark),
-      subtractionMark: parseMarks(data.subtractionMark),
-      multiplicationMark: parseMarks(data.multiplicationMark),
-      divisionMark: parseMarks(data.divisionMark)
+      additionMark: parseMarks(reportData.additionMark),
+      subtractionMark: parseMarks(reportData.subtractionMark),
+      multiplicationMark: parseMarks(reportData.multiplicationMark),
+      divisionMark: parseMarks(reportData.divisionMark),
     };
 
     const totalMarks = Object.values(subjectMarks).reduce((sum, subject) => sum + subject.total, 0);
@@ -23,24 +32,22 @@ export const createReport = async (data) => {
       percentage = ((obtainedMarks / totalMarks) * 100).toFixed(2);
     }
 
-    data.result = `${percentage}%`;
+    reportData.result = `${percentage}%`;
 
-    const existingReport = await StudentReport.findOne({
-      where: { testId: data.testId, studentId: data.studentId },
-    });
-    
     if (existingReport) {
-      const updatedReport = await existingReport.update(data);
+      const updatedReport = await existingReport.update(reportData);
       return updatedReport;
     } else {
-      const createData = await StudentReport.create(data);
-      return createData;
+      const createdReport = await StudentReport.create(reportData);
+      return createdReport;
     }
   } catch (error) {
-    console.log(error)
+    console.error("Error in createReport:", error);
     throw error;
   }
 };
+
+
 export const getAllReport = async (
   page = 1,
   pageSize = 10,

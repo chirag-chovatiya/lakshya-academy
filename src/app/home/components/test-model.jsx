@@ -115,6 +115,9 @@ export default function TestModel({
         (ans, index) => ans.userAnswer === filteredData[index]?.answer
       ).length;
       const totalScore = `${correctAnswersCount}/${filteredData.length}`;
+      const percentageScore = (correctAnswersCount / filteredData.length) * 100;
+
+      const hwStatus = percentageScore > 0 ? 1 : 0;
 
       const fieldToUpdate = `${selectedCard}Mark`;
 
@@ -122,12 +125,14 @@ export default function TestModel({
         studentId: decoded.id,
         testId: testId,
         [fieldToUpdate]: totalScore,
+        hwStatus,
       };
 
       try {
         const response = await post(API.getReport, payload, false, token);
+        console.log(response);
         console.log("Response:", response);
-        if (response.code === 200) {
+        if (response.code === 200 || response.code === 201) {
           console.log("Test results submitted successfully:", response.data);
         } else {
           console.log("Error submitting test results:", error);

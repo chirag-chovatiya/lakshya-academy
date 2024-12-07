@@ -16,9 +16,21 @@ export default function FormStudentAddition({
   data = {
     level: 0,
     totalQuestion: 0,
-    additionSettings: { horizontalDigits: 0, verticalDigits: 0, totalQuestion: 0 },
-    subtractionSettings: { horizontalDigits: 0, subDigits: 0, totalQuestion: 0 },
-    multiplicationSettings: { horizontalDigits: 0, subDigits: 0, totalQuestion: 0 },
+    additionSettings: {
+      horizontalDigits: 0,
+      verticalDigits: 0,
+      totalQuestion: 0,
+    },
+    subtractionSettings: {
+      horizontalDigits: 0,
+      subDigits: 0,
+      totalQuestion: 0,
+    },
+    multiplicationSettings: {
+      horizontalDigits: 0,
+      subDigits: 0,
+      totalQuestion: 0,
+    },
     divisionSettings: { horizontalDigits: 0, subDigits: 0, totalQuestion: 0 },
   },
 }) {
@@ -27,17 +39,22 @@ export default function FormStudentAddition({
   const [visibleFields, setVisibleFields] = useState([]);
 
   const { initialize } = useTestAdminStore((state) => state);
-  
 
   const handleToggleField = (type) => {
     setVisibleFields((prev) =>
-      prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type]
+      prev.includes(type)
+        ? prev.filter((item) => item !== type)
+        : [...prev, type]
     );
   };
 
   const handleChange = (e, type) => {
     const { name, value } = e.target;
-    const parsedValue = value === '' ? '' : parseInt(value);
+    let parsedValue = value === "" ? "" : parseInt(value);
+    if (name !== 'totalQuestion') { 
+      if (parsedValue < 1) parsedValue = 1;
+      if (parsedValue > 10) parsedValue = 10;
+    }
     setFormData((prevData) => ({
       ...prevData,
       [`${type}Settings`]: {
@@ -79,82 +96,93 @@ export default function FormStudentAddition({
               <SelectField
                 id="studentLevel"
                 label="Student Level"
-                options={Array.from({ length: 9 }, (_, i) => ({
+                options={Array.from({ length: 12 }, (_, i) => ({
                   label: `Level ${i + 1}`,
                   value: i + 1,
                 }))}
                 name="level"
                 value={formData.level}
                 onChange={(e) =>
-                  setFormData((prevData) => ({ ...prevData, level: e.target.value }))
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    level: e.target.value,
+                  }))
                 }
                 required
               />
             </div>
 
             <div className="grid gap-6 mb-6 md:grid-cols-2">
-              {["addition", "subtraction", "multiplication", "division"].map((type) => (
-                <div key={type}>
-                  <div className="flex items-center justify-between">
-                    <label className="text-gray-700 capitalize">{type}</label>
-                    <button
-                      type="button"
-                      onClick={() => handleToggleField(type)}
-                      className="bg-custom-blue text-white px-2 py-1 rounded"
-                    >
-                      {visibleFields.includes(type) ? "Remove" : "Add"} +
-                    </button>
-                  </div>
-                  {visibleFields.includes(type) && (
-                    <div className="mt-4 grid gap-4">
-                      <InputField
-                        id={`${type}RowDigits`}
-                        label={`Row Digits For ${type}`}
-                        type="number"
-                        name="horizontalDigits"
-                        value={formData[`${type}Settings`].horizontalDigits}
-                        onChange={(e) => handleChange(e, type)}
-                        placeholder="Enter number of rows"
-                        required
-                      />
-                      {type === "addition" && (
-                        <InputField
-                          id={`${type}ColDigits`}
-                          label={`Column Digits For ${type}`}
-                          type="number"
-                          name="verticalDigits"
-                          value={formData[`${type}Settings`].verticalDigits}
-                          onChange={(e) => handleChange(e, type)}
-                          placeholder="Enter number of columns"
-                        />
-                      )}
-                      {(type === "subtraction" ||
-                        type === "multiplication" ||
-                        type === "division") && (
-                        <InputField
-                          id={`${type}SubDigits`}
-                          label={`Sub Digits For ${type}`}
-                          type="number"
-                          name="subDigits"
-                          value={formData[`${type}Settings`].subDigits}
-                          onChange={(e) => handleChange(e, type)}
-                          placeholder="Enter sub digits"
-                        />
-                      )}
-                      <InputField
-                        id={`${type}TotalQuestion`}
-                        label={`Total Questions For ${type}`}
-                        type="number"
-                        name="totalQuestion"
-                        value={formData[`${type}Settings`].totalQuestion}
-                        onChange={(e) => handleChange(e, type)}
-                        placeholder="Enter total questions"
-                        required
-                      />
+              {["addition", "subtraction", "multiplication", "division"].map(
+                (type) => (
+                  <div key={type}>
+                    <div className="flex items-center justify-between">
+                      <label className="text-gray-700 capitalize">{type}</label>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleField(type)}
+                        className="bg-custom-blue text-white px-2 py-1 rounded"
+                      >
+                        {visibleFields.includes(type) ? "Remove" : "Add"} +
+                      </button>
                     </div>
-                  )}
-                </div>
-              ))}
+                    {visibleFields.includes(type) && (
+                      <div className="mt-4 grid gap-4">
+                        <InputField
+                          id={`${type}RowDigits`}
+                          label={`Row Digits For ${type}`}
+                          type="number"
+                          name="horizontalDigits"
+                          value={formData[`${type}Settings`].horizontalDigits}
+                          onChange={(e) => handleChange(e, type)}
+                          placeholder="Enter number of rows"
+                          required
+                          min="1"
+                          max="10"
+                        />
+                        {type === "addition" && (
+                          <InputField
+                            id={`${type}ColDigits`}
+                            label={`Column Digits For ${type}`}
+                            type="number"
+                            name="verticalDigits"
+                            value={formData[`${type}Settings`].verticalDigits}
+                            onChange={(e) => handleChange(e, type)}
+                            placeholder="Enter number of columns"
+                            min="1"
+                            max="10"
+                          />
+                        )}
+                        {(type === "subtraction" ||
+                          type === "multiplication" ||
+                          type === "division") && (
+                          <InputField
+                            id={`${type}SubDigits`}
+                            label={`Sub Digits For ${type}`}
+                            type="number"
+                            name="subDigits"
+                            value={formData[`${type}Settings`].subDigits}
+                            onChange={(e) => handleChange(e, type)}
+                            placeholder="Enter sub digits"
+                            min="1"
+                            max="10"
+                          />
+                        )}
+                        <InputField
+                          id={`${type}TotalQuestion`}
+                          label={`Total Questions For ${type}`}
+                          type="number"
+                          name="totalQuestion"
+                          value={formData[`${type}Settings`].totalQuestion}
+                          onChange={(e) => handleChange(e, type)}
+                          placeholder="Enter total questions"
+                          required
+                        />
+                      </div>
+                    )}
+                  </div>
+                )
+              )}
             </div>
 
             <SubmitButton loading={loading} />

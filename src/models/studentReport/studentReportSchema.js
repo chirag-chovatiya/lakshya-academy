@@ -10,6 +10,10 @@ const StudentReport = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
+    teacherId: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
     studentId: {
       type: DataTypes.INTEGER,
       defaultValue: null,

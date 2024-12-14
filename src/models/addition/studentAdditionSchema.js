@@ -10,6 +10,10 @@ const StudentAddition = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
+    teacher_id: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
     totalQuestion : {
       type: DataTypes.INTEGER,
       defaultValue: null,

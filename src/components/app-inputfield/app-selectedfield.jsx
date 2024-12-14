@@ -1,4 +1,4 @@
-export const SelectField = ({ id, label, options, name, value, onChange }) => (
+export const SelectField = ({ id, label, options, name, value, onChange, required = false }) => (
   <div>
     <label
       htmlFor={id}
@@ -10,6 +10,7 @@ export const SelectField = ({ id, label, options, name, value, onChange }) => (
       id={id}
       name={name}
       value={value} 
+      required={required}
       onChange={onChange} 
       className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full focus:outline-none focus:border-gray-300"
     >

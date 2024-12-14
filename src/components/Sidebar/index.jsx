@@ -6,7 +6,7 @@ import Link from "next/link";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const pathname = usePathname();
+  let pathname = usePathname();
 
   const trigger = useRef(null);
   const sidebar = useRef(null);
@@ -129,7 +129,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Student --> */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/" || pathname.includes("student")
+                  pathname === "/admin/" ||
+                  pathname === "/teacher" ||
+                  pathname.includes("student")
                 }
               >
                 {(handleClick, open) => {
@@ -139,6 +141,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/admin/" ||
+                            pathname === "/teacher/" ||
                             pathname.includes("student")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
@@ -169,9 +172,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/admin/"
+                             href={pathname.match(/\/admin/) ? "/admin/" : "/teacher/"}
+
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/" && "text-white"
+                                pathname === "/admin/" ||
+                                (pathname === "/teacher/" && "text-white")
                               }`}
                             >
                               Student
@@ -189,6 +194,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               <SidebarLinkGroup
                 activeCondition={
                   pathname === "/admin/addition" ||
+                  pathname === "/teacher/addition" ||
                   pathname.includes("addition")
                 }
               >
@@ -199,6 +205,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/admin/addition" ||
+                            pathname === "/teacher/addition" ||
                             pathname.includes("addition")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
@@ -229,9 +236,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/admin/addition"
+                              href={pathname.match(/\/admin/) ? "/admin/addition" : "/teacher/addition"}
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/addition" && "text-white"
+                                pathname === "/admin/addition" ||
+                                (pathname === "/teacher/addition" &&
+                                  "text-white")
                               }`}
                             >
                               Student Exam
@@ -247,7 +256,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/report" || pathname.includes("report")
+                  pathname === "/admin/report" ||
+                  pathname === "/teacher/report" ||
+                  pathname.includes("report")
                 }
               >
                 {(handleClick, open) => {
@@ -257,6 +268,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/admin/report" ||
+                            pathname === "/teacher/report" ||
                             pathname.includes("report")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
@@ -287,12 +299,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/admin/report"
+                            
+                              href={pathname.match(/\/admin/) ? "/admin/report" : "/teacher/report"}
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/addition" && "text-white"
+                                pathname === "/admin/report" && "text-white"
                               }`}
                             >
-                              Report
+                              <span>
+                                <i className="fa-solid fa-user"></i>
+                              </span>
+                              Student Report
                             </Link>
                           </li>
                         </ul>
@@ -303,7 +319,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </SidebarLinkGroup>
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/studentImage" ||
+                  pathname === "/admin/studentImage" || pathname === "/teacher/studentImage" ||
                   pathname.includes("studentImage")
                 }
               >
@@ -313,7 +329,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/studentImage" ||
+                          (pathname === "/admin/studentImage" || pathname === "/teacher/studentImage" ||
                             pathname.includes("studentImage")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
@@ -344,9 +360,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/admin/studentImage"
+                              href={pathname.match(/\/admin/) ? "/admin/studentImage" : "/teacher/studentImage"}
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/studentImage" &&
+                                pathname === "/admin/studentImage" || pathname === "/teacher/studentImage" &&
                                 "text-white"
                               }`}
                             >

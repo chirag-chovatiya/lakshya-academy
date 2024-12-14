@@ -9,10 +9,21 @@ import dotenv from "dotenv";
 import sendResponse from "@/utils/response";
 import { NextResponse } from "next/server";
 import { setCookie } from "cookies-next";
+import { authenticateToken } from "@/middlewares/auth";
 dotenv.config();
 
-export async function POST(req, res) {
+export async function POST(request, response) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
+    const userId = authResponse?.user?.id;
+    const userType = authResponse?.user?.user_type;
     const {
       email,
       password,
@@ -23,7 +34,7 @@ export async function POST(req, res) {
       images,
       status,
       teacher_permission,
-    } = await req.json();
+    } = await request.json();
 
     if (!email || !password) {
       return sendResponse(NextResponse, 400, "Email and password are required");
@@ -91,6 +102,10 @@ export async function POST(req, res) {
         teacher_permission,
       };
 
+      if (userType === "Teacher") {
+        newUser.teacherId = userId;
+      }
+
       user = await createUser(newUser);
       const token = jwt.sign({ id: user.id }, jwtSecret, {
         expiresIn: "7d",
@@ -112,19 +127,37 @@ export async function POST(req, res) {
   }
 }
 export async function GET(request) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
+    const userId = authResponse?.user?.id;
+    const userType = authResponse?.user?.user_type;
+    const teacherId = userType === "Teacher" ? userId : null;
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
     const pageSize =
       parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
     const searchQuery = request.nextUrl.searchParams.get("searchQuery");
 
-    const allUser = await getAllUser(page, pageSize, searchQuery);
+    const allUser = await getAllUser(
+      page,
+      pageSize,
+      searchQuery,
+      userType,
+      teacherId
+    );
     if (allUser) {
       return sendResponse(NextResponse, 200, "All User are available", allUser);
     } else {
       return sendResponse(NextResponse, 404, "No User available");
     }
   } catch (error) {
+    console.log(error);
     return sendResponse(NextResponse, 500, "Internal server error", {
       error: error.message,
     });

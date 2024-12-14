@@ -6,19 +6,23 @@ import {
 } from "@/models/studentReport/studentReportModel";
 import { authenticateToken } from "@/middlewares/auth";
 
-export async function POST(req) {
+export async function POST(request) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
-    const authResponse = await authenticateToken(req);
-    if (authResponse.status && authResponse.status !== 200) {
-      return sendResponse(
-        NextResponse,
-        authResponse.status,
-        authResponse.message
-      );
-    }
-    const { userId } = authResponse;
+    const userId = authResponse?.user?.id;
+    const teacherId = authResponse?.user?.teacher_id;
+    console.log(teacherId);
+    const data = await request.json();
 
-    const data = await req.json();
+    data.studentId = userId;
+    data.teacherId = teacherId;
 
     data.studentId = userId;
     const newAddition = await createReport(data);
@@ -35,7 +39,17 @@ export async function POST(req) {
   }
 }
 export async function GET(request) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
+    const userId = authResponse?.user?.id;
+    const userType = authResponse?.user?.user_type;
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
     const pageSize =
       parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
@@ -44,7 +58,11 @@ export async function GET(request) {
     const createdAt = request.nextUrl.searchParams.get("createdAt");
     const studentName = request.nextUrl.searchParams.get("studentName");
 
+    const teacherId = userType === "Teacher" ? userId : null;
+
     const allReport = await getAllReport(
+      userType,
+      teacherId,
       page,
       pageSize,
       hwStatus,

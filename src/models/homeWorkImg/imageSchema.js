@@ -14,6 +14,10 @@ const UserWorkImage = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: null,
     },
+    teacherId: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
     studentLevel: {
       type: DataTypes.INTEGER,
       defaultValue: null,

@@ -46,9 +46,9 @@ export const createReport = async (data) => {
     throw error;
   }
 };
-
-
 export const getAllReport = async (
+  userType,
+  teacherId = null,
   page = 1,
   pageSize = 10,
   hwStatus = null,
@@ -60,6 +60,8 @@ export const getAllReport = async (
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
     const offset = (parsedPage - 1) * parsedPageSize;
+
+    
 
     const includeClause = [
       {
@@ -73,6 +75,10 @@ export const getAllReport = async (
       },
     ];
     const whereClause = {};
+    
+    if (userType === "Teacher" && teacherId) {
+      whereClause.teacherId = teacherId;
+    }
 
     if (!page && !pageSize) {
       const getStudentReport = await StudentReport.findAll({

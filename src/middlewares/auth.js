@@ -36,7 +36,7 @@ export const authenticateToken = async (req) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await getUserById(decoded.id);
     if (user) {
-      return { userId: decoded.id, user };
+      return { user };
     } else {
       return sendResponse(NextResponse, 404, "User Token not found");
     }
@@ -45,30 +45,30 @@ export const authenticateToken = async (req) => {
   }
 };
 
-// export const authenticateAdminToken = async (req, next) => {
-//   const authHeader = req.headers.get("authorization");
+export const authenticateAdminToken = async (req, next) => {
+  const authHeader = req.headers.get("authorization");
 
-//   let token;
-//   if (typeof authHeader === "string" && authHeader.startsWith("Bearer")) {
-//     token = authHeader.split(" ")[1];
-//   } else {
-//     token = authHeader;
-//   }
-//   if (!token) {
-//     return sendResponse(NextResponse, 401, "Unauthorized");
-//   }
-//   jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-//     if (err) {
-//       return sendResponse(NextResponse, 401, "Unauthorized");
-//     }
-//     req.userId = decoded.id;
+  let token;
+  if (typeof authHeader === "string" && authHeader.startsWith("Bearer")) {
+    token = authHeader.split(" ")[1];
+  } else {
+    token = authHeader;
+  }
+  if (!token) {
+    return sendResponse(NextResponse, 401, "Unauthorized");
+  }
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+    if (err) {
+      return sendResponse(NextResponse, 401, "Unauthorized");
+    }
+    req.userId = decoded.id;
 
-//     const user = await getUserById(req.userId);
-//     if (user && user.user_type === "Admin") {
-//       req.user = user;
-//       return NextResponse.next();
-//     } else {
-//       return sendResponse(NextResponse, 403, "User is not an admin");
-//     }
-//   });
-// };
+    const user = await getUserById(req.userId);
+    if (user) {
+      req.user = user;
+      return NextResponse.next();
+    } else {
+      return sendResponse(NextResponse, 403, "User is not an admin");
+    }
+  });
+};

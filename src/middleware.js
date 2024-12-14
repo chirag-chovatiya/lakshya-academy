@@ -9,19 +9,29 @@ export function middleware(request) {
   }
 
   const decoded = jwt.decode(token);
-  if (decoded.user_type === "Admin" && request.nextUrl.pathname === "/") {
-    return NextResponse.redirect(new URL("/admin", request.url));
+
+  // Redirect logic based on user type and path
+  if (decoded.user_type === "Admin") {
+    if (request.nextUrl.pathname.startsWith("/teacher") || request.nextUrl.pathname === "/") {
+      return NextResponse.redirect(new URL("/admin", request.url)); 
+    }
+  } 
+
+  if (decoded.user_type === "Student") {
+    if (request.nextUrl.pathname.startsWith("/admin") || request.nextUrl.pathname.startsWith("/teacher")) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
-  if (decoded.user_type === "Student" && request.nextUrl.pathname.startsWith("/admin")) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-  if (decoded.user_type === "Teacher" && request.nextUrl.pathname.startsWith("/admin")) {
-    return NextResponse.next(); 
+
+  if (decoded.user_type === "Teacher") {
+    if (request.nextUrl.pathname === "/" || request.nextUrl.pathname.startsWith("/admin")) {
+      return NextResponse.redirect(new URL("/teacher", request.url));
+    }
   }
 
   return NextResponse.next(); 
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/"], 
+  matcher: ["/admin/:path*", "/teacher/:path*", "/"], 
 };

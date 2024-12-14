@@ -10,6 +10,7 @@ export const createUser = async (data) => {
     throw error;
   }
 };
+
 export const getUserByEmail = async (email) => {
   try {
     const getData = await User.findOne({ where: { email: email } });
@@ -18,10 +19,11 @@ export const getUserByEmail = async (email) => {
     throw error;
   }
 };
-export const getAllUser = async (
+export const getAllTeacherUser = async (
   page = 1,
   pageSize = 10,
-  searchQuery = null
+  searchQuery = null,
+  teacher_id=null
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -29,6 +31,58 @@ export const getAllUser = async (
     const offset = (parsedPage - 1) * parsedPageSize;
 
     const whereClause = {};
+
+    if (teacher_id) {
+      whereClause.teacher_id = teacher_id;
+    }
+
+    if (!page && !pageSize) {
+      const getUsers = await User.findAll();
+      return getUsers;
+    }
+
+    if (searchQuery) {
+      whereClause[Op.or] = [
+        { name: { [Op.like]: `%${searchQuery}%` } },
+        { email: { [Op.like]: `%${searchQuery}%` } },
+      ];
+    }
+    const getAllData = await User.findAndCountAll({
+      where: whereClause,
+      offset,
+      limit: parsedPageSize,
+    });
+
+    const totalPages = Math.ceil(getAllData.count / parsedPageSize);
+    
+
+    return {
+      data: getAllData.rows,
+      currentPage: parsedPage,
+      totalPages: totalPages,
+      totalData: getAllData.count,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+export const getAllUser = async (
+  page = 1,
+  pageSize = 10,
+  searchQuery = null,
+  userType,
+  teacherId = null,
+) => {
+  try {
+    const parsedPage = parseInt(page);
+    const parsedPageSize = parseInt(pageSize);
+    const offset = (parsedPage - 1) * parsedPageSize;
+
+    const whereClause = {};
+
+    if (userType === "Teacher" && teacherId) {
+      whereClause.teacherId = teacherId;
+    }
 
     if (!page && !pageSize) {
       const getUsers = await User.findAll();

@@ -7,14 +7,25 @@ import {
   getUserByIdWithReports,
   updateUserById,
 } from "@/models/users/userModel";
+import { authenticateToken } from "@/middlewares/auth";
 connectDb();
 
 export async function GET(request, { params }) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
+    // const userType = authResponse?.user?.user_type;
+    // const teacherId = authResponse?.user?.teacherId;
     const { userId } = params;
     const url = new URL(request.url);
-    const page = parseInt(url.searchParams.get("page")) || 1; 
-    const pageSize = parseInt(url.searchParams.get("pageSize")) || 10; 
+    const page = parseInt(url.searchParams.get("page")) || 1;
+    const pageSize = parseInt(url.searchParams.get("pageSize")) || 10;
     const month = parseInt(url.searchParams.get("month"));
     const year = parseInt(url.searchParams.get("year"));
     const hwStatus = url.searchParams.get("hwStatus");
@@ -22,7 +33,16 @@ export async function GET(request, { params }) {
     let userResult;
 
     if (userId) {
-      userResult = await getUserByIdWithReports(userId, page, pageSize, month, year, hwStatus);
+      userResult = await getUserByIdWithReports(
+        userId,
+        // teacherId,
+        // userType,
+        page,
+        pageSize,
+        month,
+        year,
+        hwStatus
+      );
     } else if (request.user) {
       request.user.password = null;
       request.user.otp = null;
@@ -58,9 +78,9 @@ export async function POST(request, { params }) {
     const userData = {
       name: newData.name,
       phone_number: newData.phone_number,
-      level:newData.level,
-      user_type:newData.user_type,
-      images:newData.images,
+      level: newData.level,
+      user_type: newData.user_type,
+      images: newData.images,
       status: newData.status,
     };
 

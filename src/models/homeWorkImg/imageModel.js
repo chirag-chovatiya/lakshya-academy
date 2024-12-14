@@ -15,7 +15,9 @@ export const getAllImage = async (
   pageSize = 10,
   level = null,
   createdAt=null,
-  studentName = null
+  studentName = null,
+  userType,
+  teacherId = null
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -34,6 +36,11 @@ export const getAllImage = async (
       },
     ];
     const whereClause = {};
+
+    if (userType === "Teacher" && teacherId) {
+      whereClause.teacherId = teacherId; 
+    }
+    
 
     if (!page && !pageSize) {
       const getStudentImage = await UserWorkImage.findAll({

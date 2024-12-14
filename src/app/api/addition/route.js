@@ -1,11 +1,28 @@
 import { NextResponse } from "next/server";
 import sendResponse from "@/utils/response";
 import { createTest, getAllTest } from "@/models/addition/studentAdditionModel";
+import { authenticateAdminToken, authenticateToken } from "@/middlewares/auth";
 
 export async function POST(request) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
+
   try {
+    const teacher_id = authResponse?.user?.id;
     const data = await request.json();
-    const newAddition = await createTest(data);
+
+    const newData = {
+      ...data,
+      teacher_id,
+    };
+
+    const newAddition = await createTest(newData);
 
     return sendResponse(
       NextResponse,
@@ -20,11 +37,22 @@ export async function POST(request) {
 }
 
 export async function GET(request) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
+    const userId = authResponse?.user?.id;
+    const userType = authResponse?.user?.user_type;
+    console.log(userType);
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
     const pageSize =
       parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
-    const allTest = await getAllTest(page, pageSize);
+    const allTest = await getAllTest(page, pageSize, userType, userId);
     if (allTest) {
       return sendResponse(NextResponse, 200, "All Test are available", allTest);
     } else {

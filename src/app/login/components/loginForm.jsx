@@ -24,8 +24,10 @@ export default function LoginForm() {
   
           if (decoded.user_type === "Student") {
             router.replace("/"); 
-          } else if (decoded.user_type === "Admin" || decoded.user_type === "Teacher") {
+          } else if (decoded.user_type === "Admin") {
             router.replace("/admin");
+          } else if (decoded.user_type === "Teacher") {
+            router.replace("/teacher");
           }
         } else {
           router.replace("/login");

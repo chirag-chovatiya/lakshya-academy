@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import DeleteButton from "@/components/Switchers/DeleteButton";
 import { hasPermission } from "@/utils/permissions";
+import { usePathname } from "next/navigation";
 
 const Table = ({
   columns,
@@ -16,6 +17,8 @@ const Table = ({
   const handleStatusChange = (id, newStatus) => {
     updateStatusById(id, newStatus);
   };
+
+  let pathname = usePathname();
 
   return (
     <div className="rounded-xl border border-stroke bg-white p-2 shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -78,7 +81,8 @@ const Table = ({
                         )
                       ) : col.key === "name" ? (
                         <Link
-                          href={`/admin/monthlyreport?studentId=${item.id}`}
+                          href={pathname.match(/\/admin/) ? `/admin/monthlyreport?studentId=${item.id}` : `/teacher/monthlyreport?studentId=${item.id}`}
+
                           className="text-custom-blue font-semibold hover:underline"
                         >
                           {item[col.key] || "-----"}
@@ -99,29 +103,26 @@ const Table = ({
                   ))}
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
-                      {editButtonVisible &&
-                        hasPermission("StudentEdit") &&
-                        (typeof editLinkPrefix === "string" ? (
-                          <Link
-                            href={`${editLinkPrefix}/${item.id}`}
-                            className="hover:text-primary"
-                          >
-                            <i className="fa-regular fa-pen-to-square"></i>
-                          </Link>
-                        ) : (
-                          <button
-                            onClick={() => editLinkPrefix(item.id)}
-                            className="hover:text-primary"
-                          >
-                            <i className="fa-regular fa-pen-to-square"></i>
-                          </button>
-                        ))}
-                      {hasPermission("StudentDelete") && (
-                        <DeleteButton
-                          key={item.id}
-                          deleteAction={() => deleteHandler(item.id)}
-                        />
+                      {typeof editLinkPrefix === "string" ? (
+                        <Link
+                          href={`${editLinkPrefix}/${item.id}`}
+                          className="hover:text-primary"
+                        >
+                          <i className="fa-regular fa-pen-to-square"></i>
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={() => editLinkPrefix(item.id)}
+                          className="hover:text-primary"
+                        >
+                          <i className="fa-regular fa-pen-to-square"></i>
+                        </button>
                       )}
+
+                      <DeleteButton
+                        key={item.id}
+                        deleteAction={() => deleteHandler(item.id)}
+                      />
                     </div>
                   </td>
                 </tr>

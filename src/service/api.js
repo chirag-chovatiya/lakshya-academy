@@ -1,11 +1,12 @@
 import { BASE_URl } from "./constant/api-constant";
 
-export async function get(endpoint) {
+export async function get(endpoint, token = localStorage.getItem("t")) {
   try {
     const header = {
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
       Pragma: "no-cache",
+      ...(token && { Authorization: `Bearer ${token}` }),
     };
 
     const response = await fetch(
@@ -23,9 +24,10 @@ export async function get(endpoint) {
   }
 }
 
-export async function post(endpoint, body, formdata = false, token = null) {
+export async function post(endpoint, body, formdata = false, token = localStorage.getItem("t")) {
+  console.log(token)
   const url = `${BASE_URl}${endpoint}`;
-  
+
   const options = {
     method: "POST",
     headers: {
@@ -35,6 +37,7 @@ export async function post(endpoint, body, formdata = false, token = null) {
     },
     body: formdata ? body : JSON.stringify(body),
   };
+  console.log(options);
 
   if (!formdata) {
     options.headers["Content-Type"] = "application/json";

@@ -18,7 +18,7 @@ export const useUserAdminStore = (selector) => {
   const counterStoreContext = useContext(UserStoreContext);
 
   if (!counterStoreContext) {
-    throw new Error(`useTestimonialStore must be use within TestimonialStoreProvider`);
+    throw new Error(`useUserStore must be use within UserStoreProvider`);
   }
 
   return useStore(counterStoreContext, selector);

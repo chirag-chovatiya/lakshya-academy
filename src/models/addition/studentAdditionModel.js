@@ -85,14 +85,18 @@ export const createTest = async (data) => {
     throw error;
   }
 };
-export const getAllTest = async (page = 1, pageSize = 10) => {
+export const getAllTest = async (page = 1, pageSize = 10, userType, teacherId) => {
   try {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
     const offset = (parsedPage - 1) * parsedPageSize;
 
+    const whereCondition = userType === "Teacher" 
+      ? { teacher_id: teacherId } 
+      : {};
+
     if (!page && !pageSize) {
-      const getTest = await StudentAddition.findAll();
+      const getTest = await StudentAddition.findAll({ where: whereCondition });
       const formattedResult = getTest.map((entry) => ({
         id: entry.id,
         totalQuestion: entry.totalQuestion || null,
@@ -105,36 +109,40 @@ export const getAllTest = async (page = 1, pageSize = 10) => {
         createdAt: entry.createdAt,
         updatedAt: entry.updatedAt,
       }));
-      return formattedResult
-      
+      return formattedResult;
     }
-    const {rows, count} = await StudentAddition.findAndCountAll({
+
+    const { rows, count } = await StudentAddition.findAndCountAll({
+      where: whereCondition,
       offset,
       limit: parsedPageSize,
     });
+
     const totalPages = Math.ceil(count / parsedPageSize);
     const pageResult = rows.map((entry) => ({
       id: entry.id,
       totalQuestion: entry.totalQuestion || null,
-      addition: JSON.parse(entry.addition || '[]'),
-      subtraction: JSON.parse(entry.subtraction || '[]'),
-      multiplication: JSON.parse(entry.multiplication || '[]'),
-      division: JSON.parse(entry.division || '[]'),
+      addition: JSON.parse(entry.addition || "[]"),
+      subtraction: JSON.parse(entry.subtraction || "[]"),
+      multiplication: JSON.parse(entry.multiplication || "[]"),
+      division: JSON.parse(entry.division || "[]"),
       level: entry.level,
       status: entry.status,
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,
     }));
+
     return {
       data: pageResult,
       currentPage: parsedPage,
       totalPages: totalPages,
       totalData: count,
-    }
+    };
   } catch (error) {
     throw error;
   }
 };
+
 export const getTestById = async (testId) => {
   try {
     const getData = await StudentAddition.findOne({ where: { id: testId } });

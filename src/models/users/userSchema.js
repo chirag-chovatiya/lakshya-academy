@@ -12,6 +12,10 @@ const User = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
+    teacherId: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
+    },
     name: {
       type: DataTypes.STRING,
       defaultValue: null,

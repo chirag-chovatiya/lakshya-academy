@@ -24,11 +24,16 @@ export default function StudentEdit({ params }) {
   useEffect(() => {
     const studentData = async () => {
       try {
-        const response = await get(API.getAllUser + `/${params.id}`, formData);
+        const response = await get(API.getAllUser + `/${params.id}`);
         if (response.code == 200 && response.data && response.data) {
           setFormData({
             ...response.data,
           });
+        } else if (response.code === 403) {
+          toast.error(
+            response.message ||
+              "Unauthorized: This student is not associated with you"
+          );
         }
       } catch (error) {
         console.error("There was an error geting data:", error);

@@ -17,12 +17,9 @@ export async function POST(request) {
   }
   try {
     const userId = authResponse?.user?.id;
-    const teacherId = authResponse?.user?.teacher_id;
-    console.log(teacherId);
     const data = await request.json();
 
     data.studentId = userId;
-    data.teacherId = teacherId;
 
     data.studentId = userId;
     const newAddition = await createReport(data);

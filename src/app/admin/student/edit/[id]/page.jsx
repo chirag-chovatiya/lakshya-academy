@@ -7,7 +7,6 @@ import { get, post } from "@/service/api";
 import { toast } from "react-toastify";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import { useRouter } from "next/navigation";
-import { hasPermission } from "@/utils/permissions";
 
 export default function StudentEdit({ params }) {
   const [formData, setFormData] = useState({
@@ -18,31 +17,19 @@ export default function StudentEdit({ params }) {
     level: 0,
     user_type: "",
     status: false,
-    teacher_permission: []
+    teacherId:null,
+    teacher_permission: [],
   });
   const router = useRouter();
   const { initialize } = useUserAdminStore((state) => state);
-  const hasCreatePermission = hasPermission("StudentEdit");
 
-  if (!hasCreatePermission) {
-    useEffect(() => {
-      router.replace("/admin/");
-    }, [router]);
-    return null; 
-  }
   useEffect(() => {
     const studentData = async () => {
       try {
-        const response = await get(
-          API.getAllUser + `/${params.id}`,
-          formData
-        );
+        const response = await get(API.getAllUser + `/${params.id}`);
         if (response.code == 200 && response.data && response.data) {
           setFormData({
             ...response.data,
-            teacher_permission: Array.isArray(response.data.teacher_permission)
-              ? response.data.teacher_permission
-              : [],
           });
         }
       } catch (error) {
@@ -60,7 +47,7 @@ export default function StudentEdit({ params }) {
       const response = await post(API.getAllUser + `/${params.id}`, formData);
       if (response) {
         router.replace("/admin/student");
-        initialize()
+        initialize();
       }
       return response;
     } catch (error) {
@@ -72,13 +59,13 @@ export default function StudentEdit({ params }) {
   return (
     <>
       <div>
-        <Breadcrumb pageName={`Student/edit/1`} title={`Edit Student`} />
-        <FormElementStudent data={formData} handleSubmit={handleSubmit} isEditMode={true}/>
+        <Breadcrumb pageName={`Student/edit - ${params.id}`} title={`Edit Student`} />
+        <FormElementStudent
+          data={formData}
+          handleSubmit={handleSubmit}
+          isEditMode={true}
+        />
       </div>
     </>
   );
 }
-
-
-
-

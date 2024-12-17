@@ -122,7 +122,6 @@ export default function TestModel({
       const fieldToUpdate = `${selectedCard}Mark`;
 
       const payload = {
-        studentId: decoded.id,
         testId: testId,
         [fieldToUpdate]: totalScore,
         hwStatus,

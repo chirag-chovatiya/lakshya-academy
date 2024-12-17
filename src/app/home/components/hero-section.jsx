@@ -1,13 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TestModel from "./test-model";
 import ImageUploader from "@/components/ImageUploader/ImageUploader";
 import ImageUploadModel from "./image-upload";
+import { get } from "@/service/api";
+import { API } from "@/service/constant/api-constant";
+import jwt from "jsonwebtoken";
+
 
 export default function HeroSection() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
+  const [cardCounts, setCardCounts] = useState({
+    addition: 0,
+    subtraction: 0,
+    multiplication: 0,
+    division: 0,
+  });
 
   const openModal = (cardType) => {
     setSelectedCard(cardType);
@@ -17,6 +27,38 @@ export default function HeroSection() {
   const openImageUploadModal = () => {
     setIsImageUploadOpen(true);
   };
+
+
+  const fetchCardCounts = async () => {
+    try {
+      const response = await get(API.getAllTest);
+      if (response.code === 200 && response.data?.length > 0) {
+        const token = localStorage.getItem("t");
+        const decoded = jwt.decode(token);
+        const studentLevel = decoded?.level;
+
+        const activeTests = response.data.filter(
+          (test) => test.status === true && test.level === studentLevel
+        );
+
+        if (activeTests.length > 0) {
+          const testData = activeTests[0];
+          setCardCounts({
+            addition: testData?.addition?.length || 0,
+            subtraction: testData?.subtraction?.length || 0,
+            multiplication: testData?.multiplication?.length || 0,
+            division: testData?.division?.length || 0,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching card counts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCardCounts();
+  }, []);
 
 
   return (
@@ -36,7 +78,7 @@ export default function HeroSection() {
         >
           <h2 className="text-3xl font-semibold mb-3">+</h2>
           <h2 className="text-xl font-semibold mb-3">Addition</h2>
-          <p className="font-semibold">0/10 (0.00%)</p>
+          <p className="font-semibold">Total Addition = {cardCounts.addition}</p>
         </div>
 
         <div
@@ -45,7 +87,7 @@ export default function HeroSection() {
         >
           <h2 className="text-3xl font-semibold mb-3">-</h2>
           <h2 className="text-xl font-semibold mb-3">Subtraction</h2>
-          <p className="font-semibold">0/10 (0.00%)</p>
+          <p className="font-semibold">Total Subtraction = {cardCounts.subtraction}</p>
         </div>
 
         <div
@@ -54,7 +96,7 @@ export default function HeroSection() {
         >
           <h2 className="text-3xl font-semibold mb-3">x</h2>
           <h2 className="text-xl font-semibold mb-3">Multiplication</h2>
-          <p className="font-semibold">0/10 (0.00%)</p>
+          <p className="font-semibold">Total Multiplication = {cardCounts.multiplication}</p>
         </div>
 
         <div
@@ -63,7 +105,7 @@ export default function HeroSection() {
         >
           <h2 className="text-3xl font-semibold mb-3">/</h2>
           <h2 className="text-xl font-semibold mb-3">Division</h2>
-          <p className="font-semibold">0/10 (0.00%)</p>
+          <p className="font-semibold">Total Division = {cardCounts.division}</p>
         </div>
       </div>
       {isImageUploadOpen && (

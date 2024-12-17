@@ -16,9 +16,13 @@ export const defaultInitState = {
 
 async function fetchDataAndSetState(set, get) {
   const { page, pageSize } = get().test;
+  const teacherName = get().test.teacherName;
 
   try {
-    const url = `?page=${page}&pageSize=${pageSize}`;
+    let url = `?page=${page}&pageSize=${pageSize}`;
+    if (teacherName && teacherName != "") {
+      url += `&teacherName=${encodeURIComponent(teacherName)}`;
+    }
     const { data, code } = await getAllTestData(url + '&');
 
     if (code === 200 || code === 201) {
@@ -70,6 +74,18 @@ export const createTestStore = (initState = defaultInitState) =>
       } else {
         set({ test: { ...state.test, page } });
       }
+    },
+    search: async (teacherName) => {
+      set((state) => ({
+        test: {
+          ...state.test,
+          teacherName: teacherName ? teacherName : null,
+          page: 1,
+          hasMoreData: true,
+          loading: true,
+        },
+      }));
+      await fetchDataAndSetState(set, get);
     },
     onSelectionChange: async (selected) => set({ selected }),
     onPageSizeChange: async (pageSize) => {

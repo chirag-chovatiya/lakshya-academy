@@ -8,11 +8,18 @@ export const createReport = async (data) => {
       return { obtained, total };
     };
 
+    const student = await User.findOne({
+      where: { id: data.studentId },
+      attributes: ['teacherId'],
+    });
+
+    const teacherId = student.teacherId;
+
     const existingReport = await StudentReport.findOne({
       where: { testId: data.testId, studentId: data.studentId },
     });
 
-    let reportData = { ...data };
+    let reportData = { ...data, teacherId };
     if (existingReport) {
       reportData = { ...existingReport.dataValues, ...data };
     }
@@ -33,6 +40,7 @@ export const createReport = async (data) => {
     }
 
     reportData.result = `${percentage}%`;
+
 
     if (existingReport) {
       const updatedReport = await existingReport.update(reportData);

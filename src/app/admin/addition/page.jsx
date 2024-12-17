@@ -1,19 +1,22 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Pagination from "@/components/Pagination";
-import FormStudentAddition from "./components/form-element";
 import { useTestAdminStore } from "@/providers/test-store-provider";
+import debounce from "lodash/debounce";
 import Table from "@/components/app-table/app-table";
 import { del, post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
-import { hasPermission } from "@/utils/permissions";
 
 export default function StudentLists() {
-  const { test, changePage, onPageSizeChange, onSelectionChange, initialize } =
-    useTestAdminStore((state) => state);
-
-  const hasCreatePermission = hasPermission("ExamCreate");
+  const {
+    test,
+    changePage,
+    onPageSizeChange,
+    search,
+    onSelectionChange,
+    initialize,
+  } = useTestAdminStore((state) => state);
 
   useEffect(() => {
     onSelectionChange("test");
@@ -24,6 +27,7 @@ export default function StudentLists() {
 
   const columns = [
     { key: "id", title: "ID" },
+    { key: "teacher_name", title: "TeacherName" },
     { key: "level", title: "Student Level" },
     { key: "addition", title: "Addition" },
     { key: "subtraction", title: "Subtraction" },
@@ -52,30 +56,6 @@ export default function StudentLists() {
 
   const formattedData = formatTestData(test.data[test.page] || []);
 
-  const [studentAdditionObj, setStudentAdditionObj] = useState({
-    visible: false,
-    displayHeader: true,
-    title: "Add Student Test",
-    displayDefaultBtn: false,
-    cancelBtnText: "Later",
-    okBtnText: "Save",
-  });
-
-  const handleAddNewStudent = (id = null) => {
-    setStudentAdditionObj((prevState) => ({
-      ...prevState,
-      title: id ? "Edit Student Test" : "Add Student Test",
-      visible: true,
-    }));
-  };
-
-  const handleCloseStudentForm = () => {
-    setStudentAdditionObj((prevState) => ({
-      ...prevState,
-      visible: false,
-    }));
-  };
-
   const deleteTest = async (id) => {
     try {
       const response = await del(API.getAllTest + `/${id}`);
@@ -88,8 +68,10 @@ export default function StudentLists() {
 
   const updateStatusById = async (id, newStatus) => {
     try {
-      const response = await post(API.getAllTest + `/${id}`, { status: newStatus });
-      console.log(response)
+      const response = await post(API.getAllTest + `/${id}`, {
+        status: newStatus,
+      });
+      console.log(response);
       if (response.code === 200) {
         initialize("test");
         console.log("Status updated successfully");
@@ -101,14 +83,15 @@ export default function StudentLists() {
     }
   };
 
+  const handleSearch = useCallback(
+      debounce((query) => {
+        search(query);
+      }, 300),
+      [search]
+    );
+
   return (
     <>
-      {studentAdditionObj.visible && (
-        <FormStudentAddition
-          studentAdditionObj={studentAdditionObj}
-          handleCloseStudentForm={handleCloseStudentForm}
-        />
-      )}
       <div>
         <Breadcrumb pageName="Student Test" totalData={test.totalData} />
         <div className="mb-4">
@@ -136,24 +119,21 @@ export default function StudentLists() {
                   <option value="20">20</option>
                 </select>
               </div>
-              {hasCreatePermission && (
-                <div
-                  onClick={() => handleAddNewStudent()}
-                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
-                >
-                  <span>
-                    <i className="fa-solid fa-plus"></i>
-                  </span>
-                  <span>Add New</span>
-                </div>
-              )}
+              <div className="flex-grow mt-4 sm:mt-0">
+                <input
+                  type="text"
+                  onChange={(e) => handleSearch(e.target.value)}
+                  id="search"
+                  className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                  placeholder="Search Here"
+                />
+              </div>
             </div>
           </div>
         </div>
         <Table
           columns={columns}
           data={formattedData}
-          editLinkPrefix={() => handleAddNewStudent(1)}
           deleteHandler={deleteTest}
           isStatusActive={true}
           updateStatusById={updateStatusById}

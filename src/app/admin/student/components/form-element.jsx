@@ -1,6 +1,8 @@
 import { SelectField } from "@/components/app-inputfield/app-selectedfield";
 import SubmitButton from "@/components/Button/Submit-button";
 import StatusButton from "@/components/Switchers/StatusButton";
+import { get } from "@/service/api";
+import { API } from "@/service/constant/api-constant";
 import { useEffect, useState } from "react";
 
 export default function FormElementStudent({
@@ -10,12 +12,39 @@ export default function FormElementStudent({
 }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(data);
+  const [teachers, setTeachers] = useState([]);
+  const [teacherName, setTeacherName] = useState("");
   const [isPasswordEditable, setIsPasswordEditable] = useState(false);
 
   useEffect(() => {
     setFormData(data);
     setIsPasswordEditable(false);
+    fetchTeachers();
   }, [data]);
+
+  const fetchTeachers = async () => {
+    try {
+      const response = await get(API.getAllUser);
+      if (response.code === 200 && response.data) {
+        const filteredTeachers = response.data.filter(
+          (user) => user.user_type === "Teacher"
+        );
+        setTeachers(filteredTeachers);
+
+        // If it's an edit mode and teacherId is set, find the corresponding teacher's name
+        if (data.teacherId) {
+          const teacher = filteredTeachers.find(
+            (teacher) => teacher.id === data.teacherId
+          );
+          if (teacher) {
+            setTeacherName(teacher.name); // Set the teacher's name for the edit mode
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching teachers:", error);
+    }
+  };
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,12 +68,16 @@ export default function FormElementStudent({
     e.preventDefault();
     setLoading(true);
 
-    if (!formData.name || !formData.email || (!isEditMode && !formData.password)) {
+    if (
+      !formData.name ||
+      !formData.email ||
+      (!isEditMode && !formData.password)
+    ) {
       alert("Please fill all required fields.");
       setLoading(false);
       return;
     }
-  
+
     try {
       const submissionData = isPasswordEditable
         ? formData
@@ -98,12 +131,6 @@ export default function FormElementStudent({
             type: "email",
             placeholder: "john.doe@company.com",
           },
-          {
-            label: "Phone number",
-            name: "phone_number",
-            type: "tel",
-            placeholder: "123-45-678",
-          },
         ].map((input, idx) => (
           <div key={idx}>
             <label
@@ -126,16 +153,49 @@ export default function FormElementStudent({
             htmlFor="studentlevel"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
+            Phone number
+          </label>
+          <div class="relative mt-2">
+            <div class="absolute top-2 left-0 flex items-center pl-3">
+              <span>+91</span>
+              <div class="h-6 border-l border-slate-200 ml-2"></div>
+            </div>
+            <input
+              type="tel"
+              name="phone_number"
+              value={formData.phone_number || ""}
+              onChange={handleChange}
+              className="p-2 bg-gray-50 border pr-3 pl-14 border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
+              placeholder="324-456-2323"
+              pattern="[0-9]*"
+              inputmode="numeric"
+              maxlength="10"
+            />
+          </div>
+        </div>
+        <div>
+          <label
+            htmlFor="studentlevel"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
             Student Level
           </label>
-          <input
-            type="number"
+          <select
             name="level"
             value={formData.level || ""}
             onChange={handleChange}
             className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
-            placeholder="Student Level"
-          />
+            required
+          >
+            <option value="" disabled>
+              Select a level
+            </option>
+            {Array.from({ length: 12 }, (_, index) => (
+              <option key={index + 1} value={index + 1}>
+                Level {index + 1}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label
@@ -145,13 +205,13 @@ export default function FormElementStudent({
             Password
           </label>
           <div className="flex items-center">
-          <input
+            <input
               type="text"
               name="password"
               value={formData.password || ""}
               onChange={handleChange}
               className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
-              required={!isEditMode || isPasswordEditable} 
+              required={!isEditMode || isPasswordEditable}
               placeholder="•••••••••"
               disabled={isEditMode && !isPasswordEditable}
             />
@@ -174,7 +234,20 @@ export default function FormElementStudent({
           onChange={(e) =>
             setFormData({ ...formData, user_type: e.target.value })
           }
+          required={true}
         />
+         <SelectField
+            id="AllTeacher"
+            label="Teacher Name"
+            options={teachers.map((teacher) => ({
+              label: teacher.name,
+              value: teacher.id,
+            }))}
+            value={formData.teacherId || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, teacherId: e.target.value })
+            }
+          />
         <div>
           <SelectField
             id="teacher_permission"

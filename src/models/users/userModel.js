@@ -23,7 +23,7 @@ export const getAllTeacherUser = async (
   page = 1,
   pageSize = 10,
   searchQuery = null,
-  teacher_id=null
+  teacher_id = null
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -54,7 +54,6 @@ export const getAllTeacherUser = async (
     });
 
     const totalPages = Math.ceil(getAllData.count / parsedPageSize);
-    
 
     return {
       data: getAllData.rows,
@@ -71,7 +70,7 @@ export const getAllUser = async (
   pageSize = 10,
   searchQuery = null,
   userType,
-  teacherId = null,
+  teacherId = null
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -123,6 +122,8 @@ export const getUserById = async (userId) => {
 };
 export const getUserByIdWithReports = async (
   userId,
+  teacherId,
+  userType,
   page = 1,
   pageSize = 10,
   month = null,
@@ -132,11 +133,15 @@ export const getUserByIdWithReports = async (
   try {
     const userData = await User.findOne({
       where: { id: userId },
-      attributes: { exclude: ['password'] },
+      attributes: { exclude: ["password"] },
     });
 
     if (!userData) {
       throw new Error("User not found");
+    }
+
+    if (userType === "Teacher" && userData.teacherId !== teacherId) {
+      return;
     }
 
     let dateCondition = {};
@@ -153,7 +158,7 @@ export const getUserByIdWithReports = async (
 
     let hwStatusCondition = {};
     if (hwStatus !== null) {
-      hwStatusCondition = { hwStatus: hwStatus === 'true' }; 
+      hwStatusCondition = { hwStatus: hwStatus === "true" };
     }
 
     const { count: totalData, rows: reports } =
@@ -161,7 +166,7 @@ export const getUserByIdWithReports = async (
         where: {
           studentId: userId,
           ...dateCondition,
-          ...hwStatusCondition
+          ...hwStatusCondition,
         },
         attributes: [
           "id",
@@ -193,9 +198,27 @@ export const getUserByIdWithReports = async (
   }
 };
 
-export const updateUserById = async (userId, newData) => {
+export const getTeacherNameById= async (teacherId) => {
+  try {
+    const teacher = await User.findOne({
+      where: { id: teacherId },
+    });
+    if (teacher) {
+      return teacher.name;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching teacher name:", error);
+    return null; 
+  }
+}
+
+export const updateUserById = async (userId, teacherId, userType, newData) => {
   try {
     const findUser = await User.findOne({ where: { id: userId } });
+    if (userType === "Teacher" && findUser.teacherId !== teacherId) {
+      return;
+    }
     if (findUser) {
       const userUpdated = await findUser.update(newData);
       return userUpdated;
@@ -206,9 +229,12 @@ export const updateUserById = async (userId, newData) => {
     throw error;
   }
 };
-export const deleteUserById = async function (userId) {
+export const deleteUserById = async function (userId, teacherId, userType) {
   try {
     const deleteUser = await User.findOne({ where: { id: userId } });
+    if (userType === "Teacher" && deleteUser.teacherId !== teacherId) {
+      return;
+    }
     if (deleteUser) {
       await deleteUser.destroy();
       return true;

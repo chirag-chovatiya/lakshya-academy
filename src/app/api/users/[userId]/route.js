@@ -19,9 +19,10 @@ export async function GET(request, { params }) {
       authResponse.message || "Unauthorized"
     );
   }
+
   try {
-    // const userType = authResponse?.user?.user_type;
-    // const teacherId = authResponse?.user?.teacherId;
+    const userType = authResponse?.user?.user_type;
+    const teacherId = authResponse?.user?.id;
     const { userId } = params;
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get("page")) || 1;
@@ -30,48 +31,53 @@ export async function GET(request, { params }) {
     const year = parseInt(url.searchParams.get("year"));
     const hwStatus = url.searchParams.get("hwStatus");
 
-    let userResult;
-
-    if (userId) {
-      userResult = await getUserByIdWithReports(
-        userId,
-        // teacherId,
-        // userType,
-        page,
-        pageSize,
-        month,
-        year,
-        hwStatus
-      );
-    } else if (request.user) {
-      request.user.password = null;
-      request.user.otp = null;
-      return sendResponse(
-        NextResponse,
-        200,
-        "User details fetched successfully",
-        request.user
-      );
+    if (!userId) {
+      return sendResponse(NextResponse, 400, "Bad Request: Missing student ID");
     }
 
-    if (userResult) {
-      userResult.password = null;
-      return sendResponse(NextResponse, 200, "User is available", userResult);
+    const userResult = await getUserByIdWithReports(
+      userId,
+      teacherId,
+      userType,
+      page,
+      pageSize,
+      month,
+      year,
+      hwStatus
+    );
+
+    if (!userResult) {
+      return sendResponse(
+        NextResponse,
+        403,
+        "Unauthorized: This student is not associated with you"
+      );
     } else {
       return sendResponse(
         NextResponse,
-        404,
-        "No User found with the provided ID"
+        200,
+        "Student data fetched successfully",
+        userResult
       );
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return sendResponse(NextResponse, 500, "Internal server error");
   }
 }
 
 export async function POST(request, { params }) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
+    const userType = authResponse?.user?.user_type;
+    const teacherId = authResponse?.user?.id;
     const { userId } = params;
     const newData = await request.json();
 
@@ -88,7 +94,12 @@ export async function POST(request, { params }) {
       const hashedPassword = await bcrypt.hash(newData.password, 10);
       userData.password = hashedPassword;
     }
-    const userResult = await updateUserById(userId, userData);
+    const userResult = await updateUserById(
+      userId,
+      teacherId,
+      userType,
+      userData
+    );
 
     if (userResult) {
       return sendResponse(
@@ -105,14 +116,24 @@ export async function POST(request, { params }) {
       );
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return sendResponse(NextResponse, 500, "Internal server error");
   }
 }
 export async function DELETE(request, { params }) {
+  const authResponse = await authenticateToken(request);
+  if (!authResponse.user) {
+    return sendResponse(
+      NextResponse,
+      authResponse.status || 401,
+      authResponse.message || "Unauthorized"
+    );
+  }
   try {
+    const userType = authResponse?.user?.user_type;
+    const teacherId = authResponse?.user?.id;
     const { userId } = params;
-    const deleteUser = await deleteUserById(userId);
+    const deleteUser = await deleteUserById(userId, teacherId, userType);
     if (!deleteUser) {
       return sendResponse(
         NextResponse,

@@ -13,17 +13,7 @@ import { authenticateToken } from "@/middlewares/auth";
 dotenv.config();
 
 export async function POST(request, response) {
-  const authResponse = await authenticateToken(request);
-  if (!authResponse.user) {
-    return sendResponse(
-      NextResponse,
-      authResponse.status || 401,
-      authResponse.message || "Unauthorized"
-    );
-  }
   try {
-    const userId = authResponse?.user?.id;
-    const userType = authResponse?.user?.user_type;
     const {
       email,
       password,
@@ -33,6 +23,7 @@ export async function POST(request, response) {
       level,
       images,
       status,
+      teacherId,
       teacher_permission,
     } = await request.json();
 
@@ -81,6 +72,16 @@ export async function POST(request, response) {
         user,
       });
     } else {
+      const authResponse = await authenticateToken(request);
+      if (!authResponse.user) {
+        return sendResponse(
+          NextResponse,
+          authResponse.status || 401,
+          authResponse.message || "Unauthorized"
+        );
+      }
+      const userId = authResponse?.user?.id;
+      const userType = authResponse?.user?.user_type;
       if (!name || !phone_number) {
         return sendResponse(
           NextResponse,
@@ -99,6 +100,7 @@ export async function POST(request, response) {
         level,
         images,
         status,
+        teacherId,
         teacher_permission,
       };
 
@@ -163,3 +165,4 @@ export async function GET(request) {
     });
   }
 }
+

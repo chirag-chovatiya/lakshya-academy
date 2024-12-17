@@ -59,11 +59,12 @@ export async function post(endpoint, body, formdata = false, token = localStorag
   }
 }
 
-export async function del(endpoint) {
+export async function del(endpoint, token = localStorage.getItem("t")) {
   try {
     const header = {
       "Content-Type": "application/json",
       cache: "no-store",
+      ...(token && { Authorization: `Bearer ${token}` }),
     };
     const response = await fetch(`${BASE_URl}${endpoint}`, {
       method: "DELETE",

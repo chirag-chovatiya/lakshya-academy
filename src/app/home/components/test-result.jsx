@@ -1,7 +1,7 @@
 const Results = ({ questions, userAnswers, questionType, getSign, totalScore }) => {
     return (
-      <div className="md:mt-4 mt-90">
-        <h2 className="text-xl font-semibold py-5  sm:text-left">Total Score: {totalScore}</h2>
+      <div>
+        <h2 className="text-xl font-semibold py-2  sm:text-left">Total Score: {totalScore}</h2>
         <ul>
           {questions.map((q, index) => {
             const userAnswer = userAnswers[index]?.userAnswer || null;

@@ -13,6 +13,14 @@ export async function POST(request) {
     );
   }
 
+  if (authResponse.user.user_type !== "Teacher") {
+    return sendResponse(
+      NextResponse,
+      403,
+      "Forbidden: Only teachers can create a test"
+    );
+  }
+
   try {
     const teacher_id = authResponse?.user?.id;
     const data = await request.json();
@@ -48,17 +56,29 @@ export async function GET(request) {
   try {
     const userId = authResponse?.user?.id;
     const userType = authResponse?.user?.user_type;
-    console.log(userType);
+    const teacherId = authResponse?.user?.teacherId || null;
+
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
     const pageSize =
       parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
-    const allTest = await getAllTest(page, pageSize, userType, userId);
+    const teacherName = request.nextUrl.searchParams.get("teacherName") || "";
+
+
+    const allTest = await getAllTest(
+      page,
+      pageSize,
+      userType,
+      userId,
+      teacherId,
+      teacherName
+    );
     if (allTest) {
       return sendResponse(NextResponse, 200, "All Test are available", allTest);
     } else {
       return sendResponse(NextResponse, 404, "No Test available");
     }
   } catch (error) {
+    console.log("Error in GET handler:", error);
     return sendResponse(NextResponse, 500, "Internal server error", {
       error: error.message,
     });

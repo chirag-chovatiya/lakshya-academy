@@ -5,6 +5,9 @@ import {
   generateSubtractionQuestion,
 } from "@/helper/random.service";
 import { StudentAddition } from "./studentAdditionSchema";
+import { getTeacherNameById } from "../users/userModel";
+import { User } from "../users/userSchema";
+import { Op } from "sequelize";
 
 export const createTest = async (data) => {
   try {
@@ -13,7 +16,7 @@ export const createTest = async (data) => {
       subtractionSettings,
       multiplicationSettings,
       divisionSettings,
-      totalQuestion, 
+      totalQuestion,
     } = data;
 
     const questionAnswerSet = {
@@ -35,7 +38,8 @@ export const createTest = async (data) => {
       });
     }
 
-    const subtractionTotal = subtractionSettings?.totalQuestion || totalQuestion;
+    const subtractionTotal =
+      subtractionSettings?.totalQuestion || totalQuestion;
     for (let i = 0; i < subtractionTotal; i++) {
       const subtractionResult = generateSubtractionQuestion(
         subtractionSettings?.horizontalDigits,
@@ -47,7 +51,8 @@ export const createTest = async (data) => {
       });
     }
 
-    const multiplicationTotal = multiplicationSettings?.totalQuestion || totalQuestion;
+    const multiplicationTotal =
+      multiplicationSettings?.totalQuestion || totalQuestion;
     for (let i = 0; i < multiplicationTotal; i++) {
       const multiplicationResult = generateMultiplicationQuestion(
         multiplicationSettings?.horizontalDigits,
@@ -85,20 +90,47 @@ export const createTest = async (data) => {
     throw error;
   }
 };
-export const getAllTest = async (page = 1, pageSize = 10, userType, teacherId) => {
+export const getAllTest = async (
+  page = 1,
+  pageSize = 10,
+  userType,
+  userId,
+  teacherId = null,
+  teacherName
+) => {
   try {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
     const offset = (parsedPage - 1) * parsedPageSize;
 
-    const whereCondition = userType === "Teacher" 
-      ? { teacher_id: teacherId } 
-      : {};
+    const whereCondition = {
+      ...(userType === "Teacher" ? { teacher_id: userId } : {}),
+      ...(userType === "Student" && teacherId ? { teacher_id: teacherId } : {}),
+      ...(teacherName
+        ? {
+            "$teacher.name$": {
+              [Op.like]: `%${teacherName}%`,
+            },
+          }
+        : {}),
+    };
 
     if (!page && !pageSize) {
-      const getTest = await StudentAddition.findAll({ where: whereCondition });
+      const getTest = await StudentAddition.findAll({
+        where: whereCondition,
+        include: [
+          {
+            model: User,
+            as: "teacher",
+            attributes: ["id", "name"],
+          },
+        ],
+      });
+
       const formattedResult = getTest.map((entry) => ({
         id: entry.id,
+        teacher_id: entry.teacher_id,
+        teacher_name: entry.teacher ? entry.teacher.name : null,
         totalQuestion: entry.totalQuestion || null,
         addition: JSON.parse(entry.addition || []),
         subtraction: JSON.parse(entry.subtraction || []),
@@ -116,11 +148,21 @@ export const getAllTest = async (page = 1, pageSize = 10, userType, teacherId) =
       where: whereCondition,
       offset,
       limit: parsedPageSize,
+      include: [
+        {
+          model: User,
+          as: "teacher",
+          attributes: ["id", "name"],
+        },
+      ],
     });
+
 
     const totalPages = Math.ceil(count / parsedPageSize);
     const pageResult = rows.map((entry) => ({
       id: entry.id,
+      teacher_id: entry.teacher_id,
+      teacher_name: entry.teacher ? entry.teacher.name : null,
       totalQuestion: entry.totalQuestion || null,
       addition: JSON.parse(entry.addition || "[]"),
       subtraction: JSON.parse(entry.subtraction || "[]"),
@@ -139,6 +181,7 @@ export const getAllTest = async (page = 1, pageSize = 10, userType, teacherId) =
       totalData: count,
     };
   } catch (error) {
+    console.log("Error in getAllTest:", error);
     throw error;
   }
 };
@@ -220,7 +263,3 @@ export const deleteTestById = async function (testId) {
     throw error;
   }
 };
-
-
-
-

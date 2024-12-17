@@ -17,6 +17,7 @@ export default function StudentCreate() {
     level: 0,
     user_type: "",
     status: true,
+    teacherId:null,
     teacher_permission: [],
   });
   const router = useRouter();

@@ -7,11 +7,9 @@ const inter = Montserrat({
 });
 
 export const metadata = {
-  title: "Lakshya Academy",
+  title: "Geniplus Kids Abacus",
   openGraph: {
-    title: "Welcome To Lakshya Academy",
-    // url: "https://www.fishelly.com/",
-    // images: ["https://images.fishelly.com/medLineImage/hospitalLogo.png"],
+    title: "Welcome To Geniplus Kids Abacus",
   }
 };
 

@@ -69,8 +69,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               alt="Logo"
               className="w-28 h-20" // Adjust size as needed
             />
-            <h1 className="uppercase text-[23px] font-semibold text-white">
-              lakshya academy
+            <h1 className="uppercase text-[23px] text-center font-semibold text-white">
+            Geniplus Kids Abacus
             </h1>
           </div>
         </Link>

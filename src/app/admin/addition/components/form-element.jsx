@@ -137,7 +137,7 @@ export default function FormStudentAddition({
                           onChange={(e) => handleChange(e, type)}
                           placeholder="Enter number of rows"
                           required
-                          min="1"
+                          min="0"
                           max="10"
                         />
                         {type === "addition" && (
@@ -149,7 +149,7 @@ export default function FormStudentAddition({
                             value={formData[`${type}Settings`].verticalDigits}
                             onChange={(e) => handleChange(e, type)}
                             placeholder="Enter number of columns"
-                            min="1"
+                            min="0"
                             max="10"
                           />
                         )}
@@ -164,7 +164,7 @@ export default function FormStudentAddition({
                             value={formData[`${type}Settings`].subDigits}
                             onChange={(e) => handleChange(e, type)}
                             placeholder="Enter sub digits"
-                            min="1"
+                            min="0"
                             max="10"
                           />
                         )}

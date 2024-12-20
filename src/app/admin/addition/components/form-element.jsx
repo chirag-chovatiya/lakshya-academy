@@ -52,7 +52,7 @@ export default function FormStudentAddition({
     const { name, value } = e.target;
     let parsedValue = value === "" ? "" : parseInt(value);
     if (name !== 'totalQuestion') { 
-      if (parsedValue < 1) parsedValue = 1;
+      if (parsedValue < 0) parsedValue = 0;
       if (parsedValue > 10) parsedValue = 10;
     }
     setFormData((prevData) => ({

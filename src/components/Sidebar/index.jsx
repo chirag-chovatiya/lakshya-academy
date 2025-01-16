@@ -61,18 +61,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
-      <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
+      <div className="flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5">
         <Link href="/admin/">
-          <div className="flex flex-col items-center space-y-2">
+          {/* <div className="flex justify-center items-center space-y-2"> */}
             <img
-              src="/assets/logo/logo-11.png" // Replace with your image path
+              src="/assets/logo/finallogo.png" 
               alt="Logo"
-              className="w-28 h-20" // Adjust size as needed
+              className="w-30 h-25 rounded-lg" 
             />
-            <h1 className="uppercase text-[23px] text-center font-semibold text-white">
+            {/* <h1 className="uppercase text-[23px] text-center font-semibold text-white">
               Geniplus Kids Abacus
-            </h1>
-          </div>
+            </h1> */}
+          {/* </div> */}
         </Link>
 
         <button

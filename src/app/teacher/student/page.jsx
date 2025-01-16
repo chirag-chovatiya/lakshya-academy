@@ -40,12 +40,12 @@ export default function StudentLists() {
   const columns = [
     { key: "id", title: "ID" },
     { key: "name", title: "FullName" },
+    { key: "attendance", title: "Attendance" },
+    { key: "level", title: "Level" },
+    { key: "status", title: "Status" },
     { key: "email", title: "Email" },
     { key: "phone_number", title: "Phone" },
-    { key: "level", title: "Level" },
     { key: "user_type", title: "UserType" },
-    { key: "status", title: "Status" },
-    { key: "attendance", title: "Attendance" },
   ];
 
   const handleSearch = useCallback(

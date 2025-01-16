@@ -21,20 +21,20 @@ const Table = ({
   let pathname = usePathname();
 
   return (
-    <div className="rounded-xl border border-stroke bg-white p-2 shadow-default dark:border-strokedark dark:bg-boxdark">
+    <div className="rounded-xl border border-custom-blue bg-white p-2 shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>
-            <tr className="bg-gray-2 text-left dark:bg-meta-4">
+            <tr className="bg-custom-blue text-left dark:bg-meta-4 rounded-xl">
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-4 py-4 font-medium text-black dark:text-white"
+                  className="px-4 py-4 font-medium text-white first:rounded-l-xl last:rounded-r-xl"
                 >
                   {col.title}
                 </th>
               ))}
-              <th className="px-4 py-4 font-medium text-black dark:text-white">
+              <th className="px-4 py-4 font-medium text-white last:rounded-r-xl">
                 Actions
               </th>
             </tr>
@@ -122,7 +122,7 @@ const Table = ({
                                 ? `/admin/monthlyreport?studentId=${item.id}`
                                 : `/teacher/monthlyreport?studentId=${item.id}`
                             }
-                            className="text-custom-blue font-semibold hover:underline"
+                            className="text-custom-blue dark:text-amber-300 font-semibold hover:underline"
                           >
                             {item[col.key] || "-----"}
                           </Link>

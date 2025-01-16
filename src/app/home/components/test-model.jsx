@@ -109,15 +109,15 @@ export default function TestModel({
       const token = localStorage.getItem("t");
       const decoded = typeof token === "string" ? jwt.decode(token) : token;
 
-      // localStorage.setItem(
-      //   selectedCard,
-      //   JSON.stringify({
-      //     userAnswers,
-      //     submitted: true,
-      //     testId,
-      //     studentId: decoded.id,
-      //   })
-      // );
+      localStorage.setItem(
+        selectedCard,
+        JSON.stringify({
+          userAnswers,
+          submitted: true,
+          testId,
+          studentId: decoded.id,
+        })
+      );
 
       const correctAnswersCount = userAnswers.filter(
         (ans, index) => ans.userAnswer === filteredData[index]?.answer

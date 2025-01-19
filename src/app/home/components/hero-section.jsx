@@ -124,7 +124,7 @@ export default function HeroSection() {
               Student Home Work Image
             </button>
             <a
-              href="https://www.sorobanexam.org/mentalcalculation.html?fullscreen=1"
+              href="https://www.sorobanexam.org/mentalcalculation.html?fullscreen=1" target="_blank"
               className="block p-4 bg-custom-blue rounded-lg shadow-md hover:shadow-lg transition duration-200"
             >
               <p className="text-white">
@@ -132,7 +132,7 @@ export default function HeroSection() {
               </p>
             </a>
             <a
-              href="https://abacus.tss.net.in/"
+              href="https://abacus.tss.net.in/" target="_blank"
               className="block p-4 bg-custom-blue rounded-lg shadow-md"
             >
               <p className="text-white">

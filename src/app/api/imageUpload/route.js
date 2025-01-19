@@ -21,7 +21,7 @@ export const POST = async (request) => {
   }
   try {
     const studentId = authResponse?.user?.id;
-    const teacherId = authResponse?.user?.teacher_id;
+    const teacherId = authResponse?.user?.teacherId;
     const formData = await request.formData();
     const files = formData.getAll("files");
     const studentLevel = formData.get("studentLevel");
@@ -103,13 +103,13 @@ export async function GET(request) {
     const teacherId = userType === "Teacher" ? userId : null;
 
     const allReport = await getAllImage(
+      userType,
+      teacherId,
       page,
       pageSize,
       level,
       createdAt,
       studentName,
-      userType,
-      teacherId
     );
 
     if (allReport) {

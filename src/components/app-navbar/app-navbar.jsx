@@ -20,13 +20,10 @@ export default function AppNavbar() {
       <div className="flex flex-wrap items-center justify-between mx-auto px-8 py-3 gap-4">
       <div className="flex items-center space-x-4">
           <img
-            src="/assets/logo/logo-11.png"
-            className="h-10"
+            src="/assets/logo/finallogo.png"
+            className="h-10 w-10 rounded-lg"
             alt="Hospital Logo"
           />
-          <span className="text-lg font-semibold text-white">
-          Geniplus Kids Abacus
-          </span>
         </div>
         <div className="flex md:order-2 space-x-4 md:space-x-0 ltr:space-x-reverse">
           <div className="md:flex space-x-5">

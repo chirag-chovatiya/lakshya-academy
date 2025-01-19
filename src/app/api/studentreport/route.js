@@ -65,7 +65,7 @@ export async function GET(request) {
       hwStatus,
       level,
       createdAt,
-      studentName
+      studentName,
     );
 
     if (allReport) {

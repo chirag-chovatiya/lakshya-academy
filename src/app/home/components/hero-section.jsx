@@ -31,17 +31,14 @@ export default function HeroSection() {
   const fetchCardCounts = async () => {
     try {
       const response = await get(API.getAllTest);
-      console.log("Hero Section API Response:", response);
       if (response.code === 200 && response.data?.length > 0) {
         const token = localStorage.getItem("t");
         const decoded = jwt.decode(token);
         const studentLevel = decoded?.level;
-        console.log("Hero Section Student Level:", studentLevel);
 
         const activeTests = response.data.filter(
           (test) => test.status === true && test.level === studentLevel
         );
-        console.log("Hero Section Filtered Active Tests:", activeTests);
         if (activeTests.length > 0) {
           const testData = activeTests[0];
           setCardCounts({
@@ -64,20 +61,16 @@ export default function HeroSection() {
   return (
     <>
       <AdminAdvertisement />
-      <div className="container mx-auto mt-5 p-5">
-        <button
-          className="py-2 px-4 bg-custom-blue text-white rounded"
-          onClick={openImageUploadModal}
-        >
-          Student Home Work Image
-        </button>
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 p-5">
+        <StudentLesson />
+        <StudentLesson />
       </div>
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5 p-5">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-5">
         <div
-          className="bg-white rounded-lg shadow-lg p-5 cursor-pointer"
+          className="bg-white border text-custom-blue border-custom-blue rounded-lg shadow p-5 cursor-pointer"
           onClick={() => openModal("addition")}
         >
-          <h2 className="text-3xl font-semibold mb-3">+</h2>
+          <h2 className="text-4xl  font-semibold mb-3">+</h2>
           <h2 className="text-xl font-semibold mb-3">Addition</h2>
           <p className="font-semibold">
             Total Addition = {cardCounts.addition}
@@ -85,10 +78,10 @@ export default function HeroSection() {
         </div>
 
         <div
-          className="bg-white rounded-lg shadow-lg p-5 cursor-pointer"
+          className="bg-white text-custom-blue border border-custom-blue rounded-lg shadow p-5 cursor-pointer"
           onClick={() => openModal("subtraction")}
         >
-          <h2 className="text-3xl font-semibold mb-3">-</h2>
+          <h2 className="text-4xl font-semibold mb-3">-</h2>
           <h2 className="text-xl font-semibold mb-3">Subtraction</h2>
           <p className="font-semibold">
             Total Subtraction = {cardCounts.subtraction}
@@ -96,10 +89,10 @@ export default function HeroSection() {
         </div>
 
         <div
-          className="bg-white rounded-lg shadow-lg p-5 cursor-pointer"
+          className="bg-white text-custom-blue border border-custom-blue rounded-lg shadow p-5 cursor-pointer"
           onClick={() => openModal("multiplication")}
         >
-          <h2 className="text-3xl font-semibold mb-3">x</h2>
+          <h2 className="text-4xl font-semibold mb-3">x</h2>
           <h2 className="text-xl font-semibold mb-3">Multiplication</h2>
           <p className="font-semibold">
             Total Multiplication = {cardCounts.multiplication}
@@ -107,18 +100,47 @@ export default function HeroSection() {
         </div>
 
         <div
-          className="bg-white rounded-lg shadow-lg p-5 cursor-pointer"
+          className="bg-white text-custom-blue border border-custom-blue rounded-lg shadow p-5 cursor-pointer"
           onClick={() => openModal("division")}
         >
-          <h2 className="text-3xl font-semibold mb-3">/</h2>
+          <h2 className="text-4xl font-semibold mb-3">÷</h2>
           <h2 className="text-xl font-semibold mb-3">Division</h2>
           <p className="font-semibold">
             Total Division = {cardCounts.division}
           </p>
         </div>
       </div>
-      <div className="container w-full mx-auto mt-5 p-5">
-        <StudentLesson />
+
+      <div className="container mx-auto grid grid-cols-1  gap-4 p-5">
+        <div className="block w-full h-full p-6 bg-white border border-custom-blue rounded-lg shadow">
+          <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900">
+          Student Home Work Image & Practice Link
+          </h5>
+          <div className="grid md:grid-cols-3 gap-4">
+            <button
+              className="py-2 bg-custom-blue text-white rounded-lg"
+              onClick={openImageUploadModal}
+            >
+              Student Home Work Image
+            </button>
+            <a
+              href="https://www.sorobanexam.org/mentalcalculation.html?fullscreen=1"
+              className="block p-4 bg-custom-blue rounded-lg shadow-md hover:shadow-lg transition duration-200"
+            >
+              <p className="text-white">
+                Explore Mental Calculation techniques.
+              </p>
+            </a>
+            <a
+              href="https://abacus.tss.net.in/"
+              className="block p-4 bg-custom-blue rounded-lg shadow-md"
+            >
+              <p className="text-white">
+                Learn Abacus and sharpen your skills.
+              </p>
+            </a>
+          </div>
+        </div>
       </div>
       {isImageUploadOpen && (
         <ImageUploadModel

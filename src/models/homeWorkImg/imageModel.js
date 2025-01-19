@@ -11,13 +11,13 @@ export const createImage = async (data) => {
   }
 };
 export const getAllImage = async (
+  userType,
+  teacherId = null,
   page = 1,
   pageSize = 10,
   level = null,
   createdAt=null,
   studentName = null,
-  userType,
-  teacherId = null
 ) => {
   try {
     const parsedPage = parseInt(page);

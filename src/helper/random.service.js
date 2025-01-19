@@ -58,7 +58,7 @@ export const generateDivisionQuestion = (horizontalDigits, subDigits, pointFlag)
   
   return {
     question: questionArray,
-    answer: pointFlag ? totalDivision.toFixed(2) : totalDivision
+    answer: pointFlag ? parseFloat(totalDivision.toFixed(2)) : totalDivision
   };
 };
 

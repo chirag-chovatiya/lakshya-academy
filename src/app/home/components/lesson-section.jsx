@@ -29,7 +29,7 @@ export default function StudentLesson() {
   return (
     <>
       {lessonData && (
-        <div className="block w-full h-full p-6 bg-white border border-gray-200 rounded-lg shadow">
+        <div className="block w-full h-full p-6 bg-white border border-custom-blue rounded-lg shadow">
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
             Student Weekly Home Work
           </h5>

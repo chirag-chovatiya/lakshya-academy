@@ -23,19 +23,20 @@ export default function StudentLists() {
   const [hwStatus, setHwStatus] = useState("");
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+  const [monthFilter, setMonthFilter] = useState("");
 
   useEffect(() => {
     onSelectionChange("report");
     if (!report?.data?.[report.page]?.length) {
-      initialize();
+      initialize("report");
     }
-  }, [report.page, onSelectionChange, initialize]);
+  }, []);
 
   useEffect(() => {
-    if (hwStatus || level || createdAt) {
-      selectedData(hwStatus, level, createdAt);
+    if (hwStatus || level || createdAt || monthFilter) {
+      selectedData(hwStatus, level, createdAt, monthFilter);
     }
-  }, [hwStatus, level, createdAt, selectedData]);
+  }, [hwStatus, level, createdAt, monthFilter, selectedData]);
 
   const columns = useMemo(
     () => [
@@ -53,19 +54,19 @@ export default function StudentLists() {
     []
   );
 
-  const transformedData = useMemo(
-    () =>
-      (report?.data?.[report.page] || []).map((item) => ({
-        ...item,
-        studentname: item.student?.name || "N/A",
-        standerd: item.student?.level || "N/A",
-        hwStatus: item.hwStatus,
-        createdAt: item.createdAt
-          ? new Date(item.createdAt).toLocaleDateString("en-GB")
-          : "N/A",
-      })),
-    [report.data, report.page]
-  );
+  const transformedData = useMemo(() => {
+    const currentPageData = report?.data?.[report.page] || []; 
+    return currentPageData.map((item) => ({
+      ...item,
+      studentname: item.student?.name || "N/A",
+      standerd: item.student?.level || "N/A",
+      hwStatus: item.hwStatus,
+      createdAt: item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString("en-GB")
+        : "N/A",
+    }));
+  }, [report.data, report.page]);
+  
 
   const deleteTest = async (id) => {
     try {
@@ -172,6 +173,15 @@ export default function StudentLists() {
               <input
                 type="date"
                 id="dateSearch"
+                value={createdAt}
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                onChange={(e) => setCreatedAt(e.target.value)}
+              />
+            </div>
+            <div className="mt-4 sm:mt-0">
+              <input
+                type="month"
+                id="monthSearch"
                 value={createdAt}
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 onChange={(e) => setCreatedAt(e.target.value)}

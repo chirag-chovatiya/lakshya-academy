@@ -9,9 +9,9 @@ export const defaultInitState = {
     createdAt:null,
     studentName:null,
     page: 1,
+    pageSize: 10,
     totalPages: 0,
     totalData: 0,
-    pageSize: 10,
     loading: true,
     error: null,
     hasMoreData: true,
@@ -105,7 +105,7 @@ export const createReportStore = (initState = defaultInitState) =>
       });
       await fetchDataAndSetState(set, get);
     },
-    selectedData: async (hwStatus, level, createdAt) => {
+    selectedData: async (hwStatus, level, createdAt, filterMonth) => {
       set((state) => ({
         ...state.report,
         report: {

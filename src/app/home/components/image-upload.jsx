@@ -9,11 +9,13 @@ import jwt from "jsonwebtoken";
 export default function ImageUploadModel({ isModalOpen, setIsModalOpen }) {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const closeModal = () => {
     setIsModalOpen(false);
     setUploadedImages([]);
     setUploadedImageUrls([]);
+    setIsSubmitting(false);
   };
 
   const handleImageChange = (files) => {
@@ -23,6 +25,8 @@ export default function ImageUploadModel({ isModalOpen, setIsModalOpen }) {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return; 
+    setIsSubmitting(true);
     try {
       const formData = new FormData();
       uploadedImages.forEach((file) => {
@@ -47,6 +51,8 @@ export default function ImageUploadModel({ isModalOpen, setIsModalOpen }) {
       }
     } catch (error) {
       console.error("Error submitting data:", error);
+    }finally {
+      setIsSubmitting(false); 
     }
   };
 
@@ -64,11 +70,14 @@ export default function ImageUploadModel({ isModalOpen, setIsModalOpen }) {
           handleImageChange={handleImageChange}
         />
         <div className="mt-12 flex justify-end">
-          <button
+        <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-custom-blue text-white rounded-lg"
+            className={`px-4 py-2 rounded-lg ${
+              isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-custom-blue text-white"
+            }`}
+            disabled={isSubmitting}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </div>

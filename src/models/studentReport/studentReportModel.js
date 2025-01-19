@@ -62,7 +62,7 @@ export const getAllReport = async (
   hwStatus = null,
   level = null,
   createdAt=null,
-  studentName = null
+  studentName = null,
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -102,11 +102,19 @@ export const getAllReport = async (
     }
 
     if (createdAt) {
-      const startOfDay = new Date(createdAt).setHours(0, 0, 0, 0);
-      const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
-      whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
+      const filterDate = new Date(createdAt);
+      if (!isNaN(filterDate.getDate()) && filterDate.getDate() !== 1) {
+        const startOfDay = new Date(createdAt).setHours(0, 0, 0, 0);
+        const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
+        whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
+      } else {
+        const monthStart = new Date(filterDate.getFullYear(), filterDate.getMonth(), 1).setHours(0, 0, 0, 0);
+        const monthEnd = new Date(filterDate.getFullYear(), filterDate.getMonth() + 1, 0).setHours(23, 59, 59, 999);
+        whereClause.createdAt = { [Op.between]: [monthStart, monthEnd] };
+      }
     }
-
+    
+    
     
     const getReport = await StudentReport.findAndCountAll({
       where: whereClause,

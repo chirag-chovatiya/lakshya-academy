@@ -22,7 +22,7 @@ export default function AdminAdvertisement() {
   }, []);
   return (
     formData?.status ? (
-      <div className="block w-full h-full p-3 bg-white border border-gray-200 rounded-lg shadow overflow-hidden">
+      <div className="block w-full h-full p-3  bg-white border border-custom-blue shadow overflow-hidden">
         <h5 className="text-xl font-bold tracking-tight text-gray-900 whitespace-nowrap animate-marquee">
           {formData?.description}
         </h5>

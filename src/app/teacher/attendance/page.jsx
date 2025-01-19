@@ -41,8 +41,8 @@ export default function StudentLists() {
     () => [
       { key: "id", title: "ID" },
       { key: "studentName", title: "Student Name" },
-      { key: "studentLevel", title: "Student Level" },
       { key: "status", title: "Status" },
+      { key: "studentLevel", title: "Student Level" },
       { key: "createdAt", title: "Date" },
     ],
     []
@@ -56,7 +56,7 @@ export default function StudentLists() {
         studentLevel: item?.student?.level || "N/A",
         status: item.status,
         createdAt: item.createdAt
-          ? new Date(item.createdAt).toISOString().split("T")[0]
+          ? new Date(item.createdAt).toLocaleDateString("en-GB")
           : "N/A",
       };
       return transformedItem;

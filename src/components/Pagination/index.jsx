@@ -14,7 +14,6 @@ export default function Pagination({ data, changePage = () => {} }) {
     { length: endPage - startPage + 1 },
     (_, i) => startPage + i
   );
-
   return (
     <div className="flex items-center flex-col md:flex-row md:justify-between border-t border-gray-200 bg-gray-2 dark:bg-meta-4 px-4 py-3 sm:px-6">
       <div className="flex flex-col md:flex-row sm:flex-1 sm:items-center sm:justify-between">

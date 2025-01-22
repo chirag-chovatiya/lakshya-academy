@@ -63,7 +63,6 @@ export default function HeroSection() {
       <AdminAdvertisement />
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 p-5">
         <StudentLesson />
-        {/* <StudentLesson /> */}
       </div>
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-5">
         <div
@@ -132,7 +131,7 @@ export default function HeroSection() {
               </p>
             </a>
             <a
-              href="https://abacus.tss.net.in/"
+              href="https://abacus.tss.net.in/" target="_blank"
               className="block p-4 bg-custom-blue rounded-lg shadow-md"
             >
               <p className="text-white">

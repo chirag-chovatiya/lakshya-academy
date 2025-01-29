@@ -16,6 +16,8 @@ export default function TestModel({
   const [showResults, setShowResults] = useState(false);
   const [testId, setTestId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(null);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -39,8 +41,6 @@ export default function TestModel({
   const fetchData = async () => {
     try {
       const response = await get(API.getAllTest);
-      console.log("Test Model API Response:", response);
-
       if (response.code === 200 && response.data) {
         const token = localStorage.getItem("t");
         const decoded = jwt.decode(token);
@@ -78,6 +78,7 @@ export default function TestModel({
             setCurrentIndex(0);
             setUserAnswers([]);
             localStorage.removeItem(selectedCard);
+            setStartTime(Date.now());
           }
         } else {
           console.log("No matching tests for the student's level.");
@@ -88,6 +89,20 @@ export default function TestModel({
       console.error("Failed to fetch test data:", error);
     }
   };
+
+  useEffect(() => {
+    let timerInterval;
+
+    if (isModalOpen && startTime) {
+      timerInterval = setInterval(() => {
+        setElapsedTime(Date.now() - startTime);
+      }, 1000);
+    }
+
+    return () => {
+      if (timerInterval) clearInterval(timerInterval);
+    };
+  }, [isModalOpen, startTime]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -106,6 +121,12 @@ export default function TestModel({
       setCurrentIndex(currentIndex + 1);
     } else {
       setLoading(true);
+
+      if (startTime) {
+        const timeTaken = Date.now() - startTime;
+        setElapsedTime(timeTaken);
+        setStartTime(null);
+      }
       const token = localStorage.getItem("t");
       const decoded = typeof token === "string" ? jwt.decode(token) : token;
 
@@ -137,8 +158,6 @@ export default function TestModel({
 
       try {
         const response = await post(API.getReport, payload, false, token);
-        console.log(response);
-        console.log("Response:", response);
         if (response.code === 200 || response.code === 201) {
           console.log("Test results submitted successfully:", response.data);
         } else {
@@ -152,6 +171,14 @@ export default function TestModel({
       setLoading(false);
     }
   };
+
+  const formatElapsedTime = (ms) => {
+    if (!ms) return "0:00";
+    const minutes = Math.floor(ms / 60000);
+    const seconds = ((ms % 60000) / 1000).toFixed(0);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
+
 
   const handleAnswerChange = (e) => {
     const newAnswers = [...userAnswers];
@@ -193,13 +220,19 @@ export default function TestModel({
             questionType={selectedCard}
             getSign={getSign}
             totalScore={calculateScore()}
+            elapsedTime={formatElapsedTime(elapsedTime)}
           />
         ) : (
           currentQuestion && (
             <>
-              <h2 className="text-xl font-semibold py-2  sm:text-left">
-                Question : {currentIndex + 1}/{filteredData.length}
-              </h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold py-2  sm:text-left">
+                  Question : {currentIndex + 1}/{filteredData.length}
+                </h2>
+                <h3 className="text-lg text-gray-700 transition-all duration-500 ease-in-out">
+                  Time Start: {formatElapsedTime(Date.now() - startTime)}
+                </h3>
+              </div>
               <div className="w-full flex flex-col justify-center items-center mb-20">
                 <div className="text-center text-4xl">
                   {currentQuestion?.question?.map((num, index) => (

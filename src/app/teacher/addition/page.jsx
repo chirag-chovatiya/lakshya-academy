@@ -12,8 +12,6 @@ export default function StudentLists() {
   const { test, changePage, onPageSizeChange, onSelectionChange, initialize } =
     useTestAdminStore((state) => state);
 
-  
-
   useEffect(() => {
     onSelectionChange("test");
     if (Object.keys(test.data).length === 0) {
@@ -87,8 +85,10 @@ export default function StudentLists() {
 
   const updateStatusById = async (id, newStatus) => {
     try {
-      const response = await post(API.getAllTest + `/${id}`, { status: newStatus });
-      console.log(response)
+      const response = await post(API.getAllTest + `/${id}`, {
+        status: newStatus,
+      });
+      console.log(response);
       if (response.code === 200) {
         initialize("test");
         console.log("Status updated successfully");
@@ -129,21 +129,35 @@ export default function StudentLists() {
                   id="pagesizeForBlog"
                   className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                   onChange={(e) => onPageSizeChange(e.target.value)}
+                  value={test.pageSize}
                 >
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
+                  <option value="30">30</option>
+                  <option value="40">40</option>
+                  <option value="50">50</option>
                 </select>
               </div>
-                <div
-                  onClick={() => handleAddNewStudent()}
-                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
-                >
-                  <span>
-                    <i className="fa-solid fa-plus"></i>
-                  </span>
-                  <span>Add New</span>
-                </div>
+              <div
+                onClick={() => handleAddNewStudent()}
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
+              >
+                <span>
+                  <i className="fa-solid fa-plus"></i>
+                </span>
+                <span>Add New</span>
+              </div>
+              {/* <div
+                className="px-4 py-2 flex rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
+                onClick={deleteTest}
+                disabled={selectedRows.length === 0}
+              >
+                <span>
+                  <i className="fa-solid fa-plus"></i>
+                </span>
+                <span>Delete All</span>
+              </div> */}
             </div>
           </div>
         </div>
@@ -154,6 +168,7 @@ export default function StudentLists() {
           deleteHandler={deleteTest}
           isStatusActive={true}
           updateStatusById={updateStatusById}
+        
         />
         <Pagination data={test} changePage={changePage} />
       </div>

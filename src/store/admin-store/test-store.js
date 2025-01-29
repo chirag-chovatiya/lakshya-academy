@@ -7,7 +7,7 @@ export const defaultInitState = {
     page: 1,
     totalPages: 0,
     totalData: 0,
-    pageSize: 10,
+    pageSize: 50,
     loading: true,
     error: null,
     hasMoreData: true,

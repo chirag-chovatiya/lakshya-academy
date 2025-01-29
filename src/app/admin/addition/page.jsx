@@ -84,11 +84,11 @@ export default function StudentLists() {
   };
 
   const handleSearch = useCallback(
-      debounce((query) => {
-        search(query);
-      }, 300),
-      [search]
-    );
+    debounce((query) => {
+      search(query);
+    }, 300),
+    [search]
+  );
 
   return (
     <>
@@ -113,10 +113,14 @@ export default function StudentLists() {
                   id="pagesizeForBlog"
                   className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                   onChange={(e) => onPageSizeChange(e.target.value)}
+                  value={test.pageSize}
                 >
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
+                  <option value="30">30</option>
+                  <option value="40">40</option>
+                  <option value="50">50</option>
                 </select>
               </div>
               <div className="flex-grow mt-4 sm:mt-0">

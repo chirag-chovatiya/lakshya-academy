@@ -60,14 +60,18 @@ export async function POST(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     const { testId } = params;
-    const deleteTest = await deleteTestById(testId);
+
+    const testIds = testId.includes(",") ? testId.split(",") : testId;
+
+    const deleteTest = await deleteTestById(testIds);
+
     if (deleteTest) {
-      return sendResponse(NextResponse, 200, "Test Deleted successfully");
+      return sendResponse(NextResponse, 200, deleteTest.message);
     } else {
       return sendResponse(
         NextResponse,
         404,
-        "No Test found with the provided ID"
+        "No Test(s) found with the provided ID(s)"
       );
     }
   } catch (error) {

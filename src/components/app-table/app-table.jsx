@@ -13,6 +13,8 @@ const Table = ({
   updateStatusById,
   onImageClick,
   createAttendance,
+  onSelectRow,
+  selectedRows,
 }) => {
   const handleStatusChange = (id, newStatus) => {
     updateStatusById(id, newStatus);
@@ -26,6 +28,19 @@ const Table = ({
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-custom-blue text-left dark:bg-meta-4 rounded-xl">
+            <th className="px-4 py-4 font-medium text-white">
+                <input
+                  type="checkbox"
+                  onChange={(e) =>
+                    onSelectRow(
+                      e.target.checked
+                        ? data.map((item) => item.id) 
+                        : [] 
+                    )
+                  }
+                  checked={selectedRows?.length === data?.length}
+                />
+              </th>
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -43,6 +58,19 @@ const Table = ({
             {data.length > 0 ? (
               data.map((item, key) => (
                 <tr key={key}>
+                   <td className="border-b px-4 py-5">
+                    <input
+                      type="checkbox"
+                      checked={selectedRows?.includes(item?.id)}
+                      onChange={(e) =>
+                        onSelectRow(
+                          e.target.checked
+                            ? [...selectedRows, item?.id]
+                            : selectedRows?.filter((id) => id !== item?.id)
+                        )
+                      }
+                    />
+                  </td>
                   {columns.map((col) => (
                     <td
                       key={col.key}

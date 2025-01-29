@@ -14,15 +14,15 @@ export default function StudentLists() {
   const [studentData, setStudentData] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
-    totalPages: 1,
+    totalPages: 0,
     totalData: 0,
-    pageSize: 10,
+    pageSize: 50,
   });
   const [hwStatus, setHwStatus] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   
-  const fetchStudentData = async (id, page = 1, pageSize = 10, hwStatus = "", month="", year="") => {
+  const fetchStudentData = async (id, page = 1, pageSize = 50, hwStatus = "", month="", year="") => {
     try {
       let url = `${API.getAllUser}/${id}?page=${page}&pageSize=${pageSize}`;
       if (hwStatus) {
@@ -32,6 +32,8 @@ export default function StudentLists() {
         url += `&month=${month}&year=${year}`; 
       }
       const response = await get(url + '&');
+      console.log("monthReport", response);
+
       if (response.code == 200 && response.data && response.data.reports) {
         const formattedData = response.data.reports.map((report) => {
           return {
@@ -102,20 +104,13 @@ export default function StudentLists() {
   };
 
   const changePage = (pageNumber) => {
-    if (pageNumber !== pagination.currentPage) {
-      setPagination((prevState) => ({
-        ...prevState,
-        currentPage: pageNumber,
-      }));
+    if (pageNumber !== pagination.page) {
+      setPagination((prev) => ({ ...prev, page: pageNumber }));
     }
   };
 
   const changePageSize = (size) => {
-    setPagination((prevState) => ({
-      ...prevState,
-      pageSize: size,
-      currentPage: 1,
-    }));
+    setPagination({ ...pagination, pageSize: size, page: 1 });
   };
 
   const handleMonthChange = (e) => {
@@ -165,6 +160,7 @@ export default function StudentLists() {
                 id="pagesizeForBlog"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 onChange={(e) => changePageSize(Number(e.target.value))}
+                value={pagination.pageSize}
               >
                 <option value="1">1</option>
                 <option value="10">10</option>

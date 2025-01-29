@@ -272,12 +272,15 @@ export const updateTestById = async (testId, newData) => {
     throw error;
   }
 };
-export const deleteTestById = async function (testId) {
+export const deleteTestById = async function (testIds) {
   try {
-    const deleteTest = await StudentAddition.findOne({ where: { id: testId } });
-    if (deleteTest) {
-      await deleteTest.destroy();
-      return { message: "Test deleted successfully" };
+    const ids = Array.isArray(testIds) ? testIds : [testIds];
+
+    const deleteTests = await StudentAddition.findAll({ where: { id: ids } });
+
+    if (deleteTests.length > 0) {
+      await Promise.all(deleteTests.map((test) => test.destroy()));
+      return { message: `${deleteTests.length} Test(s) deleted successfully` };
     } else {
       return null;
     }

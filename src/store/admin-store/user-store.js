@@ -7,7 +7,7 @@ export const defaultInitState = {
     searchQuery:null,
     level:null,
     page: 1,
-    pageSize: 10,
+    pageSize: 50,
     totalPages: 0,
     totalData: 0,
     loading: true,

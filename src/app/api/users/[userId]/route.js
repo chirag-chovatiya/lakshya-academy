@@ -27,8 +27,7 @@ export async function GET(request, { params }) {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get("page")) || 1;
     const pageSize = parseInt(url.searchParams.get("pageSize")) || 10;
-    const month = parseInt(url.searchParams.get("month"));
-    const year = parseInt(url.searchParams.get("year"));
+    const createdAt = request.nextUrl.searchParams.get("createdAt");
     const hwStatus = url.searchParams.get("hwStatus");
 
     if (!userId) {
@@ -41,8 +40,7 @@ export async function GET(request, { params }) {
       userType,
       page,
       pageSize,
-      month,
-      year,
+      createdAt,
       hwStatus
     );
 

@@ -99,7 +99,6 @@ export const getAllUser = async (
       return getUsers;
     }
 
-    
     const getAllData = await User.findAndCountAll({
       where: whereClause,
       offset,
@@ -132,11 +131,13 @@ export const getUserByIdWithReports = async (
   userType,
   page = 1,
   pageSize = 10,
-  month = null,
-  year = null,
+  createdAt=null,
   hwStatus = null
 ) => {
   try {
+    const parsedPage = parseInt(page);
+    const parsedPageSize = parseInt(pageSize);
+    const offset = (parsedPage - 1) * parsedPageSize;
     const userData = await User.findOne({
       where: { id: userId },
       attributes: { exclude: ["password"] },
@@ -150,29 +151,32 @@ export const getUserByIdWithReports = async (
       return;
     }
 
-    let dateCondition = {};
-    if (month && year) {
-      dateCondition = {
-        createdAt: {
-          [Op.between]: [
-            new Date(`${year}-${month}-01T00:00:00.000Z`),
-            new Date(`${year}-${month}-31T23:59:59.999Z`),
-          ],
-        },
-      };
+    let whereClause = {}
+
+    if (createdAt) {
+      const filterDate = new Date(createdAt);
+      if (!isNaN(filterDate.getDate()) && filterDate.getDate() !== 1) {
+        const startOfDay = new Date(createdAt).setHours(0, 0, 0, 0);
+        const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
+        whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
+      } else {
+        const monthStart = new Date(filterDate.getFullYear(), filterDate.getMonth(), 1).setHours(0, 0, 0, 0);
+        const monthEnd = new Date(filterDate.getFullYear(), filterDate.getMonth() + 1, 0).setHours(23, 59, 59, 999);
+        whereClause.createdAt = { [Op.between]: [monthStart, monthEnd] };
+      }
     }
 
-    let hwStatusCondition = {};
-    if (hwStatus !== null) {
-      hwStatusCondition = { hwStatus: hwStatus === "true" };
+    if (hwStatus === "complete") {
+      whereClause.hwStatus = true;
+    } else if (hwStatus === "incomplete") {
+      whereClause.hwStatus = false;
     }
 
     const { count: totalData, rows: reports } =
       await StudentReport.findAndCountAll({
         where: {
+          ...whereClause,
           studentId: userId,
-          ...dateCondition,
-          ...hwStatusCondition,
         },
         attributes: [
           "id",
@@ -185,17 +189,17 @@ export const getUserByIdWithReports = async (
           "hwStatus",
           "createdAt",
         ],
-        offset: (page - 1) * pageSize,
-        limit: pageSize,
+        offset,
+        limit: parsedPageSize,
       });
 
-    const totalPages = Math.ceil(totalData / pageSize);
+    const totalPages = Math.ceil(totalData / parsedPageSize);
 
     return {
       ...userData.toJSON(),
       reports,
-      currentPage: page,
-      totalPages,
+      currentPage: parsedPage,
+      totalPages: totalPages,
       totalData,
     };
   } catch (error) {
@@ -204,7 +208,7 @@ export const getUserByIdWithReports = async (
   }
 };
 
-export const getTeacherNameById= async (teacherId) => {
+export const getTeacherNameById = async (teacherId) => {
   try {
     const teacher = await User.findOne({
       where: { id: teacherId },
@@ -215,9 +219,9 @@ export const getTeacherNameById= async (teacherId) => {
     return null;
   } catch (error) {
     console.error("Error fetching teacher name:", error);
-    return null; 
+    return null;
   }
-}
+};
 
 export const updateUserById = async (userId, teacherId, userType, newData) => {
   try {

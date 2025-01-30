@@ -13,41 +13,45 @@ export default function StudentLists() {
   const studentId = searchParams.get("studentId");
   const [studentData, setStudentData] = useState([]);
   const [pagination, setPagination] = useState({
-    currentPage: 1,
+    page: 1,
+    pageSize: 50,
     totalPages: 0,
     totalData: 0,
-    pageSize: 50,
   });
   const [hwStatus, setHwStatus] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-  
-  const fetchStudentData = async (id, page = 1, pageSize = 50, hwStatus = "", month="", year="") => {
+  const [createdAt, setCreatedAt] = useState("");
+
+  const fetchStudentData = async (
+    id,
+    page = 1,
+    pageSize = 50,
+    hwStatus = "",
+    createdAt = null
+  ) => {
     try {
       let url = `${API.getAllUser}/${id}?page=${page}&pageSize=${pageSize}`;
       if (hwStatus) {
-        url += `&hwStatus=${hwStatus}`; 
+        url += `&hwStatus=${hwStatus}`;
       }
-      if (month && year) {
-        url += `&month=${month}&year=${year}`; 
+      if (createdAt) {
+        url += `&createdAt=${createdAt}`;
       }
-      const response = await get(url + '&');
-      console.log("monthReport", response);
+      const response = await get(url + "&");
 
       if (response.code == 200 && response.data && response.data.reports) {
         const formattedData = response.data.reports.map((report) => {
           return {
             ...report,
             createdAt: new Date(report.createdAt).toLocaleDateString("en-GB"),
-            hwstatus: report.hwStatus === true ? "Complete" : "Incomplete", 
+            hwstatus: report.hwStatus === true ? "Complete" : "Incomplete",
           };
         });
         setStudentData(formattedData);
         setPagination({
-          currentPage: response.data.currentPage,
+          page: response.data.currentPage,
+          pageSize: pageSize,
           totalPages: response.data.totalPages,
           totalData: response.data.totalData,
-          pageSize: pageSize,
         });
       } else {
         console.error("Failed to fetch student data:", response.message);
@@ -59,13 +63,17 @@ export default function StudentLists() {
 
   useEffect(() => {
     if (studentId) {
-      fetchStudentData(studentId, pagination.currentPage, pagination.pageSize, hwStatus, month,
-        year);
+      fetchStudentData(
+        studentId,
+        pagination.page,
+        pagination.pageSize,
+        hwStatus,
+        createdAt
+      );
     } else {
       console.error("No student ID provided in the URL.");
     }
-  }, [studentId, pagination.currentPage, pagination.pageSize, hwStatus,month,
-    year]);
+  }, [studentId, pagination.page, pagination.pageSize, hwStatus, createdAt]);
 
   const columns = [
     { key: "id", title: "ID" },
@@ -113,26 +121,17 @@ export default function StudentLists() {
     setPagination({ ...pagination, pageSize: size, page: 1 });
   };
 
-  const handleMonthChange = (e) => {
-    const selectedValue = e.target.value; 
-    const [selectedYear, selectedMonth] = selectedValue.split("-");
-    setMonth(selectedMonth);
-    setYear(selectedYear);
-  };
-
   const handleRefresh = () => {
-    setHwStatus(""); 
-    setMonth(""); 
-    setYear(""); 
+    setHwStatus("");
+    setCreatedAt("");
     setPagination((prevState) => ({
       ...prevState,
-      currentPage: 1,
+      page: 1,
     }));
     if (studentId) {
-      fetchStudentData(studentId, 1, pagination.pageSize); 
+      fetchStudentData(studentId, 1, pagination.pageSize);
     }
   };
-  
 
   return (
     <>
@@ -173,25 +172,32 @@ export default function StudentLists() {
             <div className="mt-4 sm:mt-0">
               <select
                 id="pagesizeForBlog"
-                value={hwStatus}
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                onChange={(e)=>setHwStatus(e.target.value)}
+                value={hwStatus}
+                onChange={(e) => setHwStatus(e.target.value)}
               >
-                <option value="" disabled selected>
-                  H W Status
-                </option>
-                <option value="true">Complete</option>
-                <option value="false">Incomplete</option>
+                <option value="">HW Status</option>
+                <option value="complete">Complete</option>
+                <option value="incomplete">Incomplete</option>
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
               <input
                 type="month"
                 id="search"
-                value={`${year && month ? `${year}-${month}` : ""}`}
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 placeholder="Search Here"
-                onChange={handleMonthChange}
+                value={createdAt}
+                onChange={(e) => setCreatedAt(e.target.value)}
+              />
+            </div>
+            <div className="mt-4 sm:mt-0">
+              <input
+                type="date"
+                id="dateSearch"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                value={createdAt}
+                onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
           </div>

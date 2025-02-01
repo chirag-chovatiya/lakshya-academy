@@ -533,8 +533,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* Advertisement Start */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/advertisement" ||
-                  pathname.includes("advertisement")
+                  pathname === "/admin/notice" ||
+                  pathname.includes("notice")
                 }
               >
                 {(handleClick, open) => {
@@ -543,8 +543,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       <Link
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/advertisement" ||
-                            pathname.includes("advertisement")) &&
+                          (pathname === "/admin/notice" ||
+                            pathname.includes("notice")) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
                         onClick={(e) => {
@@ -557,7 +557,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <span>
                           <i className="fa-solid fa-user"></i>
                         </span>
-                        Advertisement
+                        Notice
                         <span>
                           <i
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
@@ -576,14 +576,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <Link
                               href={
                                 pathname.match(/\/admin/)
-                                  ? "/admin/advertisement"
-                                  : "/teacher/lesson"
+                                  ? "/admin/notice"
+                                  : "/teacher/notice"
                               }
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/lesson" || "text-white"
+                                pathname === "/admin/notice" || "text-white"
                               }`}
                             >
-                              Advertisement List
+                              Notice
                             </Link>
                           </li>
                         </ul>

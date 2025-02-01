@@ -1,13 +1,13 @@
-import { getAllReportData } from "@/service/report-api";
+import { getAllReportData, getReportData } from "@/service/report-api";
 import { createStore } from "zustand/vanilla";
 
 export const defaultInitState = {
   report: {
     data: {},
     hwStatus: null,
-    level:null,
-    createdAt:null,
-    studentName:null,
+    level: null,
+    createdAt: null,
+    studentName: null,
     page: 1,
     pageSize: 50,
     totalPages: 0,
@@ -38,7 +38,7 @@ async function fetchDataAndSetState(set, get) {
     if (studentName && studentName != "") {
       url += `&studentName=${encodeURIComponent(studentName)}`;
     }
-    const { data, code } = await getAllReportData(url+'&');
+    const { data, code } = await getAllReportData(url + "&");
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
@@ -129,6 +129,7 @@ export const createReportStore = (initState = defaultInitState) =>
       }));
       await fetchDataAndSetState(set, get);
     },
+    
     onError: (error) => set({ report: { ...get().report, error } }),
     noMoreData: () => set({ report: { ...get().report, hasMoreData: false } }),
   }));

@@ -5,6 +5,7 @@ import { UserWorkImage } from "../homeWorkImg/imageSchema";
 import { StudentAddition } from "../addition/studentAdditionSchema";
 import { Attendance } from "../studentAttendance/studentAttendanceSchema";
 import { Lesson } from "../studentLesson/studentLessonSchema";
+import { StudentNote } from "../notice/studentNoticeSchema";
 
 const User = sequelize.define(
   "students",
@@ -95,6 +96,10 @@ Lesson.belongsTo(User, {
 UserWorkImage.belongsTo(User, {
   foreignKey: "studentId",
   as: "student",
+});
+StudentNote.belongsTo(User, {
+  foreignKey: "teacherId",
+  as: "teacher",
 });
 
 export { User };

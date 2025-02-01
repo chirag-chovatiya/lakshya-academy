@@ -3,7 +3,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import React, { useEffect, useState } from "react";
 import { TextAreaField } from "@/components/app-inputfield/app-textarea";
 import StatusButton from "@/components/Switchers/StatusButton";
-import { getAdvertisementById, updateAdvertisementById } from "@/service/advertisement-api";
+import { getAdvertisementById, updateAdvertisementById } from "@/service/notice-api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function SatisfiedClientInfo() {

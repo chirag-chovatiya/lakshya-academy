@@ -1,12 +1,12 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { AdvertisementStoreProvider } from "@/providers/advertisement-store-provider";
+import { NoticeStoreProvider } from "@/providers/notice-store-provider";
 
 export default function StudentRootLayout({ children }) {
   return (
     <>
-      <AdvertisementStoreProvider>
+      <NoticeStoreProvider>
         <DefaultLayout>{children}</DefaultLayout>
-      </AdvertisementStoreProvider>
+      </NoticeStoreProvider>
     </>
   );
 }

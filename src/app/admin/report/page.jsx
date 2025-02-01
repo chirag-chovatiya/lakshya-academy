@@ -8,6 +8,7 @@ import Pagination from "@/components/Pagination";
 import debounce from "lodash/debounce";
 import { del } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
+import { getReportData } from "@/service/report-api";
 
 export default function StudentLists() {
   const {
@@ -23,6 +24,7 @@ export default function StudentLists() {
   const [hwStatus, setHwStatus] = useState("");
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+  const [reportData, setReportData] = useState(null);
 
   useEffect(() => {
     onSelectionChange("report");
@@ -84,6 +86,47 @@ export default function StudentLists() {
     [search]
   );
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getReportData();
+        if (response.code === 200 && response.data) {
+          setReportData(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch Notice data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const exportAllExcelReport = () => {
+    const filteredData = (reportData || []).map((item) => {
+      const row = {};
+      columns.forEach((column) => {
+        if (column.key === 'studentname') {
+          row[column.key] = item.student?.name || 'N/A'; 
+        } else if (column.key === 'standerd') {
+          row[column.key] = item.student?.level || 'N/A'; 
+        } else if (column.key === 'createdAt') {
+          row[column.key] = item.createdAt ? new Date(item.createdAt).toLocaleDateString("en-GB") : 'N/A';
+        } else if (column.key === 'hwStatus') {
+          row[column.key] = item.hwStatus ? "Complete" : "Incomplete";
+        } else {
+          row[column.key] = item[column.key] || 'N/A';
+        }
+      });
+      return row;
+    });
+    const currentDate = new Date().toLocaleDateString("en-GB");
+    const filename = `student_data_${currentDate}.xlsx`;
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
+    XLSX.writeFile(workbook, filename);
+  };
+
   const exportToExcel = () => {
     const filteredData = transformedData.map((item) => {
       const row = {};
@@ -128,6 +171,14 @@ export default function StudentLists() {
               >
                 <span>Export</span>
               </button>
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                onClick={exportAllExcelReport}
+              >
+                <span>Export All</span>
+              </button>
+            </div>
+            <div className="mt-4 sm:mt-0">
               <select
                 id="pagesizeForReport"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"

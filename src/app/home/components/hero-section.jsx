@@ -6,7 +6,7 @@ import { get } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import jwt from "jsonwebtoken";
 import StudentLesson from "./lesson-section";
-import AdminAdvertisement from "./advertisement-section";
+import StudentNotice from "./notice-section";
 
 export default function HeroSection() {
   const [selectedCard, setSelectedCard] = useState(null);
@@ -60,7 +60,7 @@ export default function HeroSection() {
 
   return (
     <>
-      <AdminAdvertisement />
+      <StudentNotice />
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 p-5">
         <StudentLesson />
       </div>

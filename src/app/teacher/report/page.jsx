@@ -8,6 +8,7 @@ import Pagination from "@/components/Pagination";
 import debounce from "lodash/debounce";
 import { del } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
+import { getReportData } from "@/service/report-api";
 
 export default function StudentLists() {
   const {
@@ -24,6 +25,7 @@ export default function StudentLists() {
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [monthFilter, setMonthFilter] = useState("");
+  const [reportData, setReportData] = useState(null);
 
   useEffect(() => {
     onSelectionChange("report");
@@ -55,7 +57,7 @@ export default function StudentLists() {
   );
 
   const transformedData = useMemo(() => {
-    const currentPageData = report?.data?.[report.page] || []; 
+    const currentPageData = report?.data?.[report.page] || [];
     return currentPageData.map((item) => ({
       ...item,
       studentname: item.student?.name || "N/A",
@@ -66,7 +68,6 @@ export default function StudentLists() {
         : "N/A",
     }));
   }, [report.data, report.page]);
-  
 
   const deleteTest = async (id) => {
     try {
@@ -84,6 +85,49 @@ export default function StudentLists() {
     }, 300),
     [search]
   );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getReportData();
+        if (response.code === 200 && response.data) {
+          setReportData(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch Report data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const exportAllExcelReport = () => {
+    const filteredData = (reportData || []).map((item) => {
+      const row = {};
+      columns.forEach((column) => {
+        if (column.key === "studentname") {
+          row[column.key] = item.student?.name || "N/A";
+        } else if (column.key === "standerd") {
+          row[column.key] = item.student?.level || "N/A";
+        } else if (column.key === "createdAt") {
+          row[column.key] = item.createdAt
+            ? new Date(item.createdAt).toLocaleDateString("en-GB")
+            : "N/A";
+        } else if (column.key === "hwStatus") {
+          row[column.key] = item.hwStatus ? "Complete" : "Incomplete";
+        } else {
+          row[column.key] = item[column.key] || "N/A";
+        }
+      });
+      return row;
+    });
+    const currentDate = new Date().toLocaleDateString("en-GB");
+    const filename = `student_data_${currentDate}.xlsx`;
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
+    XLSX.writeFile(workbook, filename);
+  };
 
   const exportToExcel = () => {
     const filteredData = transformedData.map((item) => {
@@ -129,6 +173,14 @@ export default function StudentLists() {
               >
                 <span>Export</span>
               </button>
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                onClick={exportAllExcelReport}
+              >
+                <span>Export All</span>
+              </button>
+            </div>
+            <div className="sm:mt-0">
               <select
                 id="pagesizeForReport"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -143,7 +195,7 @@ export default function StudentLists() {
                 <option value="50">50</option>
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <select
                 id="hwStatusFilter"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -155,7 +207,7 @@ export default function StudentLists() {
                 <option value="incomplete">Incomplete</option>
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <select
                 id="levelFilter"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -170,7 +222,7 @@ export default function StudentLists() {
                 ))}
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <input
                 type="date"
                 id="dateSearch"
@@ -179,7 +231,9 @@ export default function StudentLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
-            <div className="mt-4 sm:mt-0">
+          </div>
+          <div className="flex flex-col sm:flex-row md:items-center gap-4">
+            <div className="sm:mt-0">
               <input
                 type="month"
                 id="monthSearch"
@@ -188,15 +242,15 @@ export default function StudentLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
-          </div>
-          <div className="flex-grow mt-4 sm:mt-0">
-            <input
-              type="text"
-              id="textSearch"
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-              placeholder="Search Here"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
+            <div className="flex-grow">
+              <input
+                type="text"
+                id="textSearch"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                placeholder="Search Here"
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
           </div>
         </div>
         <Table

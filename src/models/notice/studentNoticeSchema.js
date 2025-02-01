@@ -1,14 +1,26 @@
 import { sequelize } from "@/config/database";
 import { DataTypes } from "sequelize";
 
-const AdminAdv = sequelize.define(
-  "AdminAdvertisement",
+const StudentNote = sequelize.define(
+  "StudentNotice",
   {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
+    },
+    teacherId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "students",
+        key: "id",
+      },
+      allowNull: false,
+    },
+    studentLevel: {
+      type: DataTypes.INTEGER,
+      defaultValue: null,
     },
     description: {
       type: DataTypes.TEXT,
@@ -27,5 +39,5 @@ const AdminAdv = sequelize.define(
 
 
 
-export { AdminAdv };
+export { StudentNote };
 

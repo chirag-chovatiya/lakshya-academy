@@ -4,13 +4,15 @@ import { Op } from "sequelize";
 export const createReport = async (data) => {
   try {
     const parseMarks = (marks) => {
-      const [obtained, total] = (marks || "0/0").split("/").map(val => parseFloat(val) || 0);
+      const [obtained, total] = (marks || "0/0")
+        .split("/")
+        .map((val) => parseFloat(val) || 0);
       return { obtained, total };
     };
 
     const student = await User.findOne({
       where: { id: data.studentId },
-      attributes: ['teacherId'],
+      attributes: ["teacherId"],
     });
 
     const teacherId = student.teacherId;
@@ -31,8 +33,14 @@ export const createReport = async (data) => {
       divisionMark: parseMarks(reportData.divisionMark),
     };
 
-    const totalMarks = Object.values(subjectMarks).reduce((sum, subject) => sum + subject.total, 0);
-    const obtainedMarks = Object.values(subjectMarks).reduce((sum, subject) => sum + subject.obtained, 0);
+    const totalMarks = Object.values(subjectMarks).reduce(
+      (sum, subject) => sum + subject.total,
+      0
+    );
+    const obtainedMarks = Object.values(subjectMarks).reduce(
+      (sum, subject) => sum + subject.obtained,
+      0
+    );
 
     let percentage = 0;
     if (totalMarks > 0) {
@@ -40,7 +48,6 @@ export const createReport = async (data) => {
     }
 
     reportData.result = `${percentage}%`;
-
 
     if (existingReport) {
       const updatedReport = await existingReport.update(reportData);
@@ -61,15 +68,13 @@ export const getAllReport = async (
   pageSize = 10,
   hwStatus = null,
   level = null,
-  createdAt=null,
-  studentName = null,
+  createdAt = null,
+  studentName = null
 ) => {
   try {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
     const offset = (parsedPage - 1) * parsedPageSize;
-
-    
 
     const includeClause = [
       {
@@ -83,13 +88,14 @@ export const getAllReport = async (
       },
     ];
     const whereClause = {};
-    
+
     if (userType === "Teacher" && teacherId) {
       whereClause.teacherId = teacherId;
     }
 
     if (!page && !pageSize) {
       const getStudentReport = await StudentReport.findAll({
+        where: whereClause,
         include: includeClause,
       });
       return getStudentReport;
@@ -108,14 +114,20 @@ export const getAllReport = async (
         const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
         whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
       } else {
-        const monthStart = new Date(filterDate.getFullYear(), filterDate.getMonth(), 1).setHours(0, 0, 0, 0);
-        const monthEnd = new Date(filterDate.getFullYear(), filterDate.getMonth() + 1, 0).setHours(23, 59, 59, 999);
+        const monthStart = new Date(
+          filterDate.getFullYear(),
+          filterDate.getMonth(),
+          1
+        ).setHours(0, 0, 0, 0);
+        const monthEnd = new Date(
+          filterDate.getFullYear(),
+          filterDate.getMonth() + 1,
+          0
+        ).setHours(23, 59, 59, 999);
         whereClause.createdAt = { [Op.between]: [monthStart, monthEnd] };
       }
     }
-    
-    
-    
+
     const getReport = await StudentReport.findAndCountAll({
       where: whereClause,
       offset,

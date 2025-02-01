@@ -8,7 +8,6 @@ import Pagination from "@/components/Pagination";
 import debounce from "lodash/debounce";
 import { del } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
-import { get } from "lodash";
 import { getReportData } from "@/service/report-api";
 
 export default function StudentLists() {
@@ -19,7 +18,6 @@ export default function StudentLists() {
     onSelectionChange,
     selectedData,
     search,
-    AllReport,
     initialize,
   } = useReportAdminStore((state) => state);
 

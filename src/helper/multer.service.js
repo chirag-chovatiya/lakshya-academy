@@ -1,49 +1,47 @@
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { Client } from "basic-ftp";
+import { Readable } from "stream";
 
-// Set up multer storage to save files to memory (for later processing)
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+export const uploadFilesToFTP = async (files, folderName) => {
+  const client = new Client();
+  client.ftp.verbose = true;
 
-// API config to disable default body parser for file uploads
-export const config = {
-  api: {
-    bodyParser: false,
-  },
+  const ftpConfig = {
+    host: process.env.FTP_HOST,
+    user: process.env.FTP_USER,
+    password: process.env.FTP_PASSWORD,
+    port: parseInt(process.env.FTP_PORT, 10) || 21,
+  };
+
+  try {
+    await client.access(ftpConfig);
+
+    const directoryList = await client.list();
+    const folderExists = directoryList.some((item) => item.name === folderName);
+
+    if (!folderExists) {
+      await client.ensureDir(folderName);
+    }
+    await client.cd(folderName);
+
+    const uploadedFileUrls = [];
+
+    for (const file of files) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const filename = file.name.replace(/\\/g, "").replace(/\//g, "");
+      const bufferStream = new Readable();
+      bufferStream.push(buffer);
+      bufferStream.push(null);
+
+      await client.uploadFrom(bufferStream, filename);
+
+      const fileUrl = `https://laxyaacademy.com/exam/${folderName}/${filename}`;
+      uploadedFileUrls.push(fileUrl);
+    }
+
+    await client.close();
+    return { success: true, urls: uploadedFileUrls };
+  } catch (error) {
+    console.log("FTP Upload Error:", error);
+    return { success: false, error: "FTP Upload Failed" };
+  }
 };
-
-// Function to handle file upload and store locally
-const handleUpload = async (files, folderName) => {
-  const uploadedUrls = [];
-
-  // Define the local folder path to store images
-  const folderPath = folderName ? `uploads/doctorImage/${folderName}/` : "uploads/doctorImage/";
-
-  // Ensure that the folder exists, create it if not
-  if (!fs.existsSync(folderPath)) {
-    fs.mkdirSync(folderPath, { recursive: true });
-  }
-
-  // Loop through the uploaded files
-  for (const file of files) {
-    // Generate the file path for local storage
-    const localFilePath = path.join(folderPath, file.originalname);
-
-    // Write the file to the local system
-    fs.writeFileSync(localFilePath, file.buffer);
-
-    // Generate a URL or path to the uploaded image
-    const imgUrl = `http://yourdomain.com/${localFilePath.replace("uploads/", "")}`;
-    uploadedUrls.push(imgUrl);
-  }
-
-  // Return a single URL or an array of URLs based on the number of files uploaded
-  if (uploadedUrls.length === 1) {
-    return uploadedUrls[0];
-  } else {
-    return uploadedUrls;
-  }
-};
-
-export { upload, handleUpload };

@@ -1,36 +1,37 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo} from "react";
 import Table from "@/components/app-table/app-table";
 import Pagination from "@/components/Pagination";
 import debounce from "lodash/debounce";
-import { del, post } from "@/service/api";
+import { del } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
-import { useNoticeAdminStore } from "@/providers/notice-store-provider";
+import "react-toastify/dist/ReactToastify.css";
+import { useTeacherAdvStore } from "@/providers/teacheradv-store-provider";
 
-export default function StudentNotice() {
+export default function StudentAdvertisement() {
   const {
-    notice,
+    advertisement,
     changePage,
     onPageSizeChange,
     onSelectionChange,
     teacherSearch,
     initialize,
-  } = useNoticeAdminStore((state) => state);
+  } = useTeacherAdvStore((state) => state);
 
   useEffect(() => {
-    onSelectionChange("notice");
-    if (!notice?.data?.[notice.page]?.length) {
+    onSelectionChange("advertisement");
+    if (!advertisement?.data?.[advertisement.page]?.length) {
       initialize();
     }
-  }, [notice.page, onSelectionChange, initialize]);
+  }, [advertisement.page, onSelectionChange, initialize]);
 
   const columns = useMemo(
     () => [
       { key: "id", title: "ID" },
       { key: "teacher", title: "Teacher Name" },
-      { key: "studentLevel", title: "Student Level" },
-      { key: "description", title: "Description" },
+      { key: "imgUrl", title: "Adv Image", type: "image" },
+      { key: "description", title: "Description", maxLength: 30 },
       { key: "status", title: "Status" },
       { key: "createdAt", title: "Date" },
     ],
@@ -38,52 +39,60 @@ export default function StudentNotice() {
   );
 
   const transformedData = useMemo(() => {
-    const data = (notice?.data?.[notice.page] || []).map((item) => {
-      const transformedItem = {
-        ...item,
-        teacher: item?.teacher?.name || "N/A",
-        studentLevel: item?.studentLevel || "N/A",
-        status: item.status,
-        createdAt: item.createdAt
-          ? new Date(item.createdAt).toISOString().split("T")[0]
-          : "N/A",
-      };
-      return transformedItem;
-    });
+    const data = (advertisement?.data?.[advertisement.page] || []).map(
+      (item) => {
+        const transformedItem = {
+          ...item,
+          teacher: item?.teacher?.name || "N/A",
+          status: item.status,
+          imgUrl: item.imgUrl || "N/A",
+          createdAt: item.createdAt
+            ? new Date(item.createdAt).toLocaleDateString("en-GB")
+            : "N/A",
+          description:
+            item.description?.length > 30
+              ? item.description.substring(0, 30) + "..."
+              : item.description, 
+        };
+        return transformedItem;
+      }
+    );
     return data;
-  }, [notice.data, notice.page]);
+  }, [advertisement.data, advertisement.page]);
 
   const handleSearch = useCallback(
-    debounce((query) => {
-      teacherSearch(query);
-    }, 300),
-    [teacherSearch]
-  );
+      debounce((query) => {
+        teacherSearch(query);
+      }, 300),
+      [teacherSearch]
+    );
 
-  const deleteLesson = async (id) => {
+  const deleteAdvertisement = async (id) => {
     try {
-      const response = await del(API.studentNote + `/${id}`);
-      if (response.success) {
-        initialize();
-      }
+      const response = await del(API.teacherAdv + `/${id}`);
+      initialize("advertisement");
+      return response;
     } catch (error) {
-      console.error("Error deleting notice data:", error);
+      console.error("Error deleting advertisement data:", error);
     }
   };
-  
+
 
   return (
     <>
+    
       <div>
-        <Breadcrumb pageName="Student Notice" totalData={notice.totalData} />
+        <Breadcrumb
+          pageName="Student Advertisement"
+          totalData={advertisement?.totalData}
+        />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4 justify-between">
             <div className="flex items-center gap-4">
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={() => {
-                  // handleSearch("");
-                  initialize("notice");
+                  initialize("advertisement");
                 }}
               >
                 <span>
@@ -95,7 +104,7 @@ export default function StudentNotice() {
                 id="pagesizeForReport"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 onChange={(e) => onPageSizeChange(e.target.value)}
-                value={notice.pageSize}
+                value={advertisement.pageSize}
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -119,9 +128,9 @@ export default function StudentNotice() {
         <Table
           columns={columns}
           data={transformedData}
-          deleteHandler={deleteLesson}
+          deleteHandler={deleteAdvertisement}
         />
-        <Pagination data={notice} changePage={changePage} />
+        <Pagination data={advertisement} changePage={changePage} />
       </div>
     </>
   );

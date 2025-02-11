@@ -16,10 +16,12 @@ export const defaultInitState = {
 
 async function fetchDataAndSetState(set, get) {
   const { page, pageSize } = get().notice;
-
-  // const teacherName = get().advertisement.teacherName;
+  const teacherName = get().notice.teacherName;
   try {
     let url = `?page=${page}&pageSize=${pageSize}`;
+    if (teacherName && teacherName != "") {
+      url += `&teacherName=${encodeURIComponent(teacherName)}`;
+    }
 
     const { data, code } = await getAllStudentNoticeData(url + "&");
 
@@ -89,8 +91,18 @@ export const createNoticeStore = (initState = defaultInitState) =>
       });
       await fetchDataAndSetState(set, get);
     },
-    onError: (error) =>
-      set({ notice: { ...get().notice, error } }),
-    noMoreData: () =>
-      set({ notice: { ...get().notice, hasMoreData: false } }),
+    teacherSearch: async (teacherName) => {
+      set((state) => ({
+        notice: {
+          ...state.notice,
+          teacherName: teacherName ? teacherName : null,
+          page: 1,
+          hasMoreData: true,
+          loading: true,
+        },
+      }));
+      await fetchDataAndSetState(set, get);
+    },
+    onError: (error) => set({ notice: { ...get().notice, error } }),
+    noMoreData: () => set({ notice: { ...get().notice, hasMoreData: false } }),
   }));

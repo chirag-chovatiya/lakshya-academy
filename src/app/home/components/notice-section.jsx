@@ -1,7 +1,6 @@
 "use client";
 import { get } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
-import { getStudentNoticeById } from "@/service/notice-api";
 import React, { useEffect, useState } from "react";
 
 export default function StudentNotice() {
@@ -11,7 +10,6 @@ export default function StudentNotice() {
     const fetchData = async () => {
       try {
         const response = await get(API.studentNote);
-        console.log(response)
         if (
           response.code === 200 &&
           response.data &&

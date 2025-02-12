@@ -15,7 +15,7 @@ export const API = {
 
   stdLesson: "studentlesson",
 
-  advertisement:"adminAdvertisement",
+  teacherAdv:"teacherAdvertise",
 
   studentNote:"studentnotice"
 

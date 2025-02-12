@@ -146,7 +146,7 @@ export async function GET(request) {
       parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
     const searchQuery = request.nextUrl.searchParams.get("searchQuery");
     const level = request.nextUrl.searchParams.get("level");
-
+    const teacherName = request.nextUrl.searchParams.get("teacherName");
 
     const allUser = await getAllUser(
       page,
@@ -154,7 +154,8 @@ export async function GET(request) {
       searchQuery,
       level,
       userType,
-      teacherId
+      teacherId,
+      teacherName
     );
     if (allUser) {
       return sendResponse(NextResponse, 200, "All User are available", allUser);
@@ -168,4 +169,3 @@ export async function GET(request) {
     });
   }
 }
-

@@ -98,99 +98,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             </h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-              {/* <!-- Menu Item Dashboard --> */}
-              {/* <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/" || pathname.includes("dashboard")
-                }
-              >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="/admin/"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/" ||
-                            pathname.includes("dashboard")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                      >
-                        <span>
-                          <i className="fa-solid fa-house"></i>
-                        </span>
-                        Dashboard
-                      </Link>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup> */}
-              {/* <!-- Menu Item Dashboard --> */}
 
               {/* <!-- Student --> */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/" ||
-                  pathname === "/teacher" ||
-                  pathname.includes("student")
-                }
-              >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/" ||
-                            pathname === "/teacher/" ||
-                            pathname.includes("student")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        Student List
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
-                      </Link>
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && "hidden"
-                        }`}
-                      >
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href={
-                                pathname.match(/\/admin/)
-                                  ? "/admin/"
-                                  : "/teacher/"
-                              }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/" ||
-                                (pathname === "/teacher/" && "text-white")
-                              }`}
-                            >
-                              Student
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+              <li>
+                <Link
+                  href={pathname.match(/\/admin/) ? "/admin/" : "/teacher/"}
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    (pathname === "/admin/" || pathname === "/teacher/") && "bg-graydark dark:bg-meta-4"
+                  }`}
+                >
+                  <span>
+                    <i className="fa-solid fa-user"></i>
+                  </span>
+                  Student List
+                </Link>
+              </li>
               {/* <!-- Student End --> */}
 
               {/* <!-- Exam List --> */}
@@ -530,7 +452,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 }}
               </SidebarLinkGroup>
               {/* Lesson End */}
-              {/* Advertisement Start */}
+              {/* Notice Start */}
               <SidebarLinkGroup
                 activeCondition={
                   pathname === "/admin/notice" ||
@@ -584,6 +506,69 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               }`}
                             >
                               Notice
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </React.Fragment>
+                  );
+                }}
+              </SidebarLinkGroup>
+              {/* Notice End */}
+              {/* Advertisement Start */}
+              <SidebarLinkGroup
+                activeCondition={
+                  pathname === "/admin/advertisement" ||
+                  pathname.includes("advertisement")
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      <Link
+                        href="#"
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                          (pathname === "/admin/advertisement" ||
+                            pathname.includes("advertisement")) &&
+                          "bg-graydark dark:bg-meta-4"
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sidebarExpanded
+                            ? handleClick()
+                            : setSidebarExpanded(true);
+                        }}
+                      >
+                        <span>
+                          <i className="fa-solid fa-user"></i>
+                        </span>
+                        Advertisement
+                        <span>
+                          <i
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
+                              open && "rotate-180"
+                            }`}
+                          ></i>
+                        </span>
+                      </Link>
+                      <div
+                        className={`translate transform overflow-hidden ${
+                          !open && "hidden"
+                        }`}
+                      >
+                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
+                          <li>
+                            <Link
+                              href={
+                                pathname.match(/\/admin/)
+                                  ? "/admin/advertisement"
+                                  : "/teacher/advertisement"
+                              }
+                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                pathname === "/admin/advertisement" || "text-white"
+                              }`}
+                            >
+                              TeacherAdvertisement
                             </Link>
                           </li>
                         </ul>

@@ -1,12 +1,13 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Link from "next/link";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/app-table/app-table";
 import debounce from "lodash/debounce";
 import { del, get } from "@/service/api";
+import * as XLSX from "xlsx";
 import { API } from "@/service/constant/api-constant";
 import { hasPermission } from "@/utils/permissions";
 import { useRouter } from "next/navigation";
@@ -34,20 +35,28 @@ export default function StudentLists() {
   }, []);
 
   useEffect(() => {
-      if (level) {
-        selectedData(level);
-      }
-    }, [level, selectedData]);
+    if (level) {
+      selectedData(level);
+    } else {
+      initialize("users");
+    }
+  }, [level, selectedData, initialize]);
 
   const columns = [
     { key: "id", title: "ID" },
     { key: "name", title: "FullName" },
     { key: "email", title: "Email" },
     { key: "phone_number", title: "Phone" },
+    { key: "studentTeacher", title: "Teacher Name" },
     { key: "level", title: "Level" },
     { key: "user_type", title: "UserType" },
     { key: "status", title: "Status" },
   ];
+
+  const transformedData = users.data[users.page]?.map((student) => ({
+    ...student,
+    studentTeacher: student.studentTeacher?.name || "N/A",
+  }));
 
   const handleSearch = useCallback(
     debounce((query) => {
@@ -65,6 +74,24 @@ export default function StudentLists() {
     } catch (error) {
       console.error("Error deleting student:", error);
     }
+  };
+
+  const handleExportToExcel = () => {
+    const exportData = users.data[users.page]?.map((user) => ({
+      ID: user.id,
+      studentTeacher: user.studentTeacher?.name || "N/A",
+      FullName: user.name,
+      Email: user.email,
+      Level: user.level,
+      Phone: user.phone_number,
+      Status: user.status ? "Active" : "Inactive",
+      UserType: user.user_type,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+    XLSX.writeFile(wb, "students.xlsx");
   };
 
   return (
@@ -87,18 +114,26 @@ export default function StudentLists() {
                 </span>
                 <span>Refresh</span>
               </button>
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                onClick={handleExportToExcel}
+              >
+                <span>
+                  <i className="fa-solid fa-download"></i>
+                </span>
+                <span>Export</span>
+              </button>
               <select
                 id="pagesizeForBlog"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={users.pageSize}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
+                {[5, 10, 20, 30, 40, 50, 100, 200, 500, 1000].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
@@ -140,7 +175,7 @@ export default function StudentLists() {
         </div>
         <Table
           columns={columns}
-          data={users.data[users.page] || []}
+          data={transformedData || []}
           editLinkPrefix="../../admin/student/edit"
           deleteHandler={handleDelete}
           editButtonVisible={true}

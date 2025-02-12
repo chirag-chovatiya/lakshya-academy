@@ -6,6 +6,7 @@ import { StudentAddition } from "../addition/studentAdditionSchema";
 import { Attendance } from "../studentAttendance/studentAttendanceSchema";
 import { Lesson } from "../studentLesson/studentLessonSchema";
 import { StudentNote } from "../notice/studentNoticeSchema";
+import { TeacherAdvertisement } from "../teacherAdv/studentAdvSchema";
 
 const User = sequelize.define(
   "students",
@@ -72,6 +73,7 @@ User.hasMany(StudentAddition, {
   foreignKey: "teacher_id",
   as: "teacher",
 });
+User.belongsTo(User, { foreignKey: "teacherId", as: "studentTeacher" });
 
 StudentReport.belongsTo(User, {
   foreignKey: "studentId",
@@ -99,6 +101,10 @@ UserWorkImage.belongsTo(User, {
 });
 StudentNote.belongsTo(User, {
   foreignKey: "teacherId",
+  as: "teacher",
+});
+TeacherAdvertisement.belongsTo(User, {
+  foreignKey: "userId",
   as: "teacher",
 });
 

@@ -14,6 +14,7 @@ export default function StudentNotice() {
     changePage,
     onPageSizeChange,
     onSelectionChange,
+    teacherSearch,
     initialize,
   } = useNoticeAdminStore((state) => state);
 
@@ -27,7 +28,7 @@ export default function StudentNotice() {
   const columns = useMemo(
     () => [
       { key: "id", title: "ID" },
-      { key: "teacherId", title: "Teacher Name" },
+      { key: "teacher", title: "Teacher Name" },
       { key: "studentLevel", title: "Student Level" },
       { key: "description", title: "Description" },
       { key: "status", title: "Status" },
@@ -40,10 +41,11 @@ export default function StudentNotice() {
     const data = (notice?.data?.[notice.page] || []).map((item) => {
       const transformedItem = {
         ...item,
+        teacher: item?.teacher?.name || "N/A",
         studentLevel: item?.studentLevel || "N/A",
         status: item.status,
         createdAt: item.createdAt
-          ? new Date(item.createdAt).toISOString().split("T")[0]
+          ? new Date(item.createdAt).toLocaleDateString("en-GB")
           : "N/A",
       };
       return transformedItem;
@@ -51,20 +53,21 @@ export default function StudentNotice() {
     return data;
   }, [notice.data, notice.page]);
 
-  // const handleSearch = useCallback(
-  //   debounce((query) => {
-  //     teacherSearch(query);
-  //   }, 300),
-  //   [teacherSearch]
-  // );
+  const handleSearch = useCallback(
+    debounce((query) => {
+      teacherSearch(query);
+    }, 300),
+    [teacherSearch]
+  );
 
   const deleteLesson = async (id) => {
     try {
-      const response = await del(API.stdLesson + `/${id}`);
-      initialize("lesson");
-      return response;
+      const response = await del(API.studentNote + `/${id}`);
+      if (response.success) {
+        initialize();
+      }
     } catch (error) {
-      console.error("Error deleting lesson data:", error);
+      console.error("Error deleting notice data:", error);
     }
   };
   
@@ -79,7 +82,7 @@ export default function StudentNotice() {
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={() => {
-                  handleSearch("");
+                  // handleSearch("");
                   initialize("notice");
                 }}
               >

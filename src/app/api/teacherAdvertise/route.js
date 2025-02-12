@@ -2,17 +2,19 @@ import { NextResponse } from "next/server";
 import sendResponse from "@/utils/response";
 import { authenticateToken } from "@/middlewares/auth";
 import {
-  createStudentNote,
-  findNoticeByStudentLevel,
-  getAllStudentNote,
-} from "@/models/notice/studentNoticeModel";
+  createTeacherAdvertise,
+  findTeacherAdvertiseByUserId,
+  getAllTeacherAdvertise,
+} from "@/models/teacherAdv/studentAdvModel";
+import { uploadFilesToFTP } from "@/helper/multer.service";
 
 export async function POST(request) {
   const authResponse = await authenticateToken(request);
+
   if (!authResponse.user) {
     return sendResponse(
       NextResponse,
-      authResponse.status || 401,
+      401,
       authResponse.message || "Unauthorized"
     );
   }
@@ -21,34 +23,54 @@ export async function POST(request) {
     return sendResponse(
       NextResponse,
       403,
-      "Forbidden: Only Teacher can create"
+      "Forbidden: Only Teacher can create advertisements."
     );
   }
 
   try {
-    const teacherId = authResponse?.user?.id;
-    const data = await request.json();
-    data.teacherId = teacherId;
+    const userId = authResponse.user.id;
+    const formData = await request.formData();
+    const files = formData.getAll("files");
+    const description = formData.get("description");
+    const folderName = "advertisement";
 
-    const existingLesson = await findNoticeByStudentLevel(data.studentLevel);
+    if (!files.length) {
+      return sendResponse(NextResponse, 400, "No files received.");
+    }
 
-    if (existingLesson && existingLesson.teacherId === teacherId) {
+    const existingAdv = await findTeacherAdvertiseByUserId(userId);
+    if (existingAdv) {
       return sendResponse(
         NextResponse,
         400,
-        `Previous lesson for student level ${data.studentLevel} was inactive. Creating new lesson.`
+        "Previous Advertisement was inactive. Create a new one."
       );
     }
 
-    const newAdv = await createStudentNote(data);
+    const uploadResult = await uploadFilesToFTP(files, folderName);
+    if (!uploadResult.success) {
+      return NextResponse.json({ message: "Upload Failed" }, { status: 500 });
+    }
+
+    const createdAds = [];
+
+    for (const fileUrl of uploadResult.urls) {
+      const newAdv = await createTeacherAdvertise({
+        userId,
+        description,
+        imgUrl: fileUrl,
+      });
+      createdAds.push(newAdv);
+    }
+
     return sendResponse(
       NextResponse,
       201,
-      "Student Notice created successfully",
-      newAdv
+      "Advertisement created successfully",
+      createdAds
     );
   } catch (error) {
-    console.error(error);
+    console.error("Error:", error);
     return sendResponse(NextResponse, 500, "Internal server error");
   }
 }
@@ -65,7 +87,6 @@ export async function GET(request) {
   try {
     const userId = authResponse?.user?.id;
     const userType = authResponse?.user?.user_type;
-    const level = authResponse?.user?.level;
     const teacherId =
       userType === "Teacher" ? userId : authResponse?.user?.teacherId;
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
@@ -73,11 +94,10 @@ export async function GET(request) {
       parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
     const teacherName = request.nextUrl.searchParams.get("teacherName");
 
-
-    const allAdv = await getAllStudentNote(
+    const allAdv = await getAllTeacherAdvertise(
       userType,
+      userId,
       teacherId,
-      level,
       page,
       pageSize,
       teacherName
@@ -87,11 +107,11 @@ export async function GET(request) {
       return sendResponse(
         NextResponse,
         200,
-        "All Student Notice are available",
+        "All Advertisement are available",
         allAdv
       );
     } else {
-      return sendResponse(NextResponse, 404, "No Student Notice available");
+      return sendResponse(NextResponse, 404, "No Advertisement available");
     }
   } catch (error) {
     console.log(error);

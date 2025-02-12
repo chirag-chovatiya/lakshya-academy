@@ -21,7 +21,6 @@ export default function StudentCreate() {
     e.preventDefault();
     try {
       const token = localStorage.getItem("t");
-      console.log("ggggggggggggggggggggg",token)
       const response = await post(API.getAllTest, data || formData, token);
       if (response.code === 201 || response.code === 200) {
         router.replace("/teacher/student");

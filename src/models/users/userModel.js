@@ -71,12 +71,21 @@ export const getAllUser = async (
   searchQuery = null,
   level = null,
   userType,
-  teacherId = null
+  teacherId = null,
 ) => {
   try {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
     const offset = (parsedPage - 1) * parsedPageSize;
+
+    const includeClause = [
+      {
+        model: User,
+        as: "studentTeacher",
+        attributes: ["name"],
+      },
+    ];
+
 
     const whereClause = {};
 
@@ -88,6 +97,7 @@ export const getAllUser = async (
       whereClause[Op.or] = [
         { name: { [Op.like]: `%${searchQuery}%` } },
         { email: { [Op.like]: `%${searchQuery}%` } },
+        { "$studentTeacher.name$": { [Op.like]: `%${searchQuery}%` } },
       ];
     }
     if (level) {
@@ -95,12 +105,13 @@ export const getAllUser = async (
     }
 
     if (!page && !pageSize) {
-      const getUsers = await User.findAll();
+      const getUsers = await User.findAll({include: includeClause});
       return getUsers;
     }
 
     const getAllData = await User.findAndCountAll({
       where: whereClause,
+      include: includeClause,
       offset,
       limit: parsedPageSize,
     });

@@ -28,7 +28,7 @@ export default function TeacherAdvHomeModel() {
   }, []);
 
   useEffect(() => {
-    const isModalVisible = sessionStorage.getItem("a-m-v");
+    const isModalVisible = sessionStorage.getItem("t-m-v");
 
     if (!isModalVisible && advData?.status) {
       const timer = setTimeout(() => {
@@ -41,7 +41,7 @@ export default function TeacherAdvHomeModel() {
 
   const handleCancelClick = () => {
     setIsVisible(false);
-    sessionStorage.setItem("a-m-v", "true");
+    sessionStorage.setItem("t-m-v", "true");
   };
 
   return (
@@ -51,21 +51,21 @@ export default function TeacherAdvHomeModel() {
       headerTitle="Admin Advertisement"
       showCloseButton={true}
     >
-      <div className="h-[70vh] w-[80vw] md:h-[50vh] md:w-[60vw] bg-primary-500 relative p-4">
+      <div className="h-[70vh] w-[80vw] md:h-[50vh] md:w-[60vw] bg-primary-500 relative">
         <div className="bg-white bg-opacity-50 p-4 rounded-md">
           <div className="flex flex-col items-center">
             {advData?.imgUrl && (
               <img
-                src={advData.imgUrl}
+                src={advData?.imgUrl}
                 alt="Advertisement"
-                className="w-full h-full md:w-full md:h-full rounded-md shadow-lg"
+                className="w-full h-full rounded-md shadow-lg"
               />
             )}
-            <div className="text-center">
-              <h2 className="text-xl mt-6 md:text-2xl font-bold text-custom-blue">
-                {advData?.description}
-              </h2>
-            </div>
+          </div>
+          <div className="mt-6">
+            <h2 className="text-lg md:text-xl font-bold text-custom-blue">
+              {advData?.description}
+            </h2>
           </div>
         </div>
       </div>

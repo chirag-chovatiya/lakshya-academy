@@ -5,45 +5,34 @@ import Table from "@/components/app-table/app-table";
 import Pagination from "@/components/Pagination";
 import { del, post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
-import StudentLesson from "./components/form-element";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNoticeAdminStore } from "@/providers/notice-store-provider";
 import StudentNotice from "./components/form-element";
+import { useTeacherAdvStore } from "@/providers/teacheradv-store-provider";
 
-export default function StudentNotices() {
+export default function StudentAdvertisement() {
   const {
-    notice,
+    advertisement,
     changePage,
     onPageSizeChange,
     onSelectionChange,
-    selectedData,
     initialize,
-  } = useNoticeAdminStore((state) => state);
+  } = useTeacherAdvStore((state) => state);
 
-  const [status, setStatus] = useState("");
-  const [level, setLevel] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
-  const [selectedNoticeId, setselectedNoticeId] = useState(null);
+  const [teacherAdvId, setTeacherAdvId] = useState(null);
 
   useEffect(() => {
-    onSelectionChange("notice");
-    if (!notice?.data?.[notice.page]?.length) {
+    onSelectionChange("advertisement");
+    if (!advertisement?.data?.[advertisement.page]?.length) {
       initialize();
     }
-  }, [notice.page, onSelectionChange, initialize]);
-
-  useEffect(() => {
-    if (status || level || createdAt) {
-      selectedData(status, level, createdAt);
-    }
-  }, [status, level, createdAt, selectedData]);
+  }, [advertisement.page, onSelectionChange, initialize]);
 
   const columns = useMemo(
     () => [
       { key: "id", title: "ID" },
-      { key: "studentLevel", title: "Student Level" },
-      { key: "description", title: "Description" },
+      { key: "imgUrl", title: "Adv Image", type: "image" },
+      { key: "description", title: "Description", maxLength: 30 },
       { key: "status", title: "Status" },
       { key: "createdAt", title: "Date" },
     ],
@@ -51,66 +40,75 @@ export default function StudentNotices() {
   );
 
   const transformedData = useMemo(() => {
-    const data = (notice?.data?.[notice.page] || []).map((item) => {
-      const transformedItem = {
-        ...item,
-        studentName: item?.student?.name || "N/A",
-        studentLevel: item?.studentLevel || "N/A",
-        status: item.status,
-        createdAt: item.createdAt
-          ? new Date(item.createdAt).toLocaleDateString("en-GB")
-          : "N/A",
-      };
-      return transformedItem;
-    });
+    const data = (advertisement?.data?.[advertisement.page] || []).map(
+      (item) => {
+        const transformedItem = {
+          ...item,
+          status: item.status,
+          imgUrl: item.imgUrl || "N/A",
+          createdAt: item.createdAt
+            ? new Date(item.createdAt).toLocaleDateString("en-GB")
+            : "N/A",
+          description:
+            item.description?.length > 30
+              ? item.description.substring(0, 30) + "..."
+              : item.description, 
+        };
+        return transformedItem;
+      }
+    );
     return data;
-  }, [notice.data, notice.page]);
+  }, [advertisement.data, advertisement.page]);
 
-  const [studentNoticeObj, setstudentNoticeObj] = useState({
+  const [studentAdvObj, setstudentAdvObj] = useState({
     visible: false,
     displayHeader: true,
-    title: "Add Student Notice",
+    title: "Add Student Advertisement",
     displayDefaultBtn: false,
     cancelBtnText: "Later",
     okBtnText: "Save",
   });
 
-  const handleAddNewNotice = (id = null) => {
-    setselectedNoticeId(id);
-    setstudentNoticeObj((prevState) => ({
+  const handleAddNewAdv = (id = null) => {
+    setTeacherAdvId(id);
+    setstudentAdvObj((prevState) => ({
       ...prevState,
-      title: id ? "Edit Student Notice" : "Add Student Notice",
+      title: id ? "Edit Student Advertisement" : "Add Student Advertisement",
       visible: true,
     }));
   };
 
   const handleCloseStudentForm = () => {
-    setstudentNoticeObj((prevState) => ({
+    setstudentAdvObj((prevState) => ({
       ...prevState,
       visible: false,
     }));
   };
 
-  const deleteNotice = async (id) => {
+  const deleteAdvertisement = async (id) => {
     try {
-      const response = await del(API.studentNote + `/${id}`);
-      initialize("notice");
+      const response = await del(API.teacherAdv + `/${id}`);
+      initialize("advertisement");
       return response;
     } catch (error) {
-      console.error("Error deleting notice data:", error);
+      console.error("Error deleting advertisement data:", error);
     }
   };
 
   const updateStatusById = async (id, newStatus) => {
     try {
-      const response = await post(API.studentNote + `/${id}`, {
-        status: newStatus,
-      });
+      const formData = new FormData();
+      formData.append("status", newStatus);
+
+      const response = await post(API.teacherAdv + `/${id}`, formData, true);
+
       if (response.code === 200) {
         toast.success("Status updated successfully!");
-        initialize("notice");
+        initialize("advertisement");
       } else if (response.code === 400) {
-        toast.error("Another active notice exists at this level. Update it first.");
+        toast.error(
+          "Another active advertisement exists at this level. Update it first."
+        );
       } else {
         toast.error(response.message || "Failed to submit form.");
       }
@@ -122,22 +120,25 @@ export default function StudentNotices() {
   return (
     <>
       <ToastContainer />
-      {studentNoticeObj.visible && (
+      {studentAdvObj.visible && (
         <StudentNotice
-          studentNoticeObj={studentNoticeObj}
+          studentAdvObj={studentAdvObj}
           handleCloseStudentForm={handleCloseStudentForm}
-          id={selectedNoticeId}
+          id={teacherAdvId}
         />
       )}
       <div>
-        <Breadcrumb pageName="Student Notice" totalData={notice.totalData} />
+        <Breadcrumb
+          pageName="Student Advertisement"
+          totalData={advertisement.totalData}
+        />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4 justify-between">
             <div className="flex items-center gap-4">
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={() => {
-                  initialize("notice");
+                  initialize("advertisement");
                 }}
               >
                 <span>
@@ -149,7 +150,7 @@ export default function StudentNotices() {
                 id="pagesizeForReport"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 onChange={(e) => onPageSizeChange(e.target.value)}
-                value={notice.pageSize}
+                value={advertisement.pageSize}
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -160,7 +161,7 @@ export default function StudentNotices() {
               </select>
             </div>
             <div
-              onClick={() => handleAddNewNotice()}
+              onClick={() => handleAddNewAdv()}
               className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
             >
               <span>
@@ -173,13 +174,13 @@ export default function StudentNotices() {
         <Table
           columns={columns}
           data={transformedData}
-          editLinkPrefix={(id) => handleAddNewNotice(id)}
+          editLinkPrefix={(id) => handleAddNewAdv(id)}
           editButtonVisible={true}
-          deleteHandler={deleteNotice}
+          deleteHandler={deleteAdvertisement}
           isStatusActive={true}
           updateStatusById={updateStatusById}
         />
-        <Pagination data={notice} changePage={changePage} />
+        <Pagination data={advertisement} changePage={changePage} />
       </div>
     </>
   );

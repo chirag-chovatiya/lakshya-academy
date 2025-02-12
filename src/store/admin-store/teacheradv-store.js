@@ -1,9 +1,10 @@
-import { getAllLessonData } from "@/service/lesson-api";
+import { getAllStudentAdvData } from "@/service/teacheradv-api";
 import { createStore } from "zustand/vanilla";
 
 export const defaultInitState = {
   advertisement: {
     data: {},
+    teacherName:null,
     page: 1,
     totalPages: 0,
     totalData: 0,
@@ -20,8 +21,11 @@ async function fetchDataAndSetState(set, get) {
   const teacherName = get().advertisement.teacherName;
   try {
     let url = `?page=${page}&pageSize=${pageSize}`;
+    if (teacherName && teacherName != "") {
+      url += `&teacherName=${encodeURIComponent(teacherName)}`;
+    }
 
-    const { data, code } = await getAllAdvertisementData(url + "&");
+    const { data, code } = await getAllStudentAdvData(url + "&");
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
@@ -87,6 +91,18 @@ export const createAdvertisementStore = (initState = defaultInitState) =>
           loading: true,
         },
       });
+      await fetchDataAndSetState(set, get);
+    },
+    teacherSearch: async (teacherName) => {
+      set((state) => ({
+        advertisement: {
+          ...state.advertisement,
+          teacherName: teacherName ? teacherName : null,
+          page: 1,
+          hasMoreData: true,
+          loading: true,
+        },
+      }));
       await fetchDataAndSetState(set, get);
     },
     onError: (error) =>

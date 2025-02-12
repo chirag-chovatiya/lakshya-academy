@@ -32,10 +32,10 @@ export default function StudentLists() {
   }, []);
 
   useEffect(() => {
-        if (level) {
-          selectedData(level);
-        }
-      }, [level, selectedData]);
+    if (level) {
+      selectedData(level);
+    }
+  }, [level, selectedData]);
 
   const columns = [
     { key: "id", title: "ID" },
@@ -103,6 +103,7 @@ export default function StudentLists() {
                 </span>
                 <span>Refresh</span>
               </button>
+              
               <select
                 id="pagesizeForBlog"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -150,6 +151,12 @@ export default function StudentLists() {
               </span>
               <span>Add New</span>
             </Link>
+            <button
+              className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+           
+            >
+              Delete Selected
+            </button>
           </div>
         </div>
         <Table

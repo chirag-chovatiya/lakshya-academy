@@ -36,8 +36,10 @@ export default function StudentLists() {
   useEffect(() => {
     if (hwStatus || level || createdAt) {
       selectedData(hwStatus, level, createdAt);
+    } else {
+      initialize("report");
     }
-  }, [hwStatus, level, createdAt, selectedData]);
+  }, [hwStatus, level, createdAt, selectedData, initialize]);
 
   const columns = useMemo(
     () => [
@@ -185,12 +187,11 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={report.pageSize}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
+              {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">

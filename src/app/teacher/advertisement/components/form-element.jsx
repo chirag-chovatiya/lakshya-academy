@@ -1,7 +1,5 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-import { SelectField } from "@/components/app-inputfield/app-selectedfield";
 import AppModal from "@/components/app-modal/modal.component";
 import SubmitButton from "@/components/Button/Submit-button";
 import { get, post } from "@/service/api";
@@ -106,9 +104,9 @@ export default function StudentAdvertise({
               />
               <TextAreaField
                 id="studentDescription"
-                label="Student Lesson Description"
+                label="Student Advertisement Description"
                 required
-                placeholder="Enter details about the lesson..."
+                placeholder="Enter details about the advertisement..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 name="description"

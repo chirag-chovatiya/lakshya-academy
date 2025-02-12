@@ -57,8 +57,8 @@ export default function StudentLists() {
         studentLevel: item?.studentLevel || "N/A",
         status: item.status,
         createdAt: item.createdAt
-          ? new Date(item.createdAt).toISOString().split("T")[0]
-          : "N/A",
+        ? new Date(item.createdAt).toLocaleDateString("en-GB")
+        : "N/A",
       };
       return transformedItem;
     });

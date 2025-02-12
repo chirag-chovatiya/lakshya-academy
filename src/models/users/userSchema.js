@@ -73,6 +73,7 @@ User.hasMany(StudentAddition, {
   foreignKey: "teacher_id",
   as: "teacher",
 });
+User.belongsTo(User, { foreignKey: "teacherId", as: "studentTeacher" });
 
 StudentReport.belongsTo(User, {
   foreignKey: "studentId",

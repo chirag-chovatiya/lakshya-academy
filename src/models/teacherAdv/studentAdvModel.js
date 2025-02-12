@@ -113,8 +113,8 @@ export const updateTeacherAdvertiseById = async (
     if (userType === "Teacher" && findAdv.userId !== userId) {
       return;
     }
-
-    if (newData.status === true) {
+    const newStatus = newData.status === "true" || newData.status === true;
+    if (newStatus) {
       const conflictingAdv = await TeacherAdvertisement.findOne({
         where: {
           userId,
@@ -133,7 +133,7 @@ export const updateTeacherAdvertiseById = async (
     const updatedData = {
       description: newData.description ?? findAdv.description,
       imgUrl: newData.imgUrl ?? findAdv.imgUrl,
-      status: newData.status ?? findAdv.status,
+      status: newStatus ?? findAdv.status,
     };
 
     const advUpdated = await findAdv.update(updatedData);

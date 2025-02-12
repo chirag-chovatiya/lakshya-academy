@@ -43,7 +43,9 @@ export default function StudentLists() {
         item.subtraction.length +
         item.multiplication.length +
         item.division.length,
-      createdAt: new Date(item.createdAt).toLocaleDateString("en-GB"),
+        createdAt: item.createdAt
+          ? new Date(item.createdAt).toLocaleDateString("en-GB")
+          : "N/A",
     }));
   };
 

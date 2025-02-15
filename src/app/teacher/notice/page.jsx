@@ -28,10 +28,10 @@ export default function StudentNotices() {
 
   useEffect(() => {
     onSelectionChange("notice");
-    if (!notice?.data?.[notice.page]?.length) {
+    if (Object.keys(notice.data).length === 0) {
       initialize();
     }
-  }, [notice.page, onSelectionChange, initialize]);
+  }, []);
 
   useEffect(() => {
     if (status || level || createdAt) {

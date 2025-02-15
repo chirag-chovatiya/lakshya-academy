@@ -51,8 +51,6 @@ export default function FormElementStudent({
     }
   };
 
-  
-
   return (
     <form onSubmit={handleSubmit2}>
       <div className="grid gap-6 mb-6 md:grid-cols-2">
@@ -109,11 +107,14 @@ export default function FormElementStudent({
             <option value="" disabled>
               Select a level
             </option>
-            {Array.from({ length: 12 }, (_, index) => (
-              <option key={index + 1} value={index + 1}>
-                Level {index + 1}
-              </option>
-            ))}
+            {[...Array(12)].flatMap((_, i) => [
+              <option key={`${i + 1}`} value={`${i + 1}`}>
+                Level {i + 1}
+              </option>,
+              <option key={`${i + 1}A`} value={`${i + 1}A`}>
+                Level {i + 1}A
+              </option>,
+            ])}
           </select>
         </div>
         <div>

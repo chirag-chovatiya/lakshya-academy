@@ -5,9 +5,9 @@ export const defaultInitState = {
   notice: {
     data: {},
     page: 1,
+    pageSize: 50,
     totalPages: 0,
     totalData: 0,
-    pageSize: 10,
     loading: true,
     error: null,
     hasMoreData: true,

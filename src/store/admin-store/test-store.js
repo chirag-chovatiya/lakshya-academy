@@ -5,9 +5,9 @@ export const defaultInitState = {
   test: {
     data: {},
     page: 1,
+    pageSize: 50,
     totalPages: 0,
     totalData: 0,
-    pageSize: 50,
     loading: true,
     error: null,
     hasMoreData: true,

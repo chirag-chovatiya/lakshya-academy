@@ -6,9 +6,9 @@ export const defaultInitState = {
     data: {},
     teacherName:null,
     page: 1,
+    pageSize: 50,
     totalPages: 0,
     totalData: 0,
-    pageSize: 10,
     loading: true,
     error: null,
     hasMoreData: true,
@@ -17,7 +17,6 @@ export const defaultInitState = {
 
 async function fetchDataAndSetState(set, get) {
   const { page, pageSize } = get().advertisement;
-
   const teacherName = get().advertisement.teacherName;
   try {
     let url = `?page=${page}&pageSize=${pageSize}`;
@@ -58,7 +57,7 @@ export const createAdvertisementStore = (initState = defaultInitState) =>
       set((state) => ({
         [selected]: {
           ...state[selected],
-          data: [],
+          data: {},
           page: 1,
           hasMoreData: true,
           loading: true,

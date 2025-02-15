@@ -21,10 +21,10 @@ export default function StudentAdvertisement() {
 
   useEffect(() => {
     onSelectionChange("advertisement");
-    if (!advertisement?.data?.[advertisement.page]?.length) {
+    if (Object.keys(advertisement.data).length === 0) {
       initialize();
     }
-  }, [advertisement.page, onSelectionChange, initialize]);
+  }, []);
 
   const columns = useMemo(
     () => [

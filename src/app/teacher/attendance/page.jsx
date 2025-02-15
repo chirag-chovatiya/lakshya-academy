@@ -26,10 +26,10 @@ export default function StudentLists() {
 
   useEffect(() => {
     onSelectionChange("attendance");
-    if (!attendance?.data?.[attendance.page]?.length) {
+    if (Object.keys(attendance.data).length === 0) {
       initialize();
     }
-  }, [attendance.page, onSelectionChange, initialize]);
+  }, []);
 
   useEffect(() => {
     if (status || level || createdAt) {
@@ -134,12 +134,11 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={attendance.pageSize}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
+                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">

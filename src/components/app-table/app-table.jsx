@@ -13,8 +13,9 @@ const Table = ({
   updateStatusById,
   onImageClick,
   createAttendance,
-  onSelectRow,
   selectedRows,
+  setSelectedRows,
+  showCheckbox = false,
 }) => {
   const handleStatusChange = (id, newStatus) => {
     updateStatusById(id, newStatus);
@@ -28,6 +29,21 @@ const Table = ({
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-custom-blue text-left dark:bg-meta-4 rounded-xl">
+            {showCheckbox && (
+                <th className="px-4 py-4 font-medium text-white">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      setSelectedRows(
+                        e.target.checked ? data.map((item) => item.id) : []
+                      )
+                    }
+                    checked={
+                      selectedRows?.length === data.length && data.length > 0
+                    }
+                  />
+                </th>
+              )}
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -45,6 +61,21 @@ const Table = ({
             {data.length > 0 ? (
               data.map((item, key) => (
                 <tr key={key}>
+                  {showCheckbox && (
+                    <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows?.includes(item.id)}
+                        onChange={(e) => {
+                          setSelectedRows((prev) =>
+                            e.target.checked
+                              ? [...prev, item.id]
+                              : prev.filter((id) => id !== item.id)
+                          );
+                        }}
+                      />
+                    </td>
+                  )}
                   {columns.map((col) => (
                     <td
                       key={col.key}

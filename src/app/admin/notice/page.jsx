@@ -20,10 +20,10 @@ export default function StudentNotice() {
 
   useEffect(() => {
     onSelectionChange("notice");
-    if (!notice?.data?.[notice.page]?.length) {
+    if (Object.keys(notice.data).length === 0) {
       initialize();
     }
-  }, [notice.page, onSelectionChange, initialize]);
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -70,7 +70,6 @@ export default function StudentNotice() {
       console.error("Error deleting notice data:", error);
     }
   };
-  
 
   return (
     <>
@@ -97,12 +96,11 @@ export default function StudentNotice() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={notice.pageSize}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
+                {[10, 20, 30, 40, 50, 100, 200, 500, 1000].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex-grow mt-4 sm:mt-0">

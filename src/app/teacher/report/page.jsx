@@ -155,7 +155,7 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={report.pageSize}
               >
-                {[5, 10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 4000, 5000, 8000].map((size) => (
+                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 4000, 5000, 8000].map((size) => (
                   <option key={size} value={size}>
                     {size}
                   </option>

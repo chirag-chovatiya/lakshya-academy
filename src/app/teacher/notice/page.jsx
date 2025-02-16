@@ -5,7 +5,6 @@ import Table from "@/components/app-table/app-table";
 import Pagination from "@/components/Pagination";
 import { del, post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
-import StudentLesson from "./components/form-element";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNoticeAdminStore } from "@/providers/notice-store-provider";
@@ -151,12 +150,11 @@ export default function StudentNotices() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={notice.pageSize}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
+                {[10, 20, 30, 40, 50, 100, 200, 500, 1000].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
             <div

@@ -22,13 +22,6 @@ export default function StudentAdvertisement() {
   const [teacherAdvId, setTeacherAdvId] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
 
-  // useEffect(() => {
-  //   onSelectionChange("advertisement");
-  //   if (!advertisement?.data?.[advertisement.page]?.length) {
-  //     initialize();
-  //   }
-  // }, [advertisement.page, onSelectionChange, initialize]);
-
     useEffect(() => {
       onSelectionChange("advertisement");
       if (Object.keys(advertisement.data).length === 0) {

@@ -166,17 +166,28 @@ export const updateReportById = async (reportId, updatedData) => {
     throw error;
   }
 };
-export const deleteReportById = async function (reportId) {
+export const deleteReportById = async function (reportId, teacherId, userType) {
   try {
+    const idsToDelete = Array.isArray(reportId) ? reportId : [reportId];
     const deleteReport = await StudentReport.findOne({
-      where: { id: reportId },
+      where: { id: idsToDelete },
     });
-    if (deleteReport) {
-      await deleteReport.destroy();
-      return;
-    } else {
-      return null;
+    if (!deleteReport) {
+      return {
+        success: false,
+        message: "No Report found with the provided ID",
+      };
     }
+    if (userType === "Teacher" && deleteReport.teacherId !== teacherId) {
+      return {
+        success: false,
+        message: "Unauthorized: You cannot delete this Report",
+      };
+    }
+    await StudentReport.destroy({
+      where: { id: idsToDelete },
+    });
+    return { success: true, message: "Report Deleted successfully" };
   } catch (error) {
     throw error;
   }

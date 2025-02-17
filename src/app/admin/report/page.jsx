@@ -24,11 +24,12 @@ export default function StudentLists() {
   const [hwStatus, setHwStatus] = useState("");
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-  const [reportData, setReportData] = useState(null);
+    const [selectedRows, setSelectedRows] = useState([]);
+  
 
-  useEffect(() => {
+ useEffect(() => {
     onSelectionChange("report");
-    if (!report?.data?.[report.page]?.length) {
+    if (Object.keys(report.data).length === 0) {
       initialize();
     }
   }, []);
@@ -39,7 +40,7 @@ export default function StudentLists() {
     } else {
       initialize("report");
     }
-  }, [hwStatus, level, createdAt, selectedData, initialize]);
+  }, [hwStatus, level, createdAt, selectedData]);
 
   const columns = useMemo(
     () => [
@@ -57,19 +58,18 @@ export default function StudentLists() {
     []
   );
 
-  const transformedData = useMemo(
-    () =>
-      (report?.data?.[report.page] || []).map((item) => ({
+   const transformedData = useMemo(() => {
+      const currentPageData = report?.data?.[report.page] || [];
+      return currentPageData.map((item) => ({
         ...item,
         studentname: item.student?.name || "N/A",
         standerd: item.student?.level || "N/A",
-        hwStatus: item.hwStatus ? "Complete" : "Incomplete",
+        hwStatus: item.hwStatus,
         createdAt: item.createdAt
           ? new Date(item.createdAt).toLocaleDateString("en-GB")
           : "N/A",
-      })),
-    [report.data, report.page]
-  );
+      }));
+    }, [report.data, report.page]);
 
   const deleteTest = async (id) => {
     try {
@@ -80,6 +80,21 @@ export default function StudentLists() {
       console.error("Error deleting report data:", error);
     }
   };
+  const deleteAllSelected = async () => {
+        if (selectedRows.length === 0) return alert("No items selected!");
+    
+        if (!confirm("Are you sure you want to delete selected items?")) return;
+    
+        try {
+          await Promise.all(
+            selectedRows.map((id) => del(API.getReport + `/${id}`))
+          );
+          initialize("report");
+          setSelectedRows([]);
+        } catch (error) {
+          console.error("Error deleting multiple report:", error);
+        }
+      };
 
   const handleSearch = useCallback(
     debounce((query) => {
@@ -89,20 +104,34 @@ export default function StudentLists() {
   );
 
   const exportToExcel = () => {
-    const filteredData = transformedData.map((item) => {
-      const row = {};
-      columns.forEach((column) => {
-        row[column.key] = item[column.key] || "N/A";
+      const filteredData = transformedData.map((item) => {
+        const row = {};
+        columns.forEach((column) => {
+          let value = item[column.key];
+  
+          if (column.key === "hwStatus") {
+            value =
+              value === true
+                ? "Complete"
+                : value === false
+                ? "Incomplete"
+                : "N/A";
+          } else {
+            value = value || "N/A";
+          }
+  
+          row[column.key] = value;
+        });
+        return row;
       });
-      return row;
-    });
-    const currentDate = new Date().toLocaleDateString("en-GB");
-    const filename = `student_data_${currentDate}.xlsx`;
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
-    XLSX.writeFile(workbook, filename);
-  };
+  
+      const currentDate = new Date().toLocaleDateString("en-GB");
+      const filename = `student_report_${currentDate}.xlsx`;
+      const worksheet = XLSX.utils.json_to_sheet(filteredData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
+      XLSX.writeFile(workbook, filename);
+    };
 
   return (
     <>
@@ -125,6 +154,15 @@ export default function StudentLists() {
                   <i className="fa-solid fa-arrows-rotate"></i>
                 </span>
                 <span>Refresh</span>
+              </button>
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                onClick={deleteAllSelected}
+              >
+                <span>
+                  <i className="fa-solid fa-trash"></i>
+                </span>
+                <span>Delete</span>
               </button>
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
@@ -203,6 +241,9 @@ export default function StudentLists() {
           columns={columns}
           data={transformedData}
           deleteHandler={deleteTest}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          showCheckbox={true}
         />
         <Pagination data={report} changePage={changePage} />
       </div>

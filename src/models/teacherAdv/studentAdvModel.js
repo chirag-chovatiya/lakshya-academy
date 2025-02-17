@@ -149,8 +149,9 @@ export const deleteTeacherAdvertiseById = async function (
   userType
 ) {
   try {
+    const idsToDelete = Array.isArray(tAdvId) ? tAdvId : [tAdvId];
     const deleteAdv = await TeacherAdvertisement.findOne({
-      where: { id: tAdvId },
+      where: { id: idsToDelete },
     });
     if (!deleteAdv) {
       return {
@@ -165,7 +166,9 @@ export const deleteTeacherAdvertiseById = async function (
         message: "Unauthorized: You cannot delete this advertisement",
       };
     }
-    await deleteAdv.destroy();
+    await TeacherAdvertisement.destroy({
+      where: { id: idsToDelete },
+    });
     return { success: true, message: "Advertisement Deleted successfully" };
   } catch (error) {
     throw error;

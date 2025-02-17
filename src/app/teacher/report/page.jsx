@@ -25,12 +25,12 @@ export default function StudentLists() {
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [monthFilter, setMonthFilter] = useState("");
-  const [reportData, setReportData] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     onSelectionChange("report");
-    if (!report?.data?.[report.page]?.length) {
-      initialize("report");
+    if (Object.keys(report.data).length === 0) {
+      initialize();
     }
   }, []);
 
@@ -79,6 +79,22 @@ export default function StudentLists() {
     }
   };
 
+  const deleteAllSelected = async () => {
+    if (selectedRows.length === 0) return alert("No items selected!");
+
+    if (!confirm("Are you sure you want to delete selected items?")) return;
+
+    try {
+      await Promise.all(
+        selectedRows.map((id) => del(API.getReport + `/${id}`))
+      );
+      initialize("report");
+      setSelectedRows([]);
+    } catch (error) {
+      console.error("Error deleting multiple report:", error);
+    }
+  };
+
   const handleSearch = useCallback(
     debounce((query) => {
       search(query);
@@ -86,59 +102,30 @@ export default function StudentLists() {
     [search]
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getReportData();
-        if (response.code === 200 && response.data) {
-          setReportData(response.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch Report data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const exportAllExcelReport = () => {
-    const filteredData = (reportData || []).map((item) => {
-      const row = {};
-      columns.forEach((column) => {
-        if (column.key === "studentname") {
-          row[column.key] = item.student?.name || "N/A";
-        } else if (column.key === "standerd") {
-          row[column.key] = item.student?.level || "N/A";
-        } else if (column.key === "createdAt") {
-          row[column.key] = item.createdAt
-            ? new Date(item.createdAt).toLocaleDateString("en-GB")
-            : "N/A";
-        } else if (column.key === "hwStatus") {
-          row[column.key] = item.hwStatus ? "Complete" : "Incomplete";
-        } else {
-          row[column.key] = item[column.key] || "N/A";
-        }
-      });
-      return row;
-    });
-    const currentDate = new Date().toLocaleDateString("en-GB");
-    const filename = `student_data_${currentDate}.xlsx`;
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
-    XLSX.writeFile(workbook, filename);
-  };
-
   const exportToExcel = () => {
     const filteredData = transformedData.map((item) => {
       const row = {};
       columns.forEach((column) => {
-        row[column.key] = item[column.key];
+        let value = item[column.key];
+
+        if (column.key === "hwStatus") {
+          value =
+            value === true
+              ? "Complete"
+              : value === false
+              ? "Incomplete"
+              : "N/A";
+        } else {
+          value = value || "N/A";
+        }
+
+        row[column.key] = value;
       });
       return row;
     });
+
     const currentDate = new Date().toLocaleDateString("en-GB");
-    const filename = `student_data_${currentDate}.xlsx`;
+    const filename = `student_report_${currentDate}.xlsx`;
     const worksheet = XLSX.utils.json_to_sheet(filteredData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
@@ -169,15 +156,21 @@ export default function StudentLists() {
               </button>
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                onClick={exportToExcel}
+                onClick={deleteAllSelected}
               >
-                <span>Export</span>
+                <span>
+                  <i className="fa-solid fa-trash"></i>
+                </span>
+                <span>Delete</span>
               </button>
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                onClick={exportAllExcelReport}
+                onClick={exportToExcel}
               >
-                <span>Export All</span>
+                <span>
+                  <i className="fa-solid fa-download"></i>
+                </span>
+                <span>Export</span>
               </button>
             </div>
             <div className="sm:mt-0">
@@ -187,12 +180,14 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={report.pageSize}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
+                {[
+                  10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 4000, 5000,
+                  8000,
+                ].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="sm:mt-0">
@@ -257,6 +252,9 @@ export default function StudentLists() {
           columns={columns}
           data={transformedData}
           deleteHandler={deleteTest}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          showCheckbox={true}
         />
         <Pagination data={report} changePage={changePage} />
       </div>

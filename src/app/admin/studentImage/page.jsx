@@ -24,12 +24,13 @@ export default function ImageLists() {
   const [createdAt, setCreatedAt] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
-  useEffect(() => {
-    onSelectionChange("userImage");
-    if (!userImage?.data?.[userImage.page]?.length) {
-      initialize();
-    }
-  }, []);
+   useEffect(() => {
+     onSelectionChange("userImage");
+     if (Object.keys(userImage.data).length === 0) {
+       initialize();
+     }
+   }, []);
+ 
 
   useEffect(() => {
     if (level || createdAt) {
@@ -115,12 +116,11 @@ export default function ImageLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={userImage.pageSize}
               >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
+                {[5, 10, 20, 30, 40, 50, 100, 200, 500, 1000].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">

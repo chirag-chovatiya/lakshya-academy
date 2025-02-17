@@ -29,7 +29,6 @@ async function fetchDataAndSetState(set, get) {
       url += `&level=${encodeURIComponent(level)}`;
     }
     const { data, code } = await getAllUserData(url+'&');
-    console.log(url)
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;

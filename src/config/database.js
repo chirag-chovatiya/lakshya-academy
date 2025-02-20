@@ -22,7 +22,7 @@ const connectDb = async () => {
   }
 };
 
-sequelize.sync({ alter: true }).then(() => {
+sequelize.sync({ alter: false }).then(() => {
   console.log('Sequelize synchronized with the database');
 }).catch((err) => {
   console.error('Sequelize synchronization error:', err);

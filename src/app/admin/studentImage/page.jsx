@@ -23,14 +23,15 @@ export default function ImageLists() {
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
+  
 
-   useEffect(() => {
-     onSelectionChange("userImage");
-     if (Object.keys(userImage.data).length === 0) {
-       initialize();
-     }
-   }, []);
- 
+  useEffect(() => {
+    onSelectionChange("userImage");
+    if (Object.keys(userImage.data).length === 0) {
+      initialize();
+    }
+  }, []);
 
   useEffect(() => {
     if (level || createdAt) {
@@ -73,6 +74,22 @@ export default function ImageLists() {
     }
   };
 
+const deleteAllSelected = async () => {
+    if (selectedRows.length === 0) return alert("No items selected!");
+
+    if (!confirm("Are you sure you want to delete selected items?")) return;
+
+    try {
+      await Promise.all(
+        selectedRows.map((id) => del(API.imageUpload + `/${id}`))
+      );
+      initialize("userImage");
+      setSelectedRows([]);
+    } catch (error) {
+      console.error("Error deleting multiple image:", error);
+    }
+  };
+
   const handleSearch = useCallback(
     debounce((query) => {
       search(query);
@@ -109,7 +126,15 @@ export default function ImageLists() {
                 </span>
                 <span>Refresh</span>
               </button>
-
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                onClick={deleteAllSelected}
+              >
+                <span>
+                  <i className="fa-solid fa-trash"></i>
+                </span>
+                <span>Delete</span>
+              </button>
               <select
                 id="pagesizeForReport"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -163,6 +188,9 @@ export default function ImageLists() {
           data={transformedData}
           deleteHandler={deleteImage}
           onImageClick={handleImageClick}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          showCheckbox={true}
         />
         <Pagination data={userImage} changePage={changePage} />
       </div>

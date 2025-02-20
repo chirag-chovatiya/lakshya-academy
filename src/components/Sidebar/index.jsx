@@ -64,12 +64,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       <div className="flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5">
         <Link href="/admin/">
           {/* <div className="flex justify-center items-center space-y-2"> */}
-            <img
-              src="/assets/logo/finallogo.png" 
-              alt="Logo"
-              className="w-30 h-25 rounded-lg" 
-            />
-            {/* <h1 className="uppercase text-[23px] text-center font-semibold text-white">
+          <img
+            src="/assets/logo/finallogo.png"
+            alt="Logo"
+            className="w-30 h-25 rounded-lg"
+          />
+          {/* <h1 className="uppercase text-[23px] text-center font-semibold text-white">
               Geniplus Kids Abacus
             </h1> */}
           {/* </div> */}
@@ -98,13 +98,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             </h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-
               {/* <!-- Student --> */}
               <li>
                 <Link
                   href={pathname.match(/\/admin/) ? "/admin/" : "/teacher/"}
                   className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    (pathname === "/admin/" || pathname === "/teacher/") && "bg-graydark dark:bg-meta-4"
+                    (pathname === "/admin/" || pathname === "/teacher/") &&
+                    "bg-graydark dark:bg-meta-4"
                   }`}
                 >
                   <span>
@@ -455,8 +455,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* Notice Start */}
               <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/admin/notice" ||
-                  pathname.includes("notice")
+                  pathname === "/admin/notice" || pathname.includes("notice")
                 }
               >
                 {(handleClick, open) => {
@@ -565,12 +564,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                   : "/teacher/advertisement"
                               }
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/advertisement" || "text-white"
+                                pathname === "/admin/advertisement" ||
+                                "text-white"
                               }`}
                             >
                               TeacherAdvertisement
                             </Link>
                           </li>
+                          {pathname.startsWith("/admin") && (
+                            <li>
+                              <Link
+                                href="/admin/teacherAdvertisement"
+                                className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  pathname === "/admin/teacherAdvertisement" &&
+                                  "text-white"
+                                }`}
+                              >
+                                AdminToTeacherAdv
+                              </Link>
+                            </li>
+                          )}
                         </ul>
                       </div>
                     </React.Fragment>

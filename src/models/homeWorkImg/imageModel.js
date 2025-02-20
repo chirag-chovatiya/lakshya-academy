@@ -16,8 +16,8 @@ export const getAllImage = async (
   page = 1,
   pageSize = 10,
   level = null,
-  createdAt=null,
-  studentName = null,
+  createdAt = null,
+  studentName = null
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -38,9 +38,8 @@ export const getAllImage = async (
     const whereClause = {};
 
     if (userType === "Teacher" && teacherId) {
-      whereClause.teacherId = teacherId; 
+      whereClause.teacherId = teacherId;
     }
-    
 
     if (!page && !pageSize) {
       const getStudentImage = await UserWorkImage.findAll({
@@ -49,20 +48,19 @@ export const getAllImage = async (
       return getStudentImage;
     }
 
-
     if (createdAt) {
       const startOfDay = new Date(createdAt).setHours(0, 0, 0, 0);
       const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
       whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
     }
 
-    
-    const { rows: images, count: totalCount} = await UserWorkImage.findAndCountAll({
-      where: whereClause,
-      offset,
-      limit: parsedPageSize,
-      include: includeClause,
-    });
+    const { rows: images, count: totalCount } =
+      await UserWorkImage.findAndCountAll({
+        where: whereClause,
+        offset,
+        limit: parsedPageSize,
+        include: includeClause,
+      });
 
     const totalPages = Math.ceil(totalCount / parsedPageSize);
 
@@ -85,15 +83,28 @@ export const getImageById = async (imageId) => {
   }
 };
 
-export const deleteImageById = async function (imageId) {
+export const deleteImageById = async function (imageId, teacherId, userType) {
   try {
-    const deleteImage = await UserWorkImage.findOne({ where: { id: imageId } });
-    if (deleteImage) {
-      await deleteImage.destroy();
-      return true;
-    } else {
-      return null;
+    const idsToDelete = Array.isArray(imageId) ? imageId : [imageId];
+    const deleteImage = await UserWorkImage.findOne({
+      where: { id: idsToDelete },
+    });
+    if (!deleteImage) {
+      return {
+        success: false,
+        message: "No Image found with the provided ID",
+      };
     }
+    if (userType === "Teacher" && deleteImage.teacherId !== teacherId) {
+      return {
+        success: false,
+        message: "Unauthorized: You cannot delete this Image",
+      };
+    }
+    await UserWorkImage.destroy({
+      where: { id: idsToDelete },
+    });
+    return { success: true, message: "Image Deleted successfully" };
   } catch (error) {
     throw error;
   }

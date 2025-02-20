@@ -4,20 +4,17 @@ import ImageUploadModal from "@/components/app-modal/modal.image.component";
 import { get } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 
-export default function TeacherAdvHomeModel() {
+export default function TeacherAdvHomeModel({ id }) {
   const [isVisible, setIsVisible] = useState(false);
   const [advData, setAdvData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      const advId = id || 1;
       try {
-        const response = await get(API.teacherAdv);
-        if (response?.code === 200 && response?.data?.length > 0) {
-          const activeAdv = response.data.find((item) => item.status === true);
-
-          if (activeAdv) {
-            setAdvData(activeAdv);
-          }
+        const response = await get(`${API.teacherAdv}/${advId}` + "&");
+        if (response?.code === 200 && response?.data) {
+          setAdvData(response.data); 
         }
       } catch (error) {
         console.log("Failed to fetch advertisement data:", error);
@@ -25,12 +22,12 @@ export default function TeacherAdvHomeModel() {
     };
 
     fetchData();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const isModalVisible = sessionStorage.getItem("a-m-v");
 
-    if (!isModalVisible && advData?.status) {
+    if (!isModalVisible && advData?.status === true) {
       const timer = setTimeout(() => {
         setIsVisible(true);
       }, 5000);

@@ -122,6 +122,7 @@ export async function DELETE(request, { params }) {
       return sendResponse(NextResponse, 400, "No advertisement ID(s) provided");
     }
     const tAdvIds = tAdvId.includes(",") ? tAdvId.split(",").map(id => id.trim()) : tAdvId;
+
     const result = await deleteTeacherAdvertiseById(tAdvIds, userId, userType);
 
     if (result.success) {

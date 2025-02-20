@@ -20,14 +20,13 @@ export default function StudentAdvertisement() {
   } = useTeacherAdvStore((state) => state);
 
   const [teacherAdvId, setTeacherAdvId] = useState(null);
-  const [selectedRows, setSelectedRows] = useState([]);
 
-    useEffect(() => {
-      onSelectionChange("advertisement");
-      if (Object.keys(advertisement.data).length === 0) {
-        initialize();
-      }
-    }, []);
+  useEffect(() => {
+    onSelectionChange("advertisement");
+    if (Object.keys(advertisement.data).length === 0) {
+      initialize();
+    }
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -95,21 +94,6 @@ export default function StudentAdvertisement() {
       console.error("Error deleting advertisement data:", error);
     }
   };
-  const deleteAllSelected = async () => {
-    if (selectedRows.length === 0) return alert("No items selected!");
-
-    if (!confirm("Are you sure you want to delete selected items?")) return;
-
-    try {
-      await Promise.all(
-        selectedRows.map((id) => del(API.teacherAdv + `/${id}`))
-      );
-      initialize("advertisement");
-      setSelectedRows([]);
-    } catch (error) {
-      console.error("Error deleting multiple advertisements:", error);
-    }
-  };
 
   const updateStatusById = async (id, newStatus) => {
     try {
@@ -162,12 +146,6 @@ export default function StudentAdvertisement() {
                 </span>
                 <span>Refresh</span>
               </button>
-              <button
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                onClick={deleteAllSelected}
-              >
-                Delete
-              </button>
               <select
                 id="pagesizeForReport"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -200,9 +178,9 @@ export default function StudentAdvertisement() {
           deleteHandler={deleteAdvertisement}
           isStatusActive={true}
           updateStatusById={updateStatusById}
-          selectedRows={selectedRows}
-          setSelectedRows={setSelectedRows}
-          showCheckbox={true}
+          // selectedRows={selectedRows}
+          // setSelectedRows={setSelectedRows}
+          // showCheckbox={true}
         />
         <Pagination data={advertisement} changePage={changePage} />
       </div>

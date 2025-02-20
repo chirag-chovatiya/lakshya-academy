@@ -34,7 +34,7 @@ const StatusButton = ({ defaultChecked = false, value, onValueChange }) => {
           <div
             className={
               "block h-8 w-14 rounded-full " +
-              (enabled ? "bg-primary" : "dark:bg-[#5A616B] bg-gray-400")
+              (enabled ? "bg-custom-blue" : "dark:bg-[#5A616B] bg-gray-400")
             }
           ></div>
           <div

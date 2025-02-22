@@ -19,7 +19,7 @@ const StudentNote = sequelize.define(
       allowNull: false,
     },
     studentLevel: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     description: {

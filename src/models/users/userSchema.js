@@ -39,7 +39,7 @@ const User = sequelize.define(
       defaultValue: null,
     },
     level: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     user_type: {

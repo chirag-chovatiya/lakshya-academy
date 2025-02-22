@@ -19,7 +19,7 @@ const UserWorkImage = sequelize.define(
       defaultValue: null,
     },
     studentLevel: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     imgUrl: {

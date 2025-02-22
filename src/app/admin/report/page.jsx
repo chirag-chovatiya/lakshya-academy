@@ -24,10 +24,9 @@ export default function StudentLists() {
   const [hwStatus, setHwStatus] = useState("");
   const [level, setLevel] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-    const [selectedRows, setSelectedRows] = useState([]);
-  
+  const [selectedRows, setSelectedRows] = useState([]);
 
- useEffect(() => {
+  useEffect(() => {
     onSelectionChange("report");
     if (Object.keys(report.data).length === 0) {
       initialize();
@@ -58,18 +57,18 @@ export default function StudentLists() {
     []
   );
 
-   const transformedData = useMemo(() => {
-      const currentPageData = report?.data?.[report.page] || [];
-      return currentPageData.map((item) => ({
-        ...item,
-        studentname: item.student?.name || "N/A",
-        standerd: item.student?.level || "N/A",
-        hwStatus: item.hwStatus,
-        createdAt: item.createdAt
-          ? new Date(item.createdAt).toLocaleDateString("en-GB")
-          : "N/A",
-      }));
-    }, [report.data, report.page]);
+  const transformedData = useMemo(() => {
+    const currentPageData = report?.data?.[report.page] || [];
+    return currentPageData.map((item) => ({
+      ...item,
+      studentname: item.student?.name || "N/A",
+      standerd: item.student?.level || "N/A",
+      hwStatus: item.hwStatus,
+      createdAt: item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString("en-GB")
+        : "N/A",
+    }));
+  }, [report.data, report.page]);
 
   const deleteTest = async (id) => {
     try {
@@ -81,20 +80,20 @@ export default function StudentLists() {
     }
   };
   const deleteAllSelected = async () => {
-        if (selectedRows.length === 0) return alert("No items selected!");
-    
-        if (!confirm("Are you sure you want to delete selected items?")) return;
-    
-        try {
-          await Promise.all(
-            selectedRows.map((id) => del(API.getReport + `/${id}`))
-          );
-          initialize("report");
-          setSelectedRows([]);
-        } catch (error) {
-          console.error("Error deleting multiple report:", error);
-        }
-      };
+    if (selectedRows.length === 0) return alert("No items selected!");
+
+    if (!confirm("Are you sure you want to delete selected items?")) return;
+
+    try {
+      await Promise.all(
+        selectedRows.map((id) => del(API.getReport + `/${id}`))
+      );
+      initialize("report");
+      setSelectedRows([]);
+    } catch (error) {
+      console.error("Error deleting multiple report:", error);
+    }
+  };
 
   const handleSearch = useCallback(
     debounce((query) => {
@@ -104,34 +103,34 @@ export default function StudentLists() {
   );
 
   const exportToExcel = () => {
-      const filteredData = transformedData.map((item) => {
-        const row = {};
-        columns.forEach((column) => {
-          let value = item[column.key];
-  
-          if (column.key === "hwStatus") {
-            value =
-              value === true
-                ? "Complete"
-                : value === false
-                ? "Incomplete"
-                : "N/A";
-          } else {
-            value = value || "N/A";
-          }
-  
-          row[column.key] = value;
-        });
-        return row;
+    const filteredData = transformedData.map((item) => {
+      const row = {};
+      columns.forEach((column) => {
+        let value = item[column.key];
+
+        if (column.key === "hwStatus") {
+          value =
+            value === true
+              ? "Complete"
+              : value === false
+              ? "Incomplete"
+              : "N/A";
+        } else {
+          value = value || "N/A";
+        }
+
+        row[column.key] = value;
       });
-  
-      const currentDate = new Date().toLocaleDateString("en-GB");
-      const filename = `student_report_${currentDate}.xlsx`;
-      const worksheet = XLSX.utils.json_to_sheet(filteredData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
-      XLSX.writeFile(workbook, filename);
-    };
+      return row;
+    });
+
+    const currentDate = new Date().toLocaleDateString("en-GB");
+    const filename = `student_report_${currentDate}.xlsx`;
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Data");
+    XLSX.writeFile(workbook, filename);
+  };
 
   return (
     <>
@@ -181,13 +180,14 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={report.pageSize}
               >
-                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 4000, 5000, 8000].map(
-                  (size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  )
-                )}
+                {[
+                  10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 4000, 5000,
+                  8000,
+                ].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
@@ -210,11 +210,14 @@ export default function StudentLists() {
                 value={level}
               >
                 <option value="">Choose a level</option>
-                {[...Array(10)].map((_, i) => (
-                  <option key={i} value={i + 1}>
+                {[...Array(12)].flatMap((_, i) => [
+                  <option key={`${i + 1}`} value={`${i + 1}`}>
                     Level {i + 1}
-                  </option>
-                ))}
+                  </option>,
+                  <option key={`${i + 1}A`} value={`${i + 1}A`}>
+                    Level {i + 1}A
+                  </option>,
+                ])}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
@@ -227,14 +230,25 @@ export default function StudentLists() {
               />
             </div>
           </div>
-          <div className="flex-grow mt-4 sm:mt-0">
-            <input
-              type="text"
-              id="textSearch"
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-              placeholder="Search Here"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
+          <div className="flex flex-col sm:flex-row md:items-center gap-4">
+            <div className="sm:mt-0">
+              <input
+                type="month"
+                id="monthSearch"
+                value={createdAt}
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                onChange={(e) => setCreatedAt(e.target.value)}
+              />
+            </div>
+            <div className="flex-grow">
+              <input
+                type="text"
+                id="textSearch"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                placeholder="Search Here"
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
           </div>
         </div>
         <Table

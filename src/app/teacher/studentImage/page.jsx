@@ -149,7 +149,7 @@ export default function ImageLists() {
                 )}
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <select
                 id="levelFilter"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -157,14 +157,17 @@ export default function ImageLists() {
                 value={level}
               >
                 <option value="">Choose a level</option>
-                {[...Array(10)].map((_, i) => (
-                  <option key={i} value={i + 1}>
+                {[...Array(12)].flatMap((_, i) => [
+                  <option key={`${i + 1}`} value={`${i + 1}`}>
                     Level {i + 1}
-                  </option>
-                ))}
+                  </option>,
+                  <option key={`${i + 1}A`} value={`${i + 1}A`}>
+                    Level {i + 1}A
+                  </option>,
+                ])}
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <input
                 type="date"
                 id="dateSearch"
@@ -173,15 +176,24 @@ export default function ImageLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
-            <div className="flex-grow mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <input
-                type="text"
-                id="textSearch"
+                type="month"
+                id="monthSearch"
+                value={createdAt}
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                placeholder="Search Here"
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
+          </div>
+          <div className="flex-grow sm:mt-0">
+            <input
+              type="text"
+              id="textSearch"
+              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+              placeholder="Search Here"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
           </div>
         </div>
         <Table

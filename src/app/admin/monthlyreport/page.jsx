@@ -136,7 +136,7 @@ export default function StudentLists() {
   return (
     <>
       <div>
-        <Breadcrumb pageName="Student Monthly Report" />
+        <Breadcrumb pageName="Student Monthly Report" totalData={pagination.totalData}/>
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">

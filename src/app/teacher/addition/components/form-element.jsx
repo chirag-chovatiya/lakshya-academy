@@ -102,10 +102,10 @@ export default function FormStudentAddition({
                 id="studentLevel"
                 label="Student Level"
                 required={true}
-                options={Array.from({ length: 12 }, (_, i) => ({
-                  label: `Level ${i + 1}`,
-                  value: i + 1,
-                }))}
+                options={Array.from({ length: 12 }, (_, i) => [
+                  { label: `Level ${i + 1}`, value: `${i + 1}` },
+                  { label: `Level ${i + 1}A`, value: `${i + 1}A` },
+                ]).flat()}
                 name="level"
                 value={formData.level}
                 onChange={(e) =>

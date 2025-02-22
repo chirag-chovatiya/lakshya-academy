@@ -47,12 +47,12 @@ export async function POST(request, { params }) {
     const userId = authResponse?.user?.id;
     const { tAdvId } = params;
     const formData = await request.formData();
-    const description = formData.get("description");
-    const files = formData.getAll("files");
-    const status = formData.get("status");
+    const description = formData.get("description") || null;
+    const files = formData.getAll("files") || null;
+    const status = formData.get("status") || null;
 
-    let imgUrl = undefined;
-
+    let imgUrl = null
+    
     if (files.length) {
       const folderName = "advertisement";
       const uploadResult = await uploadFilesToFTP(files, folderName);
@@ -61,13 +61,12 @@ export async function POST(request, { params }) {
         return sendResponse(NextResponse, 500, "File upload failed.");
       }
 
-      imgUrl = uploadResult.urls.join(", ");
+      imgUrl = uploadResult?.urls.join(", ");
     }
-
     const userData = {};
-    if (description !== null) userData.description = description;
-    if (imgUrl !== undefined) userData.imgUrl = imgUrl;
-    if (status !== undefined) userData.status = status;
+    userData.description = description || null;
+    userData.imgUrl = imgUrl;
+    userData.status = status;
 
     const userResult = await updateTeacherAdvertiseById(
       tAdvId,
@@ -77,11 +76,7 @@ export async function POST(request, { params }) {
     );
 
     if (userResult?.error) {
-      return sendResponse(
-        NextResponse,
-        400,
-        userResult.error
-      );
+      return sendResponse(NextResponse, 400, userResult.error);
     }
 
     if (userResult) {
@@ -89,7 +84,11 @@ export async function POST(request, { params }) {
         NextResponse,
         200,
         "Advertisement Updated Successfully",
-        { description: userResult.description, imgUrl: userResult.imgUrl, status: userResult.status }
+        {
+          description: userResult.description,
+          imgUrl: userResult.imgUrl,
+          status: userResult.status,
+        }
       );
     } else {
       return sendResponse(
@@ -117,11 +116,13 @@ export async function DELETE(request, { params }) {
     const userType = authResponse?.user?.user_type;
     const userId = authResponse?.user?.id;
     const { tAdvId } = params;
-    
+
     if (!tAdvId) {
       return sendResponse(NextResponse, 400, "No advertisement ID(s) provided");
     }
-    const tAdvIds = tAdvId.includes(",") ? tAdvId.split(",").map(id => id.trim()) : tAdvId;
+    const tAdvIds = tAdvId.includes(",")
+      ? tAdvId.split(",").map((id) => id.trim())
+      : tAdvId;
 
     const result = await deleteTeacherAdvertiseById(tAdvIds, userId, userType);
 

@@ -210,11 +210,14 @@ export default function StudentLists() {
                 value={level}
               >
                 <option value="">Choose a level</option>
-                {[...Array(10)].map((_, i) => (
-                  <option key={i} value={i + 1}>
+                {[...Array(12)].flatMap((_, i) => [
+                  <option key={`${i + 1}`} value={`${i + 1}`}>
                     Level {i + 1}
-                  </option>
-                ))}
+                  </option>,
+                  <option key={`${i + 1}A`} value={`${i + 1}A`}>
+                    Level {i + 1}A
+                  </option>,
+                ])}
               </select>
             </div>
             <div className="sm:mt-0">

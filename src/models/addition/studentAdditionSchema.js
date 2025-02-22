@@ -35,7 +35,7 @@ const StudentAddition = sequelize.define(
       defaultValue: [],
     },
     level: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       defaultValue: null,
     },
     status: {

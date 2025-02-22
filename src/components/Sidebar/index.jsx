@@ -107,412 +107,106 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     "bg-graydark dark:bg-meta-4"
                   }`}
                 >
-                  <span>
-                    <i className="fa-solid fa-user"></i>
-                  </span>
+                  <span>🎓</span>
                   Student List
                 </Link>
               </li>
               {/* <!-- Student End --> */}
 
               {/* <!-- Exam List --> */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/addition" ||
-                  pathname === "/teacher/addition" ||
-                  pathname.includes("addition")
+              <Link
+                href={
+                  pathname.match(/\/admin/)
+                    ? "/admin/addition"
+                    : "/teacher/addition"
                 }
+                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes("addition") && "bg-graydark dark:bg-meta-4"
+                }`}
               >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/addition" ||
-                            pathname === "/teacher/addition" ||
-                            pathname.includes("addition")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        Manage Exam
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
-                      </Link>
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && "hidden"
-                        }`}
-                      >
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href={
-                                pathname.match(/\/admin/)
-                                  ? "/admin/addition"
-                                  : "/teacher/addition"
-                              }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/addition" ||
-                                (pathname === "/teacher/addition" &&
-                                  "text-white")
-                              }`}
-                            >
-                              Student Exam
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
-              {/* <!-- Student End --> */}
+                <span>✍️</span>
+                Manage Exam
+              </Link>
+              {/* <!-- Exam End --> */}
 
               {/* <!-- Student Report Start --> */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/report" ||
-                  pathname === "/teacher/report" ||
-                  pathname.includes("report")
+              <Link
+                href={
+                  pathname.match(/\/admin/)
+                    ? "/admin/report"
+                    : "/teacher/report"
                 }
+                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes("report") && "bg-graydark dark:bg-meta-4"
+                }`}
               >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/report" ||
-                            pathname === "/teacher/report" ||
-                            pathname.includes("report")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        Student Report
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
-                      </Link>
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && "hidden"
-                        }`}
-                      >
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href={
-                                pathname.match(/\/admin/)
-                                  ? "/admin/report"
-                                  : "/teacher/report"
-                              }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/report" && "text-white"
-                              }`}
-                            >
-                              <span>
-                                <i className="fa-solid fa-user"></i>
-                              </span>
-                              Student Report
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+                <span>📑</span>
+                Student Report
+              </Link>
               {/* <!-- Student Report End --> */}
 
               {/* Student Image Start */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/studentImage" ||
-                  pathname === "/teacher/studentImage" ||
-                  pathname.includes("studentImage")
+              <Link
+                href={
+                  pathname.match(/\/admin/)
+                    ? "/admin/studentImage"
+                    : "/teacher/studentImage"
                 }
+                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes("studentImage") &&
+                  "bg-graydark dark:bg-meta-4"
+                }`}
               >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/studentImage" ||
-                            pathname === "/teacher/studentImage" ||
-                            pathname.includes("studentImage")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        HomeWork Image
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
-                      </Link>
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && "hidden"
-                        }`}
-                      >
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href={
-                                pathname.match(/\/admin/)
-                                  ? "/admin/studentImage"
-                                  : "/teacher/studentImage"
-                              }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/studentImage" ||
-                                (pathname === "/teacher/studentImage" &&
-                                  "text-white")
-                              }`}
-                            >
-                              Image List
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+                <span>🖼️</span>
+                HomeWork Image
+              </Link>
+
               {/* Student Image End */}
               {/* Attendance Start */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/attendance" ||
-                  pathname === "/teacher/attendance" ||
-                  pathname.includes("attendance")
+              <Link
+                href={
+                  pathname.match(/\/admin/)
+                    ? "/admin/attendance"
+                    : "/teacher/attendance"
                 }
+                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes("attendance") &&
+                  "bg-graydark dark:bg-meta-4"
+                }`}
               >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/attendance" ||
-                            pathname === "/teacher/attendance" ||
-                            pathname.includes("attendance")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        Attendance
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
-                      </Link>
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && "hidden"
-                        }`}
-                      >
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href={
-                                pathname.match(/\/admin/)
-                                  ? "/admin/attendance"
-                                  : "/teacher/attendance"
-                              }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/attendance" ||
-                                (pathname === "/teacher/attendance" &&
-                                  "text-white")
-                              }`}
-                            >
-                              Attendance List
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+                <span>📆</span>
+                Attendance
+              </Link>
               {/* Attendance End */}
               {/* Lesson Start */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/Lesson" ||
-                  pathname === "/teacher/Lesson" ||
-                  pathname.includes("lessson")
+              <Link
+                href={
+                  pathname.match(/\/admin/)
+                    ? "/admin/lesson"
+                    : "/teacher/lesson"
                 }
+                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes("lesson") && "bg-graydark dark:bg-meta-4"
+                }`}
               >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/lessson" ||
-                            pathname === "/teacher/lessson" ||
-                            pathname.includes("lessson")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        Student Lesson
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
-                      </Link>
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && "hidden"
-                        }`}
-                      >
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href={
-                                pathname.match(/\/admin/)
-                                  ? "/admin/lesson"
-                                  : "/teacher/lesson"
-                              }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/lesson" ||
-                                (pathname === "/teacher/lesson" && "text-white")
-                              }`}
-                            >
-                              Lesson List
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+                <span>📔</span>
+                Student Lesson
+              </Link>
               {/* Lesson End */}
               {/* Notice Start */}
-              <SidebarLinkGroup
-                activeCondition={
-                  pathname === "/admin/notice" || pathname.includes("notice")
+              <Link
+                href={
+                  pathname.match(/\/admin/)
+                    ? "/admin/notice"
+                    : "/teacher/notice"
                 }
+                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes("notice") && "bg-graydark dark:bg-meta-4"
+                }`}
               >
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <Link
-                        href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/notice" ||
-                            pathname.includes("notice")) &&
-                          "bg-graydark dark:bg-meta-4"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded
-                            ? handleClick()
-                            : setSidebarExpanded(true);
-                        }}
-                      >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        Notice
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
-                      </Link>
-                      <div
-                        className={`translate transform overflow-hidden ${
-                          !open && "hidden"
-                        }`}
-                      >
-                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <Link
-                              href={
-                                pathname.match(/\/admin/)
-                                  ? "/admin/notice"
-                                  : "/teacher/notice"
-                              }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/notice" || "text-white"
-                              }`}
-                            >
-                              Notice
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+                <span>📜</span>
+                Notice
+              </Link>
               {/* Notice End */}
               {/* Advertisement Start */}
               <SidebarLinkGroup
@@ -526,9 +220,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     <React.Fragment>
                       <Link
                         href="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          (pathname === "/admin/advertisement" ||
-                            pathname.includes("advertisement")) &&
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 hover:bg-graydark dark:hover:bg-meta-4 ${
+                          pathname.includes("advertisement") &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
                         onClick={(e) => {
@@ -538,20 +231,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             : setSidebarExpanded(true);
                         }}
                       >
-                        <span>
-                          <i className="fa-solid fa-user"></i>
-                        </span>
-                        Advertisement
-                        <span>
-                          <i
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
-                              open && "rotate-180"
-                            }`}
-                          ></i>
-                        </span>
+                        📢 Advertisement
+                        <i
+                          className={`absolute right-4 top-1/2 -translate-y-1/2 fa-solid fa-angle-down ${
+                            open && "rotate-180"
+                          }`}
+                        ></i>
                       </Link>
+
                       <div
-                        className={`translate transform overflow-hidden ${
+                        className={`transform overflow-hidden ${
                           !open && "hidden"
                         }`}
                       >
@@ -559,28 +248,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <li>
                             <Link
                               href={
-                                pathname.match(/\/admin/)
+                                pathname.includes("/admin")
                                   ? "/admin/advertisement"
                                   : "/teacher/advertisement"
                               }
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/admin/advertisement" ||
-                                "text-white"
-                              }`}
+                              className="group flex items-center gap-2.5 rounded-md px-4 font-medium text-body-dark2 duration-300 hover:text-white text-white"
                             >
-                              TeacherAdvertisement
+                              Student Advertise
                             </Link>
                           </li>
                           {pathname.startsWith("/admin") && (
                             <li>
                               <Link
                                 href="/admin/teacherAdvertisement"
-                                className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                className={`group flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 hover:text-white ${
                                   pathname === "/admin/teacherAdvertisement" &&
                                   "text-white"
                                 }`}
                               >
-                                AdminToTeacherAdv
+                                Teacher Advertise
                               </Link>
                             </li>
                           )}

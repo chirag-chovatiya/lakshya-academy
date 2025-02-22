@@ -129,11 +129,13 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={users.pageSize}
               >
-                {[5, 10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
+                {[5, 10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map(
+                  (size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  )
+                )}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
@@ -144,11 +146,14 @@ export default function StudentLists() {
                 value={level}
               >
                 <option value="">Choose a level</option>
-                {[...Array(12)].map((_, i) => (
-                  <option key={i} value={i + 1}>
+                {[...Array(12)].flatMap((_, i) => [
+                  <option key={`${i + 1}`} value={`${i + 1}`}>
                     Level {i + 1}
-                  </option>
-                ))}
+                  </option>,
+                  <option key={`${i + 1}A`} value={`${i + 1}A`}>
+                    Level {i + 1}A
+                  </option>,
+                ])}
               </select>
             </div>
             <div className="flex-grow mt-4 sm:mt-0">

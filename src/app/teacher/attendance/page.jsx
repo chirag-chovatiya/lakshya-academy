@@ -126,6 +126,9 @@ export default function StudentLists() {
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={exportToExcel}
               >
+                <span>
+                  <i className="fa-solid fa-download"></i>
+                </span>
                 <span>Export</span>
               </button>
               <select
@@ -134,11 +137,13 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={attendance.pageSize}
               >
-                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
+                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map(
+                  (size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  )
+                )}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
@@ -161,11 +166,14 @@ export default function StudentLists() {
                 value={level}
               >
                 <option value="">Choose a level</option>
-                {[...Array(12)].map((_, i) => (
-                  <option key={i} value={i + 1}>
+                {[...Array(12)].flatMap((_, i) => [
+                  <option key={`${i + 1}`} value={`${i + 1}`}>
                     Level {i + 1}
-                  </option>
-                ))}
+                  </option>,
+                  <option key={`${i + 1}A`} value={`${i + 1}A`}>
+                    Level {i + 1}A
+                  </option>,
+                ])}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">
@@ -178,14 +186,25 @@ export default function StudentLists() {
               />
             </div>
           </div>
-          <div className="flex-grow mt-4 sm:mt-0">
-            <input
-              type="text"
-              id="textSearch"
-              className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-              placeholder="Search Here"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
+          <div className="flex flex-col sm:flex-row md:items-center gap-4">
+            <div className="sm:mt-0">
+              <input
+                type="month"
+                id="monthSearch"
+                value={createdAt}
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                onChange={(e) => setCreatedAt(e.target.value)}
+              />
+            </div>
+            <div className="flex-grow">
+              <input
+                type="text"
+                id="textSearch"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                placeholder="Search Here"
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
           </div>
         </div>
         <Table

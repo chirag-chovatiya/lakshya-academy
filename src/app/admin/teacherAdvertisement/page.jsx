@@ -43,8 +43,12 @@ export default function TeacherAdvertisement({ id }) {
   }, [id]);
 
   const handleImageChange = (files) => {
-    setUploadedImages(files);
-    setUploadedImageUrls(files.map((file) => URL.createObjectURL(file)));
+    if (!files || files.length === 0) {
+      setUploadedImages([]);
+      setUploadedImageUrls(null); 
+    } else {
+      setUploadedImages(files);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -54,11 +58,15 @@ export default function TeacherAdvertisement({ id }) {
     try {
       const advId = id || 1;
       const formData = new FormData();
-      uploadedImages.forEach((file) => {
-        formData.append("files", file, file.name.replace(/\s+/g, "_"));
-      });
+      if (uploadedImages) {
+        uploadedImages.forEach((file) => {
+          formData.append("files", file, file.name.replace(/\s+/g, "_"));
+        });
+        formData.append("imgUrl", JSON.stringify(uploadedImageUrls));
+      } else {
+        formData.append("imgUrl", null); 
+      }
       formData.append("description", description);
-      formData.append("imgUrl", JSON.stringify(uploadedImageUrls));
       formData.append("status", status);
 
       const response = await post(`${API.teacherAdv}/${advId}`, formData, true);
@@ -99,7 +107,6 @@ export default function TeacherAdvertisement({ id }) {
                   <TextAreaField
                     id="teacherDescription"
                     label="Teacher Advertisement Description"
-                    required
                     placeholder="Enter details about the advertisement..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -114,6 +121,7 @@ export default function TeacherAdvertisement({ id }) {
                     defaultChecked={false}
                   />
                   <SubmitButton loading={loading} />
+                  
                 </div>
               </form>
             </div>

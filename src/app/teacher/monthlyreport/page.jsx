@@ -136,7 +136,7 @@ export default function StudentLists() {
   return (
     <>
       <div>
-        <Breadcrumb pageName="Student Monthly Report" />
+        <Breadcrumb pageName="Student Monthly Report" totalData={pagination.totalData}/>
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
@@ -153,6 +153,9 @@ export default function StudentLists() {
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={exportToExcel}
               >
+                 <span>
+                  <i className="fa-solid fa-download"></i>
+                </span>
                 <span>Export</span>
               </button>
               <select

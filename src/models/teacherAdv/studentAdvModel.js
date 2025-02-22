@@ -131,8 +131,8 @@ export const updateTeacherAdvertiseById = async (
     }
 
     const updatedData = {
-      description: newData.description ?? findAdv.description,
-      imgUrl: newData.imgUrl ?? findAdv.imgUrl,
+      description: newData.description !== undefined ? newData.description : findAdv.description,
+      imgUrl: newData.imgUrl !== undefined ? newData.imgUrl : findAdv.imgUrl,
       status: newStatus ?? findAdv.status,
     };
 

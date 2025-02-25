@@ -171,8 +171,16 @@ export const getUserByIdWithReports = async (
         const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
         whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
       } else {
-        const monthStart = new Date(filterDate.getFullYear(), filterDate.getMonth(), 1).setHours(0, 0, 0, 0);
-        const monthEnd = new Date(filterDate.getFullYear(), filterDate.getMonth() + 1, 0).setHours(23, 59, 59, 999);
+        const monthStart = new Date(
+          filterDate.getFullYear(),
+          filterDate.getMonth(),
+          1
+        ).setHours(0, 0, 0, 0);
+        const monthEnd = new Date(
+          filterDate.getFullYear(),
+          filterDate.getMonth() + 1,
+          0
+        ).setHours(23, 59, 59, 999);
         whereClause.createdAt = { [Op.between]: [monthStart, monthEnd] };
       }
     }

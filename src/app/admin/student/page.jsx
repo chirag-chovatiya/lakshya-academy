@@ -105,6 +105,7 @@ export default function StudentLists() {
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={() => {
                   setLevel("");
+                  document.getElementById("search").value = "";
                   handleSearch("");
                   initialize("users");
                 }}

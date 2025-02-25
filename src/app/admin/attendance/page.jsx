@@ -115,6 +115,7 @@ export default function StudentLists() {
                   setStatus("");
                   setLevel("");
                   setCreatedAt("");
+                  document.getElementById("textSearch").value = "";
                   handleSearch("");
                   initialize("attendance");
                 }}
@@ -139,11 +140,13 @@ export default function StudentLists() {
                 onChange={(e) => onPageSizeChange(e.target.value)}
                 value={attendance.pageSize}
               >
-                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
+                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map(
+                  (size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  )
+                )}
               </select>
             </div>
             <div className="mt-4 sm:mt-0">

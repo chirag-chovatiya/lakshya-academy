@@ -117,6 +117,7 @@ const deleteAllSelected = async () => {
                 onClick={() => {
                   setLevel("");
                   setCreatedAt("");
+                  document.getElementById("textSearch").value = "";
                   handleSearch("");
                   initialize("userImage");
                 }}

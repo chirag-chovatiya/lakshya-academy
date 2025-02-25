@@ -145,6 +145,7 @@ export default function StudentLists() {
                   setHwStatus("");
                   setLevel("");
                   setCreatedAt("");
+                  document.getElementById("textSearch").value = "";
                   handleSearch("");
                   initialize("report");
                 }}

@@ -113,6 +113,7 @@ export default function StudentLists() {
                   setStatus("");
                   setLevel("");
                   setCreatedAt("");
+                  document.getElementById("textSearch").value = ""; 
                   handleSearch("");
                   initialize("attendance");
                 }}

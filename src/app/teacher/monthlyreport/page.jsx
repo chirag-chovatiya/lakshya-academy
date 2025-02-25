@@ -171,7 +171,7 @@ export default function StudentLists() {
                 ))}
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <select
                 id="pagesizeForBlog"
                 value={hwStatus}
@@ -185,7 +185,7 @@ export default function StudentLists() {
                 <option value="false">Incomplete</option>
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <input
                 type="month"
                 id="search"
@@ -195,7 +195,7 @@ export default function StudentLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <input
                 type="date"
                 id="dateSearch"

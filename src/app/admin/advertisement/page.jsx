@@ -1,6 +1,6 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import React, { useCallback, useEffect, useMemo} from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import Table from "@/components/app-table/app-table";
 import Pagination from "@/components/Pagination";
 import debounce from "lodash/debounce";
@@ -52,7 +52,7 @@ export default function StudentAdvertisement() {
           description:
             item.description?.length > 30
               ? item.description.substring(0, 30) + "..."
-              : item.description, 
+              : item.description,
         };
         return transformedItem;
       }
@@ -61,11 +61,11 @@ export default function StudentAdvertisement() {
   }, [advertisement.data, advertisement.page]);
 
   const handleSearch = useCallback(
-      debounce((query) => {
-        teacherSearch(query);
-      }, 300),
-      [teacherSearch]
-    );
+    debounce((query) => {
+      teacherSearch(query);
+    }, 300),
+    [teacherSearch]
+  );
 
   const deleteAdvertisement = async (id) => {
     try {
@@ -77,10 +77,8 @@ export default function StudentAdvertisement() {
     }
   };
 
-
   return (
     <>
-    
       <div>
         <Breadcrumb
           pageName="Student Advertisement"
@@ -92,6 +90,8 @@ export default function StudentAdvertisement() {
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={() => {
+                  document.getElementById("search").value = "";
+                  handleSearch("");
                   initialize("advertisement");
                 }}
               >

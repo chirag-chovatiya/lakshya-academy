@@ -116,6 +116,7 @@ export default function ImageLists() {
                 onClick={() => {
                   setLevel("");
                   setCreatedAt("");
+                  document.getElementById("textSearch").value = ""; 
                   handleSearch("");
                   initialize("userImage");
                 }}

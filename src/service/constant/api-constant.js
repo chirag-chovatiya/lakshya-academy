@@ -17,7 +17,9 @@ export const API = {
 
   teacherAdv:"teacherAdvertise",
 
-  studentNote:"studentnotice"
+  studentNote:"studentnotice",
+
+  studentResult:"studentresult"
 
   
 };

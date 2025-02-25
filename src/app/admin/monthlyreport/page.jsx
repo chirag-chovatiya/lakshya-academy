@@ -138,7 +138,7 @@ export default function StudentLists() {
       <div>
         <Breadcrumb pageName="Student Monthly Report" totalData={pagination.totalData}/>
         <div className="mb-4">
-          <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
+          <div className="flex flex-col sm:flex-row md:items-center gap-4">
             <div className="flex items-center gap-4">
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
@@ -153,6 +153,9 @@ export default function StudentLists() {
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={exportToExcel}
               >
+                 <span>
+                  <i className="fa-solid fa-download"></i>
+                </span>
                 <span>Export</span>
               </button>
               <select
@@ -168,7 +171,7 @@ export default function StudentLists() {
                 ))}
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <select
                 id="pagesizeForBlog"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -180,7 +183,7 @@ export default function StudentLists() {
                 <option value="incomplete">Incomplete</option>
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <input
                 type="month"
                 id="search"
@@ -190,7 +193,7 @@ export default function StudentLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="sm:mt-0">
               <input
                 type="date"
                 id="dateSearch"

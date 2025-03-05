@@ -128,6 +128,8 @@ export default function StudentAdvertisement() {
           columns={columns}
           data={transformedData}
           deleteHandler={deleteAdvertisement}
+          deleteButtonVisible={true}
+
         />
         <Pagination data={advertisement} changePage={changePage} />
       </div>

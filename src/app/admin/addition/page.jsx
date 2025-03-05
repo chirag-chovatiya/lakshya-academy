@@ -144,6 +144,7 @@ export default function StudentLists() {
           deleteHandler={deleteTest}
           isStatusActive={true}
           updateStatusById={updateStatusById}
+          deleteButtonVisible={true}
         />
         <Pagination data={test} changePage={changePage} />
       </div>

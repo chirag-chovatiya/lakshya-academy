@@ -119,6 +119,7 @@ export default function StudentNotice() {
           columns={columns}
           data={transformedData}
           deleteHandler={deleteLesson}
+          deleteButtonVisible={true}
         />
         <Pagination data={notice} changePage={changePage} />
       </div>

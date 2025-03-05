@@ -30,14 +30,12 @@ export default function FormElementStudent({
           (user) => user.user_type === "Teacher"
         );
         setTeachers(filteredTeachers);
-
-        // If it's an edit mode and teacherId is set, find the corresponding teacher's name
         if (data.teacherId) {
           const teacher = filteredTeachers.find(
             (teacher) => teacher.id === data.teacherId
           );
           if (teacher) {
-            setTeacherName(teacher.name); // Set the teacher's name for the edit mode
+            setTeacherName(teacher.name); 
           }
         }
       }
@@ -55,13 +53,14 @@ export default function FormElementStudent({
     { label: "Teacher", value: "Teacher" },
   ];
   const teacherPermissionOptions = [
+    { label: "All Permission", value: "AllPermission" },
     { label: "Student create", value: "StudentCreate" },
     { label: "Student delete", value: "StudentDelete" },
     { label: "Student edit", value: "StudentEdit" },
-    { label: "Exam create", value: "ExamCreate" },
-    { label: "Exam delete", value: "ExamDelete" },
-    { label: "Report delete", value: "ReportDelete" },
-    { label: "Report export", value: "ReportExport" },
+    // { label: "Exam create", value: "ExamCreate" },
+    // { label: "Exam delete", value: "ExamDelete" },
+    // { label: "Report delete", value: "ReportDelete" },
+    // { label: "Report export", value: "ReportExport" },
   ];
 
   const handleSubmit2 = async (e) => {
@@ -185,7 +184,6 @@ export default function FormElementStudent({
             value={formData.level || ""}
             onChange={handleChange}
             className="p-2 bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded w-full"
-            required
           >
             <option value="" disabled>
               Select a level

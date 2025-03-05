@@ -178,9 +178,8 @@ export default function StudentAdvertisement() {
           deleteHandler={deleteAdvertisement}
           isStatusActive={true}
           updateStatusById={updateStatusById}
-          // selectedRows={selectedRows}
-          // setSelectedRows={setSelectedRows}
-          // showCheckbox={true}
+          deleteButtonVisible={true}
+
         />
         <Pagination data={advertisement} changePage={changePage} />
       </div>

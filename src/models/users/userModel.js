@@ -71,7 +71,7 @@ export const getAllUser = async (
   searchQuery = null,
   level = null,
   userType,
-  teacherId = null,
+  teacherId = null
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -85,7 +85,6 @@ export const getAllUser = async (
         attributes: ["name"],
       },
     ];
-
 
     const whereClause = {};
 
@@ -105,7 +104,7 @@ export const getAllUser = async (
     }
 
     if (!page && !pageSize) {
-      const getUsers = await User.findAll({include: includeClause});
+      const getUsers = await User.findAll({ include: includeClause });
       return getUsers;
     }
 
@@ -142,7 +141,7 @@ export const getUserByIdWithReports = async (
   userType,
   page = 1,
   pageSize = 10,
-  createdAt=null,
+  createdAt = null,
   hwStatus = null
 ) => {
   try {
@@ -162,15 +161,11 @@ export const getUserByIdWithReports = async (
       return;
     }
 
-    let whereClause = {}
+    let whereClause = {};
 
     if (createdAt) {
       const filterDate = new Date(createdAt);
-      if (!isNaN(filterDate.getDate()) && filterDate.getDate() !== 1) {
-        const startOfDay = new Date(createdAt).setHours(0, 0, 0, 0);
-        const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
-        whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
-      } else {
+      if (!isNaN(filterDate)) {
         const monthStart = new Date(
           filterDate.getFullYear(),
           filterDate.getMonth(),
@@ -181,6 +176,7 @@ export const getUserByIdWithReports = async (
           filterDate.getMonth() + 1,
           0
         ).setHours(23, 59, 59, 999);
+
         whereClause.createdAt = { [Op.between]: [monthStart, monthEnd] };
       }
     }

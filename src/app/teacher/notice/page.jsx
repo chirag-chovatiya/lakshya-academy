@@ -176,6 +176,7 @@ export default function StudentNotices() {
           deleteHandler={deleteNotice}
           isStatusActive={true}
           updateStatusById={updateStatusById}
+          deleteButtonVisible={true}
         />
         <Pagination data={notice} changePage={changePage} />
       </div>

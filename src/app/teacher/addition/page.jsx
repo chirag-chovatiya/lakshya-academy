@@ -169,6 +169,8 @@ export default function StudentLists() {
           deleteHandler={deleteTest}
           isStatusActive={true}
           updateStatusById={updateStatusById}
+          deleteButtonVisible={true}
+                    // editButtonVisible={hasTeacherPermission("StudentEdit")}
         
         />
         <Pagination data={test} changePage={changePage} />

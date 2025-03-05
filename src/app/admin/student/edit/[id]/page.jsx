@@ -27,9 +27,13 @@ export default function StudentEdit({ params }) {
     const studentData = async () => {
       try {
         const response = await get(API.getAllUser + `/${params.id}`);
+        console.log(response)
         if (response.code == 200 && response.data && response.data) {
           setFormData({
             ...response.data,
+            teacher_permission: response.data.teacher_permission 
+            ? JSON.parse(response.data.teacher_permission) 
+            : [],
           });
         }
       } catch (error) {

@@ -113,7 +113,7 @@ export default function StudentLists() {
                   setStatus("");
                   setLevel("");
                   setCreatedAt("");
-                  document.getElementById("textSearch").value = ""; 
+                  document.getElementById("textSearch").value = "";
                   handleSearch("");
                   initialize("attendance");
                 }}
@@ -177,17 +177,6 @@ export default function StudentLists() {
                 ])}
               </select>
             </div>
-            <div className="mt-4 sm:mt-0">
-              <input
-                type="date"
-                id="dateSearch"
-                value={createdAt}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                onChange={(e) => setCreatedAt(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row md:items-center gap-4">
             <div className="sm:mt-0">
               <input
                 type="month"
@@ -197,6 +186,8 @@ export default function StudentLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
+          </div>
+          <div className="flex flex-col sm:flex-row md:items-center gap-4">
             <div className="flex-grow">
               <input
                 type="text"
@@ -212,6 +203,7 @@ export default function StudentLists() {
           columns={columns}
           data={transformedData}
           deleteHandler={deleteTest}
+          deleteButtonVisible={true}
         />
         <Pagination data={attendance} changePage={changePage} />
       </div>

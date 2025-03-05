@@ -86,6 +86,7 @@ export async function POST(request, { params }) {
       user_type: newData.user_type,
       images: newData.images,
       status: newData.status,
+      teacher_permission: newData.teacher_permission,
     };
 
     if (newData.password) {

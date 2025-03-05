@@ -120,7 +120,6 @@ export default function StudentLists() {
     setPagination({ ...pagination, pageSize: size, page: 1 });
   };
 
-
   const handleRefresh = () => {
     setHwStatus("");
     setCreatedAt("");
@@ -136,7 +135,10 @@ export default function StudentLists() {
   return (
     <>
       <div>
-        <Breadcrumb pageName="Student Monthly Report" totalData={pagination.totalData}/>
+        <Breadcrumb
+          pageName="Student Monthly Report"
+          totalData={pagination.totalData}
+        />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
             <div className="flex items-center gap-4">
@@ -153,7 +155,7 @@ export default function StudentLists() {
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={exportToExcel}
               >
-                 <span>
+                <span>
                   <i className="fa-solid fa-download"></i>
                 </span>
                 <span>Export</span>
@@ -164,11 +166,13 @@ export default function StudentLists() {
                 onChange={(e) => changePageSize(Number(e.target.value))}
                 value={pagination.pageSize}
               >
-                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
+                {[10, 20, 30, 40, 50, 100, 200, 500, 1000, 2000, 5000].map(
+                  (size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  )
+                )}
               </select>
             </div>
             <div className="sm:mt-0">
@@ -189,17 +193,8 @@ export default function StudentLists() {
               <input
                 type="month"
                 id="search"
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 placeholder="Search Here"
-                value={createdAt}
-                onChange={(e) => setCreatedAt(e.target.value)}
-              />
-            </div>
-            <div className="sm:mt-0">
-              <input
-                type="date"
-                id="dateSearch"
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 value={createdAt}
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
@@ -210,6 +205,7 @@ export default function StudentLists() {
           columns={columns}
           data={studentData}
           deleteHandler={handleDelete}
+          deleteButtonVisible={true}
         />
         <Pagination data={pagination} changePage={changePage} />
       </div>

@@ -7,6 +7,7 @@ import { get, post } from "@/service/api";
 import { toast } from "react-toastify";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import { useRouter } from "next/navigation";
+import { hasTeacherPermission } from "@/components/app-permission/app-permission";
 
 export default function StudentEdit({ params }) {
   const [formData, setFormData] = useState({
@@ -20,8 +21,13 @@ export default function StudentEdit({ params }) {
   });
   const router = useRouter();
   const { initialize } = useUserAdminStore((state) => state);
-
+const hasCreatePermission = hasTeacherPermission("StudentEdit");
   useEffect(() => {
+    if (!hasCreatePermission) {
+      toast.error("Unauthorized: You do not have permission to edit students.");
+      router.replace("/teacher");
+      return;
+    }
     const studentData = async () => {
       try {
         const response = await get(API.getAllUser + `/${params.id}`);
@@ -62,7 +68,7 @@ export default function StudentEdit({ params }) {
   return (
     <>
       <div>
-        <Breadcrumb pageName={`Student/edit/1`} title={`Edit Student`} />
+        <Breadcrumb pageName={`Student/edit/${params.id}`} title={`Edit Student`} />
         <FormElementStudent
           data={formData}
           handleSubmit={handleSubmit}

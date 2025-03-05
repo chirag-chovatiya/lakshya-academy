@@ -145,9 +145,9 @@ export const getAllAttendance = async (
   teacherId = null,
   page = 1,
   pageSize = 10,
-  status= null,
+  status = null,
   level = null,
-  createdAt=null,
+  createdAt = null,
   studentName = null,
   teacherName = null
 ) => {
@@ -176,7 +176,7 @@ export const getAllAttendance = async (
       },
     ];
     const whereClause = {};
-    
+
     if (userType === "Teacher" && teacherId) {
       whereClause.teacherId = teacherId;
     }
@@ -190,19 +190,17 @@ export const getAllAttendance = async (
 
     if (status) {
       if (["Present", "Absent"].includes(status)) {
-        whereClause.status = status; 
+        whereClause.status = status;
       } else {
-        throw new Error("Invalid status value. Accepted values are 'Present' or 'Absent'.");
+        throw new Error(
+          "Invalid status value. Accepted values are 'Present' or 'Absent'."
+        );
       }
     }
 
     if (createdAt) {
       const filterDate = new Date(createdAt);
-      if (!isNaN(filterDate.getDate()) && filterDate.getDate() !== 1) {
-        const startOfDay = new Date(createdAt).setHours(0, 0, 0, 0);
-        const endOfDay = new Date(createdAt).setHours(23, 59, 59, 999);
-        whereClause.createdAt = { [Op.between]: [startOfDay, endOfDay] };
-      } else {
+      if (!isNaN(filterDate)) {
         const monthStart = new Date(
           filterDate.getFullYear(),
           filterDate.getMonth(),
@@ -213,11 +211,11 @@ export const getAllAttendance = async (
           filterDate.getMonth() + 1,
           0
         ).setHours(23, 59, 59, 999);
+
         whereClause.createdAt = { [Op.between]: [monthStart, monthEnd] };
       }
     }
 
-    
     const getAttendance = await Attendance.findAndCountAll({
       where: whereClause,
       offset,
@@ -246,19 +244,30 @@ export const getAttendanceById = async (attendanceId) => {
   }
 };
 
-export const deleteAttendanceById = async function (attendanceId, teacherId, userType) {
+export const deleteAttendanceById = async function (
+  attendanceId,
+  teacherId,
+  userType
+) {
   try {
-    const deleteAttendance = await Attendance.findOne({ where: { id: attendanceId } });
+    const deleteAttendance = await Attendance.findOne({
+      where: { id: attendanceId },
+    });
     if (!deleteAttendance) {
-      return { success: false, message: "No Attendance found with the provided ID" };
+      return {
+        success: false,
+        message: "No Attendance found with the provided ID",
+      };
     }
 
     if (userType === "Teacher" && deleteAttendance.teacherId !== teacherId) {
-      return { success: false, message: "Unauthorized: You cannot delete this attendance" };
+      return {
+        success: false,
+        message: "Unauthorized: You cannot delete this attendance",
+      };
     }
     await deleteAttendance.destroy();
     return { success: true, message: "Attendance Deleted successfully" };
-
   } catch (error) {
     throw error;
   }

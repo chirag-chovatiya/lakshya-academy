@@ -118,6 +118,7 @@ export default function StudentLists() {
           columns={columns}
           data={transformedData}
           deleteHandler={deleteLesson}
+          deleteButtonVisible={true}
         />
         <Pagination data={lesson} changePage={changePage} />
       </div>

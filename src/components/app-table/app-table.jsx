@@ -9,6 +9,7 @@ const Table = ({
   editLinkPrefix,
   deleteHandler,
   editButtonVisible = false,
+  deleteButtonVisible = false,
   isStatusActive = false,
   updateStatusById,
   onImageClick,
@@ -29,7 +30,7 @@ const Table = ({
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-custom-blue text-left dark:bg-meta-4 rounded-xl">
-            {showCheckbox && (
+              {showCheckbox && (
                 <th className="px-4 py-4 font-medium text-white">
                   <input
                     type="checkbox"
@@ -179,7 +180,7 @@ const Table = ({
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div
                       className={`flex items-center ${
-                        editButtonVisible ? "space-x-3.5" : "justify-center"
+                        editButtonVisible || deleteButtonVisible ? "space-x-3.5" : "justify-center"
                       }`}
                     >
                       {editButtonVisible &&
@@ -199,10 +200,12 @@ const Table = ({
                           </button>
                         ))}
 
-                      <DeleteButton
-                        key={item.id}
-                        deleteAction={() => deleteHandler(item.id)}
-                      />
+                      {deleteButtonVisible && (
+                        <DeleteButton
+                          key={item.id}
+                          deleteAction={() => deleteHandler(item.id)}
+                        />
+                      )}
                     </div>
                   </td>
                 </tr>

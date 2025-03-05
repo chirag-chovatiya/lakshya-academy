@@ -185,6 +185,7 @@ export default function StudentLists() {
           editLinkPrefix="../../admin/student/edit"
           deleteHandler={handleDelete}
           editButtonVisible={true}
+          deleteButtonVisible={true}
         />
 
         <Pagination data={users} changePage={changePage} />

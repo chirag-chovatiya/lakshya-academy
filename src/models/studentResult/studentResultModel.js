@@ -10,7 +10,6 @@ export const createResult = async (data) => {
     throw error;
   }
 };
-
 export const getResultById = async (resultId) => {
   try {
     const getData = await Result.findOne({ where: { id: resultId } });
@@ -19,7 +18,6 @@ export const getResultById = async (resultId) => {
     throw error;
   }
 };
-
 export const getAllResult = async (
   userType,
   teacherId = null,
@@ -82,7 +80,6 @@ export const getAllResult = async (
     throw error;
   }
 };
-
 export const updateResultById = async (resultId, teacherId, userType, newData) => {
   try {
     const findResult = await Result.findOne({ where: { id: resultId } });
@@ -98,7 +95,6 @@ export const updateResultById = async (resultId, teacherId, userType, newData) =
     throw error;
   }
 };
-
 export const deleteResultById = async function (resultId, teacherId, userType) {
   try {
     const deleteResult = await Result.findOne({ where: { id: resultId } });

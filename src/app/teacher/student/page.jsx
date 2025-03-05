@@ -11,6 +11,7 @@ import * as XLSX from "xlsx";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { hasTeacherPermission } from "@/components/app-permission/app-permission";
 
 export default function StudentLists() {
   const {
@@ -22,6 +23,8 @@ export default function StudentLists() {
     onSelectionChange,
     initialize,
   } = useUserAdminStore((state) => state);
+
+  const hasCreatePermission = hasTeacherPermission("StudentCreate");
 
   const [level, setLevel] = useState("");
 
@@ -144,6 +147,9 @@ export default function StudentLists() {
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                 onClick={exportToExcel}
               >
+                <span>
+                  <i className="fa-solid fa-download"></i>
+                </span>
                 <span>Export</span>
               </button>
               <select
@@ -188,24 +194,26 @@ export default function StudentLists() {
                 placeholder="Search Here"
               />
             </div>
-            <Link
-              href="../../teacher/student/create"
-              className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-            >
-              <span>
-                <i className="fa-solid fa-plus"></i>
-              </span>
-              <span>Add New</span>
-            </Link>
+            {hasCreatePermission && (
+              <Link
+                href="../../teacher/student/create"
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+              >
+                <span>
+                  <i className="fa-solid fa-plus"></i>
+                </span>
+                <span>Add New</span>
+              </Link>
+            )}
           </div>
         </div>
-
         <Table
           columns={columns}
           data={users.data[users.page] || []}
           editLinkPrefix="../../teacher/student/edit"
           deleteHandler={handleDelete}
-          editButtonVisible={true}
+          deleteButtonVisible={hasTeacherPermission("StudentDelete")}
+          editButtonVisible={hasTeacherPermission("StudentEdit")}
           createAttendance={createAttendance}
         />
 

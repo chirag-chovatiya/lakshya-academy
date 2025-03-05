@@ -193,6 +193,7 @@ export default function StudentResults() {
           editLinkPrefix={(id) => handleAddNewResult(id)}
           editButtonVisible={true}
           deleteHandler={deleteResult}
+          deleteButtonVisible={true}
         />
         <Pagination data={result} changePage={changePage} />
       </div>

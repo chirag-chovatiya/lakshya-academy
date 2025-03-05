@@ -205,6 +205,8 @@ export default function ImageLists() {
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
           showCheckbox={true}
+          deleteButtonVisible={true}
+
         />
         <Pagination data={userImage} changePage={changePage} />
       </div>

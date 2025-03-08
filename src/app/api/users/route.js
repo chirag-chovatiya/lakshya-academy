@@ -82,11 +82,11 @@ export async function POST(request, response) {
       }
       const userId = authResponse?.user?.id;
       const userType = authResponse?.user?.user_type;
-      if (!name || !phone_number) {
+      if (!name || !email) {
         return sendResponse(
           NextResponse,
           400,
-          "Name and phone number are required for registration"
+          "Name and email are required for registration"
         );
       }
 

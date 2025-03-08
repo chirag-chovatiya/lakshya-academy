@@ -79,9 +79,8 @@ export default function ImageLists() {
     if (!confirm("Are you sure you want to delete selected items?")) return;
 
     try {
-      await Promise.all(
-        selectedRows.map((id) => del(API.imageUpload + `/${id}`))
-      );
+      const ids = selectedRows.join(",");
+      await del(`${API.imageUpload}/${ids}`);
       initialize("userImage");
       setSelectedRows([]);
     } catch (error) {
@@ -104,6 +103,29 @@ export default function ImageLists() {
     setSelectedImage(null);
   };
 
+  const exportToExcel = () => {
+    if (!userImage?.data?.[userImage.page]?.length) {
+      alert("No data available to export!");
+      return;
+    }
+
+    const formattedData = userImage?.data?.[userImage.page]?.map((item) => ({
+      ID: item.id,
+      "Student Name": item.student?.name || "N/A",
+      "Student Level": item.student?.level || "N/A",
+      "HW Image URL": item.imgUrl || "",
+      Date: item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString("en-GB")
+        : "N/A",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Student Images");
+
+    XLSX.writeFile(workbook, "student_images.xlsx");
+  };
+
   return (
     <>
       <div>
@@ -116,15 +138,24 @@ export default function ImageLists() {
                 onClick={() => {
                   setLevel("");
                   setCreatedAt("");
-                  document.getElementById("textSearch").value = ""; 
+                  document.getElementById("textSearch").value = "";
                   handleSearch("");
-                  initialize("userImage");
+                  initialize("refresh");
                 }}
               >
                 <span>
                   <i className="fa-solid fa-arrows-rotate"></i>
                 </span>
                 <span>Refresh</span>
+              </button>
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                onClick={exportToExcel}
+              >
+                <span>
+                  <i className="fa-solid fa-download"></i>
+                </span>
+                <span>Export</span>
               </button>
               <button
                 className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
@@ -170,15 +201,6 @@ export default function ImageLists() {
             </div>
             <div className="sm:mt-0">
               <input
-                type="date"
-                id="dateSearch"
-                value={createdAt}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                onChange={(e) => setCreatedAt(e.target.value)}
-              />
-            </div>
-            <div className="sm:mt-0">
-              <input
                 type="month"
                 id="monthSearch"
                 value={createdAt}
@@ -206,7 +228,6 @@ export default function ImageLists() {
           setSelectedRows={setSelectedRows}
           showCheckbox={true}
           deleteButtonVisible={true}
-
         />
         <Pagination data={userImage} changePage={changePage} />
       </div>

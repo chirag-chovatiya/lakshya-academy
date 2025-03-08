@@ -12,6 +12,7 @@ import { useUserAdminStore } from "@/providers/user-store-provider";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { hasTeacherPermission } from "@/components/app-permission/app-permission";
+import FormElementStudent from "./components/form-element";
 
 export default function StudentLists() {
   const {
@@ -27,6 +28,7 @@ export default function StudentLists() {
   const hasCreatePermission = hasTeacherPermission("StudentCreate");
 
   const [level, setLevel] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
 
   useEffect(() => {
     onSelectionChange("users");
@@ -48,7 +50,7 @@ export default function StudentLists() {
     { key: "level", title: "Level" },
     { key: "status", title: "Status" },
     { key: "email", title: "Email" },
-    { key: "phone_number", title: "Phone" },
+    // { key: "phone_number", title: "Phone" },
     { key: "user_type", title: "UserType" },
   ];
 
@@ -121,10 +123,42 @@ export default function StudentLists() {
     XLSX.writeFile(workbook, filename);
   };
 
+  const [studentRegisterObj, setStudentRegisterObj] = useState({
+    visible: false,
+    displayHeader: true,
+    title: "Register New Student",
+    displayDefaultBtn: false,
+    cancelBtnText: "Later",
+    okBtnText: "Save",
+  });
+
+  const handleAddNewStudent = (id = null) => {
+    setSelectedStudentId(id);
+    setStudentRegisterObj((prevState) => ({
+      ...prevState,
+      title: id ? "Edit Student" : "Register New Student",
+      visible: true,
+    }));
+  };
+
+  const handleCloseStudentForm = () => {
+    setStudentRegisterObj((prevState) => ({
+      ...prevState,
+      visible: false,
+    }));
+  };
+
   return (
     <>
+      <ToastContainer />
+      {studentRegisterObj.visible && (
+        <FormElementStudent
+          studentRegisterObj={studentRegisterObj}
+          handleCloseStudentForm={handleCloseStudentForm}
+          id={selectedStudentId}
+        />
+      )}
       <div>
-        <ToastContainer />
         <Breadcrumb pageName="Student" totalData={users.totalData} />
         <div className="mb-4">
           <div className="flex flex-col sm:flex-row md:items-center gap-4 py-4">
@@ -135,7 +169,7 @@ export default function StudentLists() {
                   setLevel("");
                   document.getElementById("search").value = "";
                   handleSearch("");
-                  initialize("users");
+                  initialize("refresh");
                 }}
               >
                 <span>
@@ -195,22 +229,22 @@ export default function StudentLists() {
               />
             </div>
             {hasCreatePermission && (
-              <Link
-                href="../../teacher/student/create"
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+              <div
+                onClick={() => handleAddNewStudent()}
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
               >
                 <span>
                   <i className="fa-solid fa-plus"></i>
                 </span>
                 <span>Add New</span>
-              </Link>
+              </div>
             )}
           </div>
         </div>
         <Table
           columns={columns}
           data={users.data[users.page] || []}
-          editLinkPrefix="../../teacher/student/edit"
+          editLinkPrefix={(id) => handleAddNewStudent(id)}
           deleteHandler={handleDelete}
           deleteButtonVisible={hasTeacherPermission("StudentDelete")}
           editButtonVisible={hasTeacherPermission("StudentEdit")}

@@ -147,7 +147,7 @@ export default function StudentLists() {
                   setCreatedAt("");
                   document.getElementById("textSearch").value = "";
                   handleSearch("");
-                  initialize("report");
+                  initialize("refresh");
                 }}
               >
                 <span>

@@ -1,16 +1,16 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import Link from "next/link";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useUserAdminStore } from "@/providers/user-store-provider";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/app-table/app-table";
 import debounce from "lodash/debounce";
-import { del, get } from "@/service/api";
+import { del } from "@/service/api";
 import * as XLSX from "xlsx";
 import { API } from "@/service/constant/api-constant";
-import { hasPermission } from "@/utils/permissions";
-import { useRouter } from "next/navigation";
+import FormElementStudent from "./components/form-element";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function StudentLists() {
   const {
@@ -24,9 +24,9 @@ export default function StudentLists() {
   } = useUserAdminStore((state) => state);
 
   const [level, setLevel] = useState("");
+    const [selectedStudentId, setSelectedStudentId] = useState(null);
+  
 
-  const hasCreatePermission = hasPermission("StudentCreate");
-  const router = useRouter();
   useEffect(() => {
     onSelectionChange("users");
     if (Object.keys(users.data).length === 0) {
@@ -37,19 +37,16 @@ export default function StudentLists() {
   useEffect(() => {
     if (level) {
       selectedData(level);
-    } else {
-      initialize("users");
     }
-  }, [level, selectedData, initialize]);
+  }, [level, selectedData]);
 
   const columns = [
     { key: "id", title: "ID" },
     { key: "name", title: "FullName" },
-    { key: "email", title: "Email" },
-    { key: "phone_number", title: "Phone" },
-    { key: "studentTeacher", title: "Teacher Name" },
     { key: "level", title: "Level" },
     { key: "user_type", title: "UserType" },
+    { key: "studentTeacher", title: "Teacher Name" },
+    { key: "email", title: "Email" },
     { key: "status", title: "Status" },
   ];
 
@@ -83,7 +80,6 @@ export default function StudentLists() {
       FullName: user.name,
       Email: user.email,
       Level: user.level,
-      Phone: user.phone_number,
       Status: user.status ? "Active" : "Inactive",
       UserType: user.user_type,
     }));
@@ -94,8 +90,41 @@ export default function StudentLists() {
     XLSX.writeFile(wb, "students.xlsx");
   };
 
+  const [studentRegisterObj, setStudentRegisterObj] = useState({
+    visible: false,
+    displayHeader: true,
+    title: "Register New Student",
+    displayDefaultBtn: false,
+    cancelBtnText: "Later",
+    okBtnText: "Save",
+  });
+
+  const handleAddNewStudent = (id = null) => {
+    setSelectedStudentId(id);
+    setStudentRegisterObj((prevState) => ({
+      ...prevState,
+      title: id ? "Edit Student" : "Register New Student",
+      visible: true,
+    }));
+  };
+
+  const handleCloseStudentForm = () => {
+    setStudentRegisterObj((prevState) => ({
+      ...prevState,
+      visible: false,
+    }));
+  };
+
   return (
     <>
+      <ToastContainer />
+      {studentRegisterObj.visible && (
+        <FormElementStudent
+          studentRegisterObj={studentRegisterObj}
+          handleCloseStudentForm={handleCloseStudentForm}
+          id={selectedStudentId}
+        />
+      )}
       <div>
         <Breadcrumb pageName="Student" totalData={users.totalData} />
         <div className="mb-4">
@@ -107,7 +136,7 @@ export default function StudentLists() {
                   setLevel("");
                   document.getElementById("search").value = "";
                   handleSearch("");
-                  initialize("users");
+                  initialize("refresh");
                 }}
               >
                 <span>
@@ -166,23 +195,21 @@ export default function StudentLists() {
                 placeholder="Search Here"
               />
             </div>
-            {hasCreatePermission && (
-              <Link
-                href="../../admin/student/create"
-                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-              >
-                <span>
-                  <i className="fa-solid fa-plus"></i>
-                </span>
-                <span>Add New</span>
-              </Link>
-            )}
+            <div
+              onClick={() => handleAddNewStudent()}
+              className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 cursor-pointer"
+            >
+              <span>
+                <i className="fa-solid fa-plus"></i>
+              </span>
+              <span>Add New</span>
+            </div>
           </div>
         </div>
         <Table
           columns={columns}
           data={transformedData || []}
-          editLinkPrefix="../../admin/student/edit"
+          editLinkPrefix={(id) => handleAddNewStudent(id)}
           deleteHandler={handleDelete}
           editButtonVisible={true}
           deleteButtonVisible={true}

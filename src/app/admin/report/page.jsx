@@ -85,9 +85,8 @@ export default function StudentLists() {
     if (!confirm("Are you sure you want to delete selected items?")) return;
 
     try {
-      await Promise.all(
-        selectedRows.map((id) => del(API.getReport + `/${id}`))
-      );
+      const ids = selectedRows.join(",");
+    await del(`${API.getReport}/${ids}`);
       initialize("report");
       setSelectedRows([]);
     } catch (error) {
@@ -147,7 +146,7 @@ export default function StudentLists() {
                   setCreatedAt("");
                   document.getElementById("textSearch").value = "";
                   handleSearch("");
-                  initialize("report");
+                  initialize("refresh");
                 }}
               >
                 <span>

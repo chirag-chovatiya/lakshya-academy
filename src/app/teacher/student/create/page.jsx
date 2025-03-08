@@ -12,7 +12,6 @@ export default function StudentCreate() {
     name: "",
     email: "",
     password: "",
-    phone_number: "",
     level: 0,
     user_type: "",
     status: true,

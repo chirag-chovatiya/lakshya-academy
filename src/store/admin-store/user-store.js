@@ -57,7 +57,7 @@ async function fetchDataAndSetState(set, get) {
 export const createUsersStore = (initState = defaultInitState) =>
   createStore((set, get) => ({
     ...initState,
-    initialize: async (selected = "users") => {
+    initialize: async (mode = "initialize", selected = "users") => {
       set((state) => ({
         [selected]: {
           ...state[selected],
@@ -65,12 +65,13 @@ export const createUsersStore = (initState = defaultInitState) =>
           page: 1,
           hasMoreData: true,
           loading: true,
-          level: null,
-          searchQuery: null
+          level: mode === "refresh" ? null : state[selected].level,
+          searchQuery: mode === "refresh" ? null : state[selected].searchQuery,
         },
       }));
       await fetchDataAndSetState(set, get);
     },
+
     changePage: async (page) => {
       const state = get();
       if (!state.users.data[page]) {
@@ -107,7 +108,6 @@ export const createUsersStore = (initState = defaultInitState) =>
     },
     selectedData: async (level) => {
       set((state) => ({
-        ...state.users,
         users: {
           ...state.users,
           level: level || null,

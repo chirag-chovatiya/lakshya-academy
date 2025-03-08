@@ -4,9 +4,9 @@ import { createStore } from "zustand/vanilla";
 export const defaultInitState = {
   userImage: {
     data: {},
-    level:null,
-    createdAt:null,
-    studentName:null,
+    level: null,
+    createdAt: null,
+    studentName: null,
     page: 1,
     pageSize: 50,
     totalPages: 0,
@@ -33,7 +33,7 @@ async function fetchDataAndSetState(set, get) {
     if (studentName && studentName != "") {
       url += `&studentName=${encodeURIComponent(studentName)}`;
     }
-    const { data, code } = await getAllImage(url+'&');
+    const { data, code } = await getAllImage(url + "&");
 
     if (code === 200 || code === 201) {
       const hasMoreData = data.data.length > 0 && data.data.length >= 10;
@@ -62,7 +62,7 @@ async function fetchDataAndSetState(set, get) {
 export const createImageStore = (initState = defaultInitState) =>
   createStore((set, get) => ({
     ...initState,
-    initialize: async (selected = "userImage") => {
+    initialize: async (mode = "initialize", selected = "userImage") => {
       set((state) => ({
         [selected]: {
           ...state[selected],
@@ -70,9 +70,9 @@ export const createImageStore = (initState = defaultInitState) =>
           page: 1,
           hasMoreData: true,
           loading: true,
-          level: null,
-          createdAt: null,
-          studentName: null,
+          level: mode === "refresh" ? null : state[selected].level,
+          studentName: mode === "refresh" ? null : state[selected].studentName,
+          createdAt: mode === "refresh" ? null : state[selected].createdAt,
         },
       }));
       await fetchDataAndSetState(set, get);
@@ -81,7 +81,12 @@ export const createImageStore = (initState = defaultInitState) =>
       const state = get();
       if (!state.userImage.data[page]) {
         set({
-          userImage: { ...state.userImage, page, hasMoreData: true, loading: true },
+          userImage: {
+            ...state.userImage,
+            page,
+            hasMoreData: true,
+            loading: true,
+          },
         });
         await fetchDataAndSetState(set, get);
       } else {
@@ -123,5 +128,6 @@ export const createImageStore = (initState = defaultInitState) =>
       await fetchDataAndSetState(set, get);
     },
     onError: (error) => set({ userImage: { ...get().userImage, error } }),
-    noMoreData: () => set({ userImage: { ...get().userImage, hasMoreData: false } }),
+    noMoreData: () =>
+      set({ userImage: { ...get().userImage, hasMoreData: false } }),
   }));

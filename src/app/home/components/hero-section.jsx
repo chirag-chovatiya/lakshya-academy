@@ -7,6 +7,7 @@ import { API } from "@/service/constant/api-constant";
 import jwt from "jsonwebtoken";
 import StudentLesson from "./lesson-section";
 import StudentNotice from "./notice-section";
+import StudentRating from "./student-rating";
 
 export default function HeroSection() {
   const [selectedCard, setSelectedCard] = useState(null);
@@ -141,6 +142,7 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+      <StudentRating/>
       {isImageUploadOpen && (
         <ImageUploadModel
           isModalOpen={isImageUploadOpen}

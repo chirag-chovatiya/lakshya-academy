@@ -21,7 +21,7 @@ export default function StudentEdit({ params }) {
   });
   const router = useRouter();
   const { initialize } = useUserAdminStore((state) => state);
-const hasCreatePermission = hasTeacherPermission("StudentEdit");
+  const hasCreatePermission = hasTeacherPermission("StudentEdit");
   useEffect(() => {
     if (!hasCreatePermission) {
       toast.error("Unauthorized: You do not have permission to edit students.");
@@ -68,7 +68,10 @@ const hasCreatePermission = hasTeacherPermission("StudentEdit");
   return (
     <>
       <div>
-        <Breadcrumb pageName={`Student/edit/${params.id}`} title={`Edit Student`} />
+        <Breadcrumb
+          pageName={`Student/edit/${params.id}`}
+          title={`Edit Student`}
+        />
         <FormElementStudent
           data={formData}
           handleSubmit={handleSubmit}

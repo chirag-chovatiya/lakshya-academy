@@ -67,7 +67,7 @@ async function fetchDataAndSetState(set, get) {
 export const createReportStore = (initState = defaultInitState) =>
   createStore((set, get) => ({
     ...initState,
-    initialize: async (selected = "report") => {
+    initialize: async (mode = "initialize", selected = "report") => {
       set((state) => ({
         [selected]: {
           ...state[selected],
@@ -75,10 +75,10 @@ export const createReportStore = (initState = defaultInitState) =>
           page: 1,
           hasMoreData: true,
           loading: true,
-          hwStatus: null,
-          level: null,
-          createdAt: null,
-          studentName: null,
+          level: mode === "refresh" ? null : state[selected].level,
+          studentName: mode === "refresh" ? null : state[selected].studentName,
+          createdAt: mode === "refresh" ? null : state[selected].createdAt,
+          hwStatus: mode === "refresh" ? null : state[selected].hwStatus,
         },
       }));
       await fetchDataAndSetState(set, get);

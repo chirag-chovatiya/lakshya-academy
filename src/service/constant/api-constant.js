@@ -1,5 +1,5 @@
-// export const BASE_URl = "http://localhost:3000/api/";
-export const BASE_URl = "https://lakshya-academy.vercel.app/api/";
+export const BASE_URl = "http://localhost:3000/api/";
+// export const BASE_URl = "https://lakshya-academy.vercel.app/api/";
 
 
 export const API = {
@@ -19,7 +19,9 @@ export const API = {
 
   studentNote:"studentnotice",
 
-  studentResult:"studentresult"
+  studentResult:"studentresult",
+
+  studentRating:"studentrating"
 
   
 };

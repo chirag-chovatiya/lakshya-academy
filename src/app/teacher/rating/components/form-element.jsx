@@ -8,37 +8,35 @@ import { get, post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useResultAdminStore } from "@/providers/result-store-provider";
+import { useRatingAdminStore } from "@/providers/rating-store-provider";
 
-export default function StudentResult({
+export default function StudentRating({
   handleCloseStudentForm,
-  studentResultObj,
+  studentRatingObj,
   id = null,
   data = {
     studentName: "",
     studentLevel: "",
-    totalMarks: "",
-    obtainedMarks: "",
-    status: false,
+    rating: "",
   },
 }) {
   const [formData, setFormData] = useState(data);
   const [loading, setLoading] = useState(false);
 
-  const { initialize } = useResultAdminStore((state) => state);
+  const { initialize } = useRatingAdminStore((state) => state);
 
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
         try {
-          const response = await get(`${API.studentResult}/${id}&`);
+          const response = await get(`${API.studentRating}/${id}&`);
           if (response.code === 200) {
             setFormData(response.data);
           } else {
-            toast.error("Failed to fetch result data.");
+            toast.error("Failed to fetch rating data.");
           }
         } catch (error) {
-          console.error("Error fetching result data:", error);
+          console.error("Error fetching rating data:", error);
           toast.error("There was an error fetching the data.");
         }
       }
@@ -59,11 +57,11 @@ export default function StudentResult({
     setLoading(true);
     try {
       const response = await post(
-        id ? `${API.studentResult}/${id}` : API.studentResult,
+        id ? `${API.studentRating}/${id}` : API.studentRating,
         formData
       );
       if (response.code === 201 || response.code === 200) {
-        toast.success(`Result ${id ? "updated" : "submitted"} successfully!`);
+        toast.success(`Rating ${id ? "updated" : "submitted"} successfully!`);
         handleCloseStudentForm();
         initialize();
       } else {
@@ -79,8 +77,8 @@ export default function StudentResult({
 
   return (
     <AppModal
-      key="Add Student Result"
-      config={studentResultObj}
+      key="Add Student Rating"
+      config={studentRatingObj}
       component={
         <>
           <ToastContainer />
@@ -116,30 +114,16 @@ export default function StudentResult({
 
               {/* Total Marks Input */}
               <InputField
-                id="totalMarks"
-                label="Total Marks"
+                id="rating"
+                label="Student Rating"
                 type="number"
-                name="totalMarks"
-                value={formData.totalMarks}
+                name="rating"
+                value={formData.rating}
                 onChange={handleChange}
-                placeholder="Enter Total Marks"
-                required
-              />
-
-              {/* Obtained Marks Input */}
-              <InputField
-                id="obtainedMarks"
-                label="Obtained Marks"
-                type="number"
-                name="obtainedMarks"
-                value={formData.obtainedMarks}
-                onChange={handleChange}
-                placeholder="Enter Obtained Marks"
+                placeholder="Enter Student Rating"
                 required
               />
             </div>
-
-            {/* Submit Button */}
             <SubmitButton loading={loading} />
           </form>
         </>

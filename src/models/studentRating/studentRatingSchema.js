@@ -27,7 +27,7 @@ const StudentRating = sequelize.define(
       defaultValue: null,
     },
     rating: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       defaultValue: null,
     },
   },

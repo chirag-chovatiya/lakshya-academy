@@ -22,6 +22,12 @@ const User = sequelize.define(
     teacherId: {
       type: DataTypes.INTEGER,
       defaultValue: null,
+      references: {
+        model: "students", 
+        key: "id",
+      },
+      onDelete: "CASCADE", 
+      onUpdate: "CASCADE", 
     },
     name: {
       type: DataTypes.STRING,
@@ -106,7 +112,7 @@ StudentNote.belongsTo(User, {
   as: "teacher",
 });
 TeacherAdvertisement.belongsTo(User, {
-  foreignKey: "userId",
+  foreignKey: "teacherId",
   as: "teacher",
 });
 Result.belongsTo(User, {

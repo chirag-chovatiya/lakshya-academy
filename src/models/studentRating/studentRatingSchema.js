@@ -18,6 +18,10 @@ const StudentRating = sequelize.define(
       },
       allowNull: false,
     },
+    studentName: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
     studentLevel: {
       type: DataTypes.STRING,
       defaultValue: null,

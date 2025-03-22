@@ -19,7 +19,9 @@ export const API = {
 
   studentNote:"studentnotice",
 
-  studentResult:"studentresult"
+  studentResult:"studentresult",
+
+  studentRating:"studentrating"
 
   
 };

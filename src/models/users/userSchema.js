@@ -8,6 +8,7 @@ import { Lesson } from "../studentLesson/studentLessonSchema";
 import { StudentNote } from "../notice/studentNoticeSchema";
 import { TeacherAdvertisement } from "../teacherAdv/studentAdvSchema";
 import { Result } from "../studentResult/studentResultSchema";
+import { StudentRating } from "../studentRating/studentRatingSchema";
 
 const User = sequelize.define(
   "students",
@@ -109,6 +110,10 @@ TeacherAdvertisement.belongsTo(User, {
   as: "teacher",
 });
 Result.belongsTo(User, {
+  foreignKey: "teacherId",
+  as: "teacher",
+});
+StudentRating.belongsTo(User, {
   foreignKey: "teacherId",
   as: "teacher",
 });

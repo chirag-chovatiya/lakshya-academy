@@ -223,6 +223,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 Student Result
               </Link>
               {/* Result End */}
+              {/* Rating Start */}
+              <Link
+                href={
+                  pathname.match(/\/admin/)
+                    ? "/admin/rating"
+                    : "/teacher/rating"
+                }
+                className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes("rating") && "bg-graydark dark:bg-meta-4"
+                }`}
+              >
+                <span>⭐</span>
+                Student Rating
+              </Link>
+              {/* Rating End */}
               {/* Advertisement Start */}
               <SidebarLinkGroup
                 activeCondition={

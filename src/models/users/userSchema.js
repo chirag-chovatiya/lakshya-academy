@@ -112,7 +112,7 @@ StudentNote.belongsTo(User, {
   as: "teacher",
 });
 TeacherAdvertisement.belongsTo(User, {
-  foreignKey: "teacherId",
+  foreignKey: "userId",
   as: "teacher",
 });
 Result.belongsTo(User, {

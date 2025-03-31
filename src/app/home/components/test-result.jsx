@@ -8,11 +8,11 @@ const Results = ({
 }) => {
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold py-2  sm:text-left">
+      <div className="flex md:flex-row flex-col justify-between md:items-center mb-5">
+        <h2 className="text-xl font-semibold py-2 text-custom-blue  sm:text-left">
           Total Score: {totalScore}
         </h2>
-        <h3 className="text-lg text-gray-700 py-2">
+        <h3 className="text-xl text-custom-blue font-semibold pb-5">
           Time Taken: {elapsedTime}
         </h3>
       </div>
@@ -22,11 +22,11 @@ const Results = ({
           const isCorrect = userAnswer === q.answer;
           return (
             <li key={index} className="mt-2">
-              <p className="text-3xl font-semibold">
+              <p className="text-xl text-custom-blue font-semibold">
                 Q {index + 1}.{" "}
                 {q.question.join(" " + getSign(questionType) + " ")}
               </p>
-              <div className="flex flex-col sm:flex-row justify-between md:items-center text-xl py-2">
+              <div className="flex flex-col sm:flex-row justify-between md:items-center text-lg py-2">
                 <span className="text-green-500 mb-2 sm:mb-0">
                   <strong>Correct Answer:</strong> {q.answer}
                 </span>

@@ -5,6 +5,7 @@ import {
   getTestById,
   updateTestById,
 } from "@/models/addition/studentAdditionModel";
+import { authenticateToken } from "@/middlewares/auth";
 
 export async function GET(request, { params }) {
   try {
@@ -58,21 +59,29 @@ export async function POST(request, { params }) {
   }
 }
 export async function DELETE(request, { params }) {
+    const authResponse = await authenticateToken(request);
+    if (!authResponse.user) {
+      return sendResponse(
+        NextResponse,
+        authResponse.status || 401,
+        authResponse.message || "Unauthorized"
+      );
+    }
   try {
+    const userType = authResponse?.user?.user_type;
+    const userId = authResponse?.user?.id;
     const { testId } = params;
 
-    const testIds = testId.includes(",") ? testId.split(",") : testId;
+    const testIds = testId.includes(",")
+    ? testId.split(",").map((id) => id.trim())
+    : testId;
 
-    const deleteTest = await deleteTestById(testIds);
+    const deleteTest = await deleteTestById(testIds, userId, userType);
 
     if (deleteTest) {
       return sendResponse(NextResponse, 200, deleteTest.message);
     } else {
-      return sendResponse(
-        NextResponse,
-        404,
-        "No Test(s) found with the provided ID(s)"
-      );
+      return sendResponse(NextResponse, 404, result.message);
     }
   } catch (error) {
     console.error(error);

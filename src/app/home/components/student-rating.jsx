@@ -24,7 +24,7 @@ export default function StudentRating() {
   return (
     <div className="container mx-auto w-full mb-10 p-5">
       <div className="block w-full h-full p-6 bg-white border border-custom-blue rounded-lg shadow">
-        <h5 className="mb-4 text-2xl font-bold text-gray-900 text-center">
+        <h5 className="mb-4 text-2xl font-bold text-custom-blue text-center">
           Student Star Rating
         </h5>
         <div className="overflow-x-auto">
@@ -45,7 +45,7 @@ export default function StudentRating() {
             <tbody>
               {ratingData?.length > 0 ? (
                 ratingData.map((student, index) => (
-                  <tr key={student.id} className="bg-white text-center">
+                  <tr key={student.id} className="bg-white text-center text-custom-blue font-semibold">
                     <td className="border border-gray-300 px-4 py-2">
                       {student.studentName}
                     </td>
@@ -61,7 +61,7 @@ export default function StudentRating() {
                 <tr>
                   <td
                     colSpan="3"
-                    className="border border-gray-300 px-4 py-2 text-center font-bold"
+                    className="border border-gray-300 text-custom-blue px-4 py-2 text-center font-bold"
                   >
                     No Ratings Available
                   </td>

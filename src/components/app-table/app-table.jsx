@@ -160,6 +160,14 @@ const Table = ({
                           >
                             {item[col.key] || "-----"}
                           </Link>
+                        ) : item.user_type === "Teacher" &&
+                          pathname.match(/\/admin/) ? (
+                          <Link
+                            href={`/admin/studentList?teacherId=${item.id}`}
+                            className="text-[#2d5097] dark:text-amber-200 font-semibold hover:underline"
+                          >
+                            {item[col.key] || "-----"}
+                          </Link>
                         ) : (
                           <span>{item[col.key] || "-----"}</span>
                         )
@@ -180,7 +188,9 @@ const Table = ({
                   <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                     <div
                       className={`flex items-center ${
-                        editButtonVisible || deleteButtonVisible ? "space-x-3.5" : "justify-center"
+                        editButtonVisible || deleteButtonVisible
+                          ? "space-x-3.5"
+                          : "justify-center"
                       }`}
                     >
                       {editButtonVisible &&

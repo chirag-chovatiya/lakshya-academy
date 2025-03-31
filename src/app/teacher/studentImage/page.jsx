@@ -8,7 +8,7 @@ import { del } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import { useImageAdminStore } from "@/providers/image-store-provider";
 import ImageModal from "@/components/app-modal/modal.component.image";
-
+import * as XLSX from "xlsx";
 export default function ImageLists() {
   const {
     userImage,

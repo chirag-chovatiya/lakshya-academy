@@ -20,7 +20,6 @@ export async function POST(request) {
       "Forbidden: Only teachers can create a rating"
     );
   }
-
   try {
     const teacherId = authResponse?.user?.id;
     const data = await request.json();

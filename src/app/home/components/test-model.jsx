@@ -4,6 +4,7 @@ import Results from "./test-result";
 import { get, post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import jwt from "jsonwebtoken";
+import Abacus from "./abcus-design";
 
 export default function TestModel({
   isModalOpen,
@@ -79,6 +80,7 @@ export default function TestModel({
             setUserAnswers([]);
             localStorage.removeItem(selectedCard);
             setStartTime(Date.now());
+            setElapsedTime(null);
           }
         } else {
           console.log("No matching tests for the student's level.");
@@ -99,9 +101,7 @@ export default function TestModel({
       }, 1000);
     }
 
-    return () => {
-      if (timerInterval) clearInterval(timerInterval);
-    };
+    return () => timerInterval && clearInterval(timerInterval);
   }, [isModalOpen, startTime]);
 
   useEffect(() => {
@@ -179,7 +179,6 @@ export default function TestModel({
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-
   const handleAnswerChange = (e) => {
     const newAnswers = [...userAnswers];
     newAnswers[currentIndex] = {
@@ -212,7 +211,7 @@ export default function TestModel({
     >
       <div className="w-full">
         {filteredData.length === 0 ? (
-          <p className="text-center text-xl text-red-500">No test found</p>
+          <p className="text-center text-custom-blue font-semibold text-xl text-red-500">No test found</p>
         ) : showResults ? (
           <Results
             questions={filteredData}
@@ -226,34 +225,41 @@ export default function TestModel({
           currentQuestion && (
             <>
               <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold py-2  sm:text-left">
+                <h2 className="text-xl text-custom-blue font-semibold py-2  sm:text-left">
                   Question : {currentIndex + 1}/{filteredData.length}
                 </h2>
-                <h3 className="text-lg text-gray-700 transition-all duration-500 ease-in-out">
-                  Time Start: {formatElapsedTime(Date.now() - startTime)}
+                <h3 className="text-lg text-custom-blue font-semibold transition-all duration-500 ease-in-out">
+                  Time Start: {formatElapsedTime(elapsedTime)}
                 </h3>
               </div>
-              <div className="w-full flex flex-col justify-center items-center mb-20">
-                <div className="text-center text-4xl">
-                  {currentQuestion?.question?.map((num, index) => (
-                    <p key={index} className="text-center text-5xl relative">
-                      {index > 0 && (
-                        <span className="absolute bottom-0 left-[-40px]">
-                          {getSign(selectedCard)}
-                        </span>
-                      )}{" "}
-                      {num}
-                    </p>
-                  ))}
+              <div className="w-full grid grid-cols-12 gap-4 px-4 md:px-10 py-4 md:py-10">
+                {/* Question Section (6 columns) */}
+                <div className="col-span-12 md:col-span-6 flex flex-col justify-center items-center">
+                  <div className="text-center text-4xl">
+                    {currentQuestion?.question?.map((num, index) => (
+                      <p key={index} className="text-center text-4xl relative font-mono">
+                        {index > 0 && (
+                          <span className="absolute bottom-0 left-[-40px]">
+                            {getSign(selectedCard)}
+                          </span>
+                        )}
+                        {num}
+                      </p>
+                    ))}
+                  </div>
+                  <input
+                    type="number"
+                    className="w-2/3 my-4 p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded"
+                    placeholder="Your answer"
+                    value={userAnswers[currentIndex]?.userAnswer || ""}
+                    onChange={handleAnswerChange}
+                  />
                 </div>
 
-                <input
-                  type="number"
-                  className="w-1/2 mt-10 p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded"
-                  placeholder="Your answer"
-                  value={userAnswers[currentIndex]?.userAnswer || ""}
-                  onChange={handleAnswerChange}
-                />
+                {/* Abacus Section (6 columns) */}
+                <div className="col-span-12 md:col-span-6 flex justify-center items-center">
+                  <Abacus />
+                </div>
               </div>
             </>
           )

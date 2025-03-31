@@ -12,6 +12,8 @@ export default function StudentLists() {
   const { test, changePage, onPageSizeChange, onSelectionChange, initialize } =
     useTestAdminStore((state) => state);
 
+  const [selectedRows, setSelectedRows] = useState([]);
+
   useEffect(() => {
     onSelectionChange("test");
     if (Object.keys(test.data).length === 0) {
@@ -43,9 +45,9 @@ export default function StudentLists() {
         item.subtraction.length +
         item.multiplication.length +
         item.division.length,
-        createdAt: item.createdAt
-          ? new Date(item.createdAt).toLocaleDateString("en-GB")
-          : "N/A",
+      createdAt: item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString("en-GB")
+        : "N/A",
     }));
   };
 
@@ -82,6 +84,21 @@ export default function StudentLists() {
       return response;
     } catch (error) {
       console.error("Error deleting test data:", error);
+    }
+  };
+
+  const deleteAllSelected = async () => {
+    if (selectedRows.length === 0) return alert("No items selected!");
+
+    if (!confirm("Are you sure you want to delete selected items?")) return;
+
+    try {
+      const ids = selectedRows.join(",");
+      await del(`${API.getAllTest}/${ids}`);
+      initialize("test");
+      setSelectedRows([]);
+    } catch (error) {
+      console.error("Error deleting multiple test:", error);
     }
   };
 
@@ -127,6 +144,15 @@ export default function StudentLists() {
                   </span>
                   <span>Refresh</span>
                 </button>
+                <button
+                  className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                  onClick={deleteAllSelected}
+                >
+                  <span>
+                    <i className="fa-solid fa-trash"></i>
+                  </span>
+                  <span>Delete</span>
+                </button>
                 <select
                   id="pagesizeForBlog"
                   className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
@@ -134,10 +160,10 @@ export default function StudentLists() {
                   value={test.pageSize}
                 >
                   {[5, 10, 20, 30, 40, 50, 100, 200, 500, 1000].map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div
@@ -170,8 +196,9 @@ export default function StudentLists() {
           isStatusActive={true}
           updateStatusById={updateStatusById}
           deleteButtonVisible={true}
-                    // editButtonVisible={hasTeacherPermission("StudentEdit")}
-        
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+          showCheckbox={true}
         />
         <Pagination data={test} changePage={changePage} />
       </div>

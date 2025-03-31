@@ -10,57 +10,10 @@ export const createUser = async (data) => {
     throw error;
   }
 };
-
 export const getUserByEmail = async (email) => {
   try {
     const getData = await User.findOne({ where: { email: email } });
     return getData;
-  } catch (error) {
-    throw error;
-  }
-};
-export const getAllTeacherUser = async (
-  page = 1,
-  pageSize = 10,
-  searchQuery = null,
-  teacher_id = null
-) => {
-  try {
-    const parsedPage = parseInt(page);
-    const parsedPageSize = parseInt(pageSize);
-    const offset = (parsedPage - 1) * parsedPageSize;
-
-    const whereClause = {};
-
-    if (teacher_id) {
-      whereClause.teacher_id = teacher_id;
-    }
-
-    if (!page && !pageSize) {
-      const getUsers = await User.findAll();
-      return getUsers;
-    }
-
-    if (searchQuery) {
-      whereClause[Op.or] = [
-        { name: { [Op.like]: `%${searchQuery}%` } },
-        { email: { [Op.like]: `%${searchQuery}%` } },
-      ];
-    }
-    const getAllData = await User.findAndCountAll({
-      where: whereClause,
-      offset,
-      limit: parsedPageSize,
-    });
-
-    const totalPages = Math.ceil(getAllData.count / parsedPageSize);
-
-    return {
-      data: getAllData.rows,
-      currentPage: parsedPage,
-      totalPages: totalPages,
-      totalData: getAllData.count,
-    };
   } catch (error) {
     throw error;
   }
@@ -222,7 +175,6 @@ export const getUserByIdWithReports = async (
     throw error;
   }
 };
-
 export const getTeacherNameById = async (teacherId) => {
   try {
     const teacher = await User.findOne({
@@ -267,6 +219,113 @@ export const deleteUserById = async function (userId, teacherId, userType) {
       return null;
     }
   } catch (error) {
+    throw error;
+  }
+};
+
+// TEACHER LIST
+export const getAllTeacherUser = async (
+  page = 1,
+  pageSize = 10,
+  searchQuery = null
+) => {
+  try {
+    const parsedPage = parseInt(page);
+    const parsedPageSize = parseInt(pageSize);
+    const offset = (parsedPage - 1) * parsedPageSize;
+
+    const whereClause = {
+      user_type: "Teacher",
+    };
+
+    if (!page && !pageSize) {
+      const getUsers = await User.findAll({ where: whereClause });
+      return getUsers;
+    }
+
+    if (searchQuery) {
+      whereClause[Op.or] = [
+        { name: { [Op.like]: `%${searchQuery}%` } },
+        { email: { [Op.like]: `%${searchQuery}%` } },
+      ];
+    }
+
+    const getAllData = await User.findAndCountAll({
+      where: whereClause,
+      offset,
+      limit: parsedPageSize,
+    });
+
+    const teacherData = await Promise.all(
+      getAllData.rows.map(async (teacher) => ({
+        ...teacher.get(),
+        studentCount: await User.count({ where: { teacherId: teacher.id } }),
+      }))
+    );
+    const totalPages = Math.ceil(getAllData.count / parsedPageSize);
+
+    return {
+      data: teacherData,
+      currentPage: parsedPage,
+      totalPages: totalPages,
+      totalData: getAllData.count,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getStudentsByTeacherId = async (
+  teacherId,
+  page = 1,
+  pageSize = 10,
+  searchQuery = null,
+  level = null
+) => {
+  try {
+    const parsedPage = parseInt(page);
+    const parsedPageSize = parseInt(pageSize);
+    const offset = (parsedPage - 1) * parsedPageSize;
+
+    if (!teacherId) {
+      throw new Error("Teacher ID is required");
+    }
+    const whereClause = { teacherId, user_type: "Student" };
+    if (level) {
+      whereClause.level = level;
+    }
+    if (searchQuery) {
+      whereClause[Op.or] = [
+        { name: { [Op.like]: `%${searchQuery}%` } },
+        { email: { [Op.like]: `%${searchQuery}%` } },
+      ];
+    }
+
+    const { count: totalData, rows: students } = await User.findAndCountAll({
+      where: whereClause,
+      attributes: [
+        "id",
+        "name",
+        "email",
+        "user_type",
+        "status",
+        "level",
+        "createdAt",
+      ],
+      offset,
+      limit: parsedPageSize,
+    });
+
+    const totalPages = Math.ceil(totalData / parsedPageSize);
+
+    return {
+      students,
+      currentPage: parsedPage,
+      totalPages,
+      totalData,
+    };
+  } catch (error) {
+    console.error("Error fetching students by teacherId:", error);
     throw error;
   }
 };

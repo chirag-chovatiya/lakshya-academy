@@ -144,7 +144,7 @@ export default function StudentResults() {
                   setStudentLevel("");
                   document.getElementById("textSearch").value = "";
                   handleSearch("");
-                  initialize("rating");
+                  initialize("refresh");
                 }}
               >
                 <span>

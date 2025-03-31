@@ -272,18 +272,45 @@ export const updateTestById = async (testId, newData) => {
     throw error;
   }
 };
-export const deleteTestById = async function (testIds) {
+// export const deleteTestById = async function (testIds) {
+//   try {
+//     const ids = Array.isArray(testIds) ? testIds : [testIds];
+
+//     const deleteTests = await StudentAddition.findAll({ where: { id: ids } });
+
+//     if (deleteTests.length > 0) {
+//       await Promise.all(deleteTests.map((test) => test.destroy()));
+//       return { message: `${deleteTests.length} Test(s) deleted successfully` };
+//     } else {
+//       return null;
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+export const deleteTestById = async function (testIds, teacher_id, userType) {
   try {
     const ids = Array.isArray(testIds) ? testIds : [testIds];
-
-    const deleteTests = await StudentAddition.findAll({ where: { id: ids } });
-
-    if (deleteTests.length > 0) {
-      await Promise.all(deleteTests.map((test) => test.destroy()));
-      return { message: `${deleteTests.length} Test(s) deleted successfully` };
-    } else {
-      return null;
+    const deleteTests = await StudentAddition.findOne({
+      where: { id: ids },
+    });
+    if (!deleteTests) {
+      return {
+        success: false,
+        message: "No Test found with the provided ID",
+      };
     }
+    if (userType === "Teacher" && deleteTests.teacher_id !== teacher_id) {
+      return {
+        success: false,
+        message: "Unauthorized: You cannot delete this test",
+      };
+    }
+    await StudentAddition.destroy({
+      where: { id: ids },
+    });
+    return { success: true, message: "test Deleted successfully" };
   } catch (error) {
     throw error;
   }

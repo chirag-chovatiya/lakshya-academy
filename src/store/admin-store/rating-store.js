@@ -60,7 +60,7 @@ async function fetchDataAndSetState(set, get) {
 export const createRatingStore = (initState = defaultInitState) =>
   createStore((set, get) => ({
     ...initState,
-    initialize: async (selected = "rating") => {
+    initialize: async (mode = "initialize", selected = "rating") => {
       set((state) => ({
         [selected]: {
           ...state[selected],
@@ -68,8 +68,8 @@ export const createRatingStore = (initState = defaultInitState) =>
           page: 1,
           hasMoreData: true,
           loading: true,
-          studentName: null,
-          studentLevel: null,
+          studentLevel: mode === "refresh" ? null : state[selected].studentLevel,
+          studentName: mode === "refresh" ? null : state[selected].studentName,
         },
       }));
       await fetchDataAndSetState(set, get);

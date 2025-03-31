@@ -76,7 +76,6 @@ export default function HeroSection() {
             Total Addition = {cardCounts.addition}
           </p>
         </div>
-
         <div
           className="bg-white text-custom-blue border border-custom-blue rounded-lg shadow p-5 cursor-pointer"
           onClick={() => openModal("subtraction")}

@@ -9,7 +9,7 @@ export const API = {
   getReport:"studentreport",
   imageUpload:"imageUpload",
 
-  allTeacher: "teacher",
+  allTeacher: "teacherlist",
 
   attendance: "studentattendance",
 

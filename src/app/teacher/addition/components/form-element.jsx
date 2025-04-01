@@ -82,6 +82,7 @@ export default function FormStudentAddition({
         toast.error("Failed to submit form.");
       }
     } catch (error) {
+      console.log(error)
       console.error("There was an error submitting the form:", error);
       toast.error("There was an error submitting the form.");
     } finally {

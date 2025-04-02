@@ -18,7 +18,8 @@ export const createTest = async (data) => {
       multiplicationSettings,
       divisionSettings,
       totalQuestion,
-      level
+      level,
+      teacher_id,
     } = data;
 
     const questionAnswerSet = {
@@ -90,11 +91,11 @@ export const createTest = async (data) => {
     const createData = await StudentAddition.create(updatedData);
 
     const students = await User.findAll({
-      where: { level },
+      where: { level, teacherId: teacher_id },
     });
     for (const student of students) {
       const reportData = {
-        teacherId: student.teacher_id,
+        teacherId: teacher_id,
         studentId: student.id,
         testId: createData.id,
         additionMark: null,

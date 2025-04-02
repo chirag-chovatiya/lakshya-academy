@@ -193,18 +193,6 @@ export default function StudentLists() {
             </div>
             <div className="sm:mt-0">
               <select
-                id="hwStatusFilter"
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
-                value={hwStatus}
-                onChange={(e) => setHwStatus(e.target.value)}
-              >
-                <option value="">HW Status</option>
-                <option value="complete">Complete</option>
-                <option value="incomplete">Incomplete</option>
-              </select>
-            </div>
-            <div className="sm:mt-0">
-              <select
                 id="levelFilter"
                 className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
                 onChange={(e) => setLevel(e.target.value)}
@@ -220,6 +208,19 @@ export default function StudentLists() {
                   </option>,
                 ])}
               </select>
+            </div>
+            <div className="sm:mt-0">
+              <button
+                className="px-4 py-2 flex space-x-2 rounded-md bg-custom-blue text-white dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                onClick={() => {
+                  setCreatedAt(new Date().toISOString().slice(0, 10));
+                }}
+              >
+                <span>
+                  <i className="fa-solid fa-calendar-day"></i>
+                </span>
+                <span>Today</span>
+              </button>
             </div>
             <div className="sm:mt-0">
               <input

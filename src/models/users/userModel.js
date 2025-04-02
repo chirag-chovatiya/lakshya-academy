@@ -117,21 +117,23 @@ export const getUserByIdWithReports = async (
     let whereClause = {};
 
     if (createdAt) {
-      const filterDate = new Date(createdAt);
-      if (!isNaN(filterDate)) {
-        const monthStart = new Date(
-          filterDate.getFullYear(),
-          filterDate.getMonth(),
-          1
-        ).setHours(0, 0, 0, 0);
-        const monthEnd = new Date(
-          filterDate.getFullYear(),
-          filterDate.getMonth() + 1,
-          0
-        ).setHours(23, 59, 59, 999);
+      const dateParts = createdAt.split("-");
+      const filterDate = new Date(
+        createdAt + (dateParts.length === 2 ? "-01" : "")
+      );
 
-        whereClause.createdAt = { [Op.between]: [monthStart, monthEnd] };
-      }
+      const startOfRange = new Date(
+        filterDate.getFullYear(),
+        filterDate.getMonth(),
+        dateParts.length === 3 ? filterDate.getDate() : 1
+      ).setHours(0, 0, 0, 0);
+      const endOfRange = new Date(
+        filterDate.getFullYear(),
+        filterDate.getMonth() + (dateParts.length === 2 ? 1 : 0),
+        dateParts.length === 2 ? 0 : filterDate.getDate()
+      ).setHours(23, 59, 59, 999);
+
+      whereClause.createdAt = { [Op.between]: [startOfRange, endOfRange] };
     }
 
     if (hwStatus === "complete") {

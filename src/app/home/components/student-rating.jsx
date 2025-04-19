@@ -31,36 +31,43 @@ export default function StudentRating() {
           <table className="w-full border-collapse border border-gray-300 text-center">
             <thead>
               <tr className="bg-gray-200">
+                <th className="border border-gray-300 px-4 py-2">SR No.</th>
                 <th className="border border-gray-300 px-4 py-2">
                   Student Name
                 </th>
                 <th className="border border-gray-300 px-4 py-2">
-                  Student Level
+                  Student Rating ⭐
                 </th>
                 <th className="border border-gray-300 px-4 py-2">
-                  Student Rating ⭐
+                  Student Level
                 </th>
               </tr>
             </thead>
             <tbody>
               {ratingData?.length > 0 ? (
                 ratingData.map((student, index) => (
-                  <tr key={student.id} className="bg-white text-center text-custom-blue font-semibold">
+                  <tr
+                    key={student.id}
+                    className="bg-white text-center text-custom-blue font-semibold"
+                  >
+                    <td className="border border-gray-300 px-4 py-2">
+                      {index + 1}
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">
                       {student.studentName}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      {student.studentLevel}
-                    </td>
                     <td className="border text- border-gray-300 px-4 py-2">
                       {student.rating} ⭐
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {student.studentLevel}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td
-                    colSpan="3"
+                    colSpan="4"
                     className="border border-gray-300 text-custom-blue px-4 py-2 text-center font-bold"
                   >
                     No Ratings Available

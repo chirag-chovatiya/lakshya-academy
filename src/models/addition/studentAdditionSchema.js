@@ -42,6 +42,14 @@ const StudentAddition = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    repeatFlag: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    abacusFlag: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    }
   },
   {
     timestamps: true,

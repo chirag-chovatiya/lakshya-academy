@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 const Abacuss = () => {
   // State for tracking bead positions
-  const [upperBeads, setUpperBeads] = useState(Array(6).fill(true)); // true = upper, false = moved down
-  const [lowerBeads, setLowerBeads] = useState(Array(6).fill(4)); // Each rod starts with all 4 beads down
+  const [upperBeads, setUpperBeads] = useState(Array(6).fill(true)); 
+  const [lowerBeads, setLowerBeads] = useState(Array(6).fill(4));
 
   // Toggle upper bead position
   const toggleUpperBead = (index) => {

@@ -113,7 +113,7 @@ export default function ImageLists() {
       ID: item.id,
       "Student Name": item.student?.name || "N/A",
       "Student Level": item.student?.level || "N/A",
-      "HW Image URL": item.imgUrl || "",
+      "HW Image URL": item.imgUrl ? "Yes" : "No",
       Date: item.createdAt
         ? new Date(item.createdAt).toLocaleDateString("en-GB")
         : "N/A",

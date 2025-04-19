@@ -10,6 +10,8 @@ import sendResponse from "@/utils/response";
 import { NextResponse } from "next/server";
 import { setCookie } from "cookies-next";
 import { authenticateToken } from "@/middlewares/auth";
+import { createStudenRating } from "@/models/studentRating/studentRatingModel";
+import { createResult } from "@/models/studentResult/studentResultModel";
 dotenv.config();
 
 export async function POST(request, response) {
@@ -109,6 +111,37 @@ export async function POST(request, response) {
       }
 
       user = await createUser(newUser);
+      if (user.user_type === "Student") {
+        const ratingPayload = {
+          teacherId: user.teacherId,
+          studentName: user.name,
+          studentLevel: user.level,
+          rating: 0,
+        };
+
+        const resultPayload = {
+          teacherId: user.teacherId,
+          studentName: user.name,
+          studentLevel: user.level,
+          totalMarks: "0",
+          obtainedMarks: "0",
+          status: false,
+        };
+
+        try {
+          await createStudenRating(ratingPayload);
+        } catch (ratingError) {
+          console.error(
+            "Error creating StudentRating for new user:",
+            ratingError
+          );
+        }
+        try {
+          await createResult(resultPayload);
+        } catch (resultError) {
+          console.error("Error creating StudentResult for new user:", resultError);
+        }
+      }
       const token = jwt.sign({ id: user.id }, jwtSecret, {
         expiresIn: "7d",
       });

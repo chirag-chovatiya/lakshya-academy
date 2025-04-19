@@ -13,6 +13,7 @@ export default function StudentLists() {
     useTestAdminStore((state) => state);
 
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedTestId, setSelectedTestId] = useState(null);
 
   useEffect(() => {
     onSelectionChange("test");
@@ -63,6 +64,7 @@ export default function StudentLists() {
   });
 
   const handleAddNewStudent = (id = null) => {
+    setSelectedTestId(id);
     setStudentAdditionObj((prevState) => ({
       ...prevState,
       title: id ? "Edit Student Test" : "Add Student Test",
@@ -125,6 +127,7 @@ export default function StudentLists() {
         <FormStudentAddition
           studentAdditionObj={studentAdditionObj}
           handleCloseStudentForm={handleCloseStudentForm}
+          id={selectedTestId}
         />
       )}
       <div>
@@ -191,7 +194,8 @@ export default function StudentLists() {
         <Table
           columns={columns}
           data={formattedData}
-          editLinkPrefix={() => handleAddNewStudent(1)}
+          editLinkPrefix={(id) => handleAddNewStudent(id)}
+          editButtonVisible={true}
           deleteHandler={deleteTest}
           isStatusActive={true}
           updateStatusById={updateStatusById}

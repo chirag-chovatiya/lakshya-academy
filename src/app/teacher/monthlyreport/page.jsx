@@ -199,6 +199,18 @@ export default function StudentLists() {
                 onChange={(e) => setCreatedAt(e.target.value)}
               />
             </div>
+            <div className="sm:mt-0">
+              <select
+                id="hwStatusFilter"
+                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white outline-none"
+                value={hwStatus}
+                onChange={(e) => setHwStatus(e.target.value)}
+              >
+                <option value="">HW Status</option>
+                <option value="complete">Complete</option>
+                <option value="incomplete">Incomplete</option>
+              </select>
+            </div>
           </div>
         </div>
         <Table

@@ -5,7 +5,6 @@ import {
   generateSubtractionQuestion,
 } from "@/helper/random.service";
 import { StudentAddition } from "./studentAdditionSchema";
-import { getTeacherNameById } from "../users/userModel";
 import { User } from "../users/userSchema";
 import { Op } from "sequelize";
 import { createReport } from "../studentReport/studentReportModel";
@@ -22,70 +21,50 @@ export const createTest = async (data) => {
       teacher_id,
     } = data;
 
-    const questionAnswerSet = {
-      addition: [],
-      subtraction: [],
-      multiplication: [],
-      division: [],
-    };
+    const questionAnswerSet = {};
+    const operations = [
+      {
+        key: "addition",
+        settings: additionSettings,
+        generator: generateAdditionQuestion,
+      },
+      {
+        key: "subtraction",
+        settings: subtractionSettings,
+        generator: generateSubtractionQuestion,
+      },
+      {
+        key: "multiplication",
+        settings: multiplicationSettings,
+        generator: generateMultiplicationQuestion,
+      },
+      {
+        key: "division",
+        settings: divisionSettings,
+        generator: generateDivisionQuestion,
+      },
+    ];
 
-    const additionTotal = additionSettings?.totalQuestion || totalQuestion;
-    for (let i = 0; i < additionTotal; i++) {
-      const additionResult = generateAdditionQuestion(
-        additionSettings?.horizontalDigits,
-        additionSettings?.verticalDigits
-      );
-      questionAnswerSet.addition.push({
-        question: additionResult.question,
-        answer: additionResult.answer,
-      });
-    }
-
-    const subtractionTotal =
-      subtractionSettings?.totalQuestion || totalQuestion;
-    for (let i = 0; i < subtractionTotal; i++) {
-      const subtractionResult = generateSubtractionQuestion(
-        subtractionSettings?.horizontalDigits,
-        subtractionSettings?.subDigits
-      );
-      questionAnswerSet.subtraction.push({
-        question: subtractionResult.question,
-        answer: subtractionResult.answer,
-      });
-    }
-
-    const multiplicationTotal =
-      multiplicationSettings?.totalQuestion || totalQuestion;
-    for (let i = 0; i < multiplicationTotal; i++) {
-      const multiplicationResult = generateMultiplicationQuestion(
-        multiplicationSettings?.horizontalDigits,
-        multiplicationSettings?.subDigits
-      );
-      questionAnswerSet.multiplication.push({
-        question: multiplicationResult.question,
-        answer: multiplicationResult.answer,
-      });
-    }
-
-    const divisionTotal = divisionSettings?.totalQuestion || totalQuestion;
-    for (let i = 0; i < divisionTotal; i++) {
-      const divisionResult = generateDivisionQuestion(
-        divisionSettings?.horizontalDigits,
-        divisionSettings?.subDigits,
-        divisionSettings?.pointFlag || false
-      );
-      questionAnswerSet.division.push({
-        question: divisionResult.question,
-        answer: divisionResult.answer,
-      });
+    for (const operation of operations) {
+      const { key, settings, generator } = operation;
+      const operationTotal = settings?.totalQuestion || totalQuestion;
+      questionAnswerSet[key] = [];
+      for (let i = 0; i < operationTotal; i++) {
+        const result = generator(
+          settings?.horizontalDigits,
+          settings?.verticalDigits || settings?.subDigits,
+          settings?.pointFlag || false
+        );
+        questionAnswerSet[key].push({
+          question: result.question,
+          answer: result.answer,
+        });
+      }
     }
 
     const updatedData = {
       ...data,
-      addition: questionAnswerSet.addition,
-      subtraction: questionAnswerSet.subtraction,
-      multiplication: questionAnswerSet.multiplication,
-      division: questionAnswerSet.division,
+      ...questionAnswerSet,
     };
 
     const createData = await StudentAddition.create(updatedData);
@@ -93,20 +72,22 @@ export const createTest = async (data) => {
     const students = await User.findAll({
       where: { level, teacherId: teacher_id },
     });
-    for (const student of students) {
-      const reportData = {
-        teacherId: teacher_id,
-        studentId: student.id,
-        testId: createData.id,
-        additionMark: null,
-        subtractionMark: null,
-        multiplicationMark: null,
-        divisionMark: null,
-        result: "0%",
-        hwStatus: false,
-      };
-      await createReport(reportData);
-    }
+
+    const reportBulkData = students.map((student) => ({
+      teacherId: teacher_id,
+      studentId: student.id,
+      testId: createData.id,
+      additionMark: null,
+      subtractionMark: null,
+      multiplicationMark: null,
+      divisionMark: null,
+      result: "0%",
+      hwStatus: false,
+    }));
+
+    await Promise.all(
+      reportBulkData.map((reportData) => createReport(reportData))
+    );
 
     return createData;
   } catch (error) {
@@ -119,7 +100,8 @@ export const getAllTest = async (
   userType,
   userId,
   teacherId = null,
-  teacherName
+  teacherName,
+  level
 ) => {
   try {
     const parsedPage = parseInt(page);
@@ -128,64 +110,26 @@ export const getAllTest = async (
 
     const whereCondition = {
       ...(userType === "Teacher" ? { teacher_id: userId } : {}),
-      ...(userType === "Student" && teacherId ? { teacher_id: teacherId } : {}),
+      ...(userType === "Student" && teacherId
+        ? { teacher_id: teacherId, status: true, level: level }
+        : {}),
       ...(teacherName
-        ? {
-            "$teacher.name$": {
-              [Op.like]: `%${teacherName}%`,
-            },
-          }
+        ? { "$teacher.name$": { [Op.like]: `%${teacherName}%` } }
         : {}),
     };
 
-    if (!page && !pageSize) {
-      const getTest = await StudentAddition.findAll({
-        where: whereCondition,
-        include: [
-          {
-            model: User,
-            as: "teacher",
-            attributes: ["id", "name"],
-          },
-        ],
-      });
+    const includeOptions = [
+      {
+        model: User,
+        as: "teacher",
+        attributes: ["id", "name"],
+      },
+    ];
 
-      const formattedResult = getTest.map((entry) => ({
-        id: entry.id,
-        teacher_id: entry.teacher_id,
-        teacher_name: entry.teacher ? entry.teacher.name : null,
-        totalQuestion: entry.totalQuestion || null,
-        addition: JSON.parse(entry.addition || []),
-        subtraction: JSON.parse(entry.subtraction || []),
-        multiplication: JSON.parse(entry.multiplication || []),
-        division: JSON.parse(entry.division || []),
-        level: entry.level,
-        status: entry.status,
-        createdAt: entry.createdAt,
-        updatedAt: entry.updatedAt,
-      }));
-      return formattedResult;
-    }
-
-    const { rows, count } = await StudentAddition.findAndCountAll({
-      where: whereCondition,
-      offset,
-      limit: parsedPageSize,
-      include: [
-        {
-          model: User,
-          as: "teacher",
-          attributes: ["id", "name"],
-        },
-      ],
-    });
-
-
-    const totalPages = Math.ceil(count / parsedPageSize);
-    const pageResult = rows.map((entry) => ({
+    const formatTestEntry = (entry) => ({
       id: entry.id,
       teacher_id: entry.teacher_id,
-      teacher_name: entry.teacher ? entry.teacher.name : null,
+      teacher_name: entry.teacher?.name || null,
       totalQuestion: entry.totalQuestion || null,
       addition: JSON.parse(entry.addition || "[]"),
       subtraction: JSON.parse(entry.subtraction || "[]"),
@@ -195,8 +139,27 @@ export const getAllTest = async (
       status: entry.status,
       createdAt: entry.createdAt,
       updatedAt: entry.updatedAt,
-    }));
+      abacusFlag: JSON.parse(entry.abacusFlag || "[]"),
+      repeatFlag: entry.repeatFlag,
+    });
 
+    if (!page && !pageSize) {
+      const getTest = await StudentAddition.findAll({
+        where: whereCondition,
+        include: includeOptions,
+      });
+      return getTest.map(formatTestEntry);
+    }
+
+    const { rows, count } = await StudentAddition.findAndCountAll({
+      where: whereCondition,
+      offset,
+      limit: parsedPageSize,
+      include: includeOptions,
+    });
+
+    const totalPages = Math.ceil(count / parsedPageSize);
+    const pageResult = rows.map(formatTestEntry);
     return {
       data: pageResult,
       currentPage: parsedPage,
@@ -209,70 +172,116 @@ export const getAllTest = async (
   }
 };
 
+export const findTeacherTestByUserId = async (teacher_id, level, status) => {
+  try {
+    const adv = await StudentAddition.findOne({
+      where: {
+        teacher_id,
+        level,
+        status,
+      },
+    });
+    return adv;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getTestById = async (testId) => {
   try {
     const getData = await StudentAddition.findOne({ where: { id: testId } });
-    return getData;
+
+    if (!getData) return null;
+
+    const test = getData.toJSON();
+
+    test.addition = JSON.parse(test.addition || "[]");
+    test.subtraction = JSON.parse(test.subtraction || "[]");
+    test.multiplication = JSON.parse(test.multiplication || "[]");
+    test.division = JSON.parse(test.division || "[]");
+    test.abacusFlag = JSON.parse(test.abacusFlag || "[]");
+
+    return test;
   } catch (error) {
     throw error;
   }
 };
+
 export const updateTestById = async (testId, newData) => {
   try {
     const findTest = await StudentAddition.findOne({ where: { id: testId } });
+    if (!findTest) return null;
 
-    if (findTest) {
-      const {
-        horizontalDigits,
-        verticalDigits,
-        subDigits,
-        totalQuestion,
-        type,
-      } = newData;
-      const questionAnswerSet = [];
-      for (let i = 0; i < totalQuestion; i++) {
-        let question, answer;
-        if (type === "addition") {
-          const additionResult = generateAdditionQuestion(
-            horizontalDigits,
-            verticalDigits
-          );
-          question = additionResult.question;
-          answer = additionResult.answer;
-        } else if (type === "multiplication") {
-          const multiplicationResult = generateMultiplicationQuestion(
-            horizontalDigits,
-            subDigits
-          );
-          question = multiplicationResult.question;
-          answer = multiplicationResult.answer;
-        } else if (type === "subtraction") {
-          const subtractionResult = generateSubtractionQuestion(
-            horizontalDigits,
-            subDigits
-          );
-          question = subtractionResult.question;
-          answer = subtractionResult.answer;
-        } else if (type === "division") {
-          const divisionResult = generateDivisionQuestion(
-            horizontalDigits,
-            subDigits
-          );
-          question = divisionResult.question;
-          answer = divisionResult.answer;
-        }
-        questionAnswerSet.push({ question, answer });
+    const existingData = findTest.toJSON();
+    const questionAnswerSet = {};
+
+    const {
+      additionSettings,
+      subtractionSettings,
+      multiplicationSettings,
+      divisionSettings,
+      totalQuestion,
+    } = newData;
+
+    const operations = [
+      {
+        key: "addition",
+        settings: additionSettings,
+        generator: generateAdditionQuestion,
+      },
+      {
+        key: "subtraction",
+        settings: subtractionSettings,
+        generator: generateSubtractionQuestion,
+      },
+      {
+        key: "multiplication",
+        settings: multiplicationSettings,
+        generator: generateMultiplicationQuestion,
+      },
+      {
+        key: "division",
+        settings: divisionSettings,
+        generator: generateDivisionQuestion,
+      },
+    ];
+
+    for (const { key, settings, generator } of operations) {
+      // if no settings, skip
+      if (!settings) continue;
+
+      const operationTotal = settings.totalQuestion ?? totalQuestion ?? 0;
+
+      // If total is 0, retain existing questions
+      if (operationTotal === 0 && existingData[key]) {
+        questionAnswerSet[key] = existingData[key];
+        continue;
       }
-      const updatedData = { ...newData, question: questionAnswerSet };
-      const testUpdated = await findTest.update(updatedData);
-      return testUpdated;
-    } else {
-      return null;
+
+      // Generate new questions
+      questionAnswerSet[key] = [];
+      for (let i = 0; i < operationTotal; i++) {
+        const result = generator(
+          settings?.horizontalDigits,
+          settings?.verticalDigits || settings?.subDigits,
+          settings?.pointFlag || false
+        );
+        questionAnswerSet[key].push({
+          question: result.question,
+          answer: result.answer,
+        });
+      }
     }
+
+    const updatedData = { ...newData, ...questionAnswerSet };
+    const testUpdated = await findTest.update(updatedData);
+    return testUpdated;
   } catch (error) {
     throw error;
   }
 };
+
+
 // export const deleteTestById = async function (testIds) {
 //   try {
 //     const ids = Array.isArray(testIds) ? testIds : [testIds];

@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InputField } from "@/components/app-inputfield/app-inputfield";
 import { SelectField } from "@/components/app-inputfield/app-selectedfield";
 import AppModal from "@/components/app-modal/modal.component";
 import SubmitButton from "@/components/Button/Submit-button";
-import { post } from "@/service/api";
+import { get, post } from "@/service/api";
 import { API } from "@/service/constant/api-constant";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,23 +13,28 @@ import { useTestAdminStore } from "@/providers/test-store-provider";
 export default function FormStudentAddition({
   handleCloseStudentForm,
   studentAdditionObj,
+  id = null,
   data = {
     level: 0,
     totalQuestion: 0,
+    status: false,
     additionSettings: {
       horizontalDigits: 0,
       verticalDigits: 0,
       totalQuestion: 0,
+      pointFlag: false,
     },
     subtractionSettings: {
       horizontalDigits: 0,
       subDigits: 0,
       totalQuestion: 0,
+      pointFlag: false,
     },
     multiplicationSettings: {
       horizontalDigits: 0,
       subDigits: 0,
       totalQuestion: 0,
+      pointFlag: false,
     },
     divisionSettings: {
       horizontalDigits: 0,
@@ -37,6 +42,8 @@ export default function FormStudentAddition({
       totalQuestion: 0,
       pointFlag: false,
     },
+    abacusFlag: [],
+    repeatFlag: false,
   },
 }) {
   const [formData, setFormData] = useState(data);
@@ -44,6 +51,36 @@ export default function FormStudentAddition({
   const [visibleFields, setVisibleFields] = useState([]);
 
   const { initialize } = useTestAdminStore((state) => state);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        try {
+          const response = await get(`${API.getAllTest}/${id}&`);
+          if (response.code === 200) {
+            const apiData = response.data;
+
+            const updatedFormData = {
+              ...data,
+              ...apiData,
+              level: apiData.level || 0,
+              repeatFlag: apiData.repeatFlag || false,
+              abacusFlag: apiData.abacusFlag || [],
+            };
+
+            setFormData(updatedFormData);
+            setVisibleFields(["addition", "subtraction", "multiplication", "division"]);
+          } else {
+            toast.error("Failed to fetch test data.");
+          }
+        } catch (error) {
+          console.error("Error fetching test data:", error);
+          toast.error("There was an error fetching the data.");
+        }
+      }
+    };
+    fetchData();
+  }, [id]);
 
   const handleToggleField = (type) => {
     setVisibleFields((prev) =>
@@ -69,20 +106,49 @@ export default function FormStudentAddition({
     }));
   };
 
+  const handleAbacusFlagChange = (type, checked) => {
+    setFormData((prevData) => {
+      let updatedAbacusFlag = [...prevData.abacusFlag];
+      if (checked) {
+        if (!updatedAbacusFlag.includes(type)) {
+          updatedAbacusFlag.push(type);
+        }
+      } else {
+        updatedAbacusFlag = updatedAbacusFlag.filter((item) => item !== type);
+      }
+      return { ...prevData, abacusFlag: updatedAbacusFlag };
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!id) {
+      for (let type of visibleFields) {
+        const total = formData[`${type}Settings`].totalQuestion;
+        if (!total || total <= 0) {
+          toast.error(`Total questions for ${type} must be greater than 0.`);
+          return;
+        }
+      }
+    }
     setLoading(true);
     try {
-      const response = await post(API.getAllTest, formData);
-      if (response.code === 201 || response.code === 200) {
+      const response = await post(
+        id ? `${API.getAllTest}/${id}` : API.getAllTest,
+        formData
+      );
+      if ([200, 201].includes(response.code)) {
         toast.success("Form submitted successfully!");
         handleCloseStudentForm();
         initialize();
+      } else if (response.code === 400) {
+        toast.error(
+          "Another Test at this level already has status set to true. Please update it first."
+        );
       } else {
-        toast.error("Failed to submit form.");
+        toast.error(response.message || "Failed to submit form.");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       console.error("There was an error submitting the form:", error);
       toast.error("There was an error submitting the form.");
     } finally {
@@ -98,24 +164,50 @@ export default function FormStudentAddition({
         <>
           <ToastContainer />
           <form onSubmit={handleSubmit}>
-            <div className="grid mb-6 md:grid-cols-1">
-              <SelectField
-                id="studentLevel"
-                label="Student Level"
-                required={true}
-                options={Array.from({ length: 12 }, (_, i) => [
-                  { label: `Level ${i + 1}`, value: `${i + 1}` },
-                  { label: `Level ${i + 1}A`, value: `${i + 1}A` },
-                ]).flat()}
-                name="level"
-                value={formData.level}
-                onChange={(e) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    level: e.target.value,
-                  }))
-                }
-              />
+            <div className="grid grid-cols-12 gap-6 mb-6 align-items-center">
+              <div className="col-span-6">
+                <SelectField
+                  id="studentLevel"
+                  label="Student Level"
+                  required={true}
+                  options={Array.from({ length: 12 }, (_, i) => [
+                    { label: `Level ${i + 1}`, value: `${i + 1}` },
+                    { label: `Level ${i + 1}A`, value: `${i + 1}A` },
+                  ]).flat()}
+                  name="level"
+                  value={formData.level}
+                  onChange={(e) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      level: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="col-span-6">
+                <label
+                  htmlFor="test"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Repeat Test Calculation
+                </label>
+                <input
+                  id="hasFlag"
+                  type="checkbox"
+                  className="mr-2"
+                  name="repeatFlag"
+                  checked={formData.repeatFlag}
+                  onChange={(e) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      repeatFlag: e.target.checked,
+                    }))
+                  }
+                />
+                <span className="text-gray-700">
+                  Enable multiple test attempts
+                </span>
+              </div>
             </div>
 
             <div className="grid gap-6 mb-6 md:grid-cols-2">
@@ -138,7 +230,7 @@ export default function FormStudentAddition({
                           id={`${type}RowDigits`}
                           label={`Row Digits For ${type}`}
                           type="number"
-                          required={true}
+                          required={!id}
                           name="horizontalDigits"
                           value={formData[`${type}Settings`].horizontalDigits}
                           onChange={(e) => handleChange(e, type)}
@@ -182,43 +274,56 @@ export default function FormStudentAddition({
                           value={formData[`${type}Settings`].totalQuestion}
                           onChange={(e) => handleChange(e, type)}
                           placeholder="Enter total questions"
-                          required
+                          required={!id}
                         />
-                        {type === "division" && (
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              id={`${type}PointFlag`}
-                              name="pointFlag"
-                              checked={
-                                formData[`${type}Settings`].pointFlag
-                              }
-                              onChange={(e) =>
-                                setFormData((prevData) => ({
-                                  ...prevData,
-                                  [`${type}Settings`]: {
-                                    ...prevData[`${type}Settings`],
-                                    pointFlag: e.target.checked,
-                                  },
-                                }))
-                              }
-                              className="mr-2"
-                            />
-                            <label
-                              htmlFor={`${type}PointFlag`}
-                              className="text-gray-700"
-                            >
-                              Include points in division
-                            </label>
-                          </div>
-                        )}
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={`${type}PointFlag`}
+                            name="pointFlag"
+                            checked={formData[`${type}Settings`].pointFlag}
+                            onChange={(e) =>
+                              setFormData((prevData) => ({
+                                ...prevData,
+                                [`${type}Settings`]: {
+                                  ...prevData[`${type}Settings`],
+                                  pointFlag: e.target.checked,
+                                },
+                              }))
+                            }
+                            className="mr-2"
+                          />
+                          <label
+                            htmlFor={`${type}PointFlag`}
+                            className="text-gray-700"
+                          >
+                            Include points in {type}
+                          </label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={`${type}AbacusFlag`}
+                            name="abacusFlag"
+                            checked={formData.abacusFlag.includes(type)}
+                            onChange={(e) =>
+                              handleAbacusFlagChange(type, e.target.checked)
+                            }
+                            className="mr-2"
+                          />
+                          <label
+                            htmlFor={`${type}AbacusFlag`}
+                            className="text-gray-700"
+                          >
+                            Abacus display in {type}
+                          </label>
+                        </div>
                       </div>
                     )}
                   </div>
                 )
               )}
             </div>
-
             <SubmitButton loading={loading} />
           </form>
         </>

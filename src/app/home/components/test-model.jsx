@@ -19,9 +19,20 @@ export default function TestModel({
   const [loading, setLoading] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(null);
+  const [abacusFlag, setAbacusFlag] = useState([]);
+  const [repeatFlag, setRepeatFlag] = useState(false);
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setFilteredData([]);
+    setCurrentIndex(0);
+    setUserAnswers([]);
+    setShowResults(false);
+    setTestId(null);
+    setLoading(false);
+    setStartTime(null);
+    setElapsedTime(null);
+    setAbacusFlag([]);
   };
 
   const getSign = (cardType) => {
@@ -45,15 +56,16 @@ export default function TestModel({
       if (response.code === 200 && response.data) {
         const token = localStorage.getItem("t");
         const decoded = jwt.decode(token);
-        const studentLevel = decoded?.level;
 
-        const activeTestData = response.data.filter(
-          (test) => test.status === true && test.level === studentLevel
-        );
-
-        if (activeTestData.length > 0) {
-          const newTestId = activeTestData[0].id;
-
+        const activeTestData = response.data[0];
+        if (
+          activeTestData &&
+          activeTestData[selectedCard] &&
+          activeTestData[selectedCard].length > 0
+        ) {
+          const newTestId = activeTestData.id;
+          setAbacusFlag(activeTestData.abacusFlag || []);
+          setRepeatFlag(activeTestData.repeatFlag || false);
           const savedTestData =
             JSON.parse(localStorage.getItem(selectedCard)) || {};
           const {
@@ -70,11 +82,11 @@ export default function TestModel({
           ) {
             setTestId(newTestId);
             setUserAnswers(savedAnswers || []);
-            setFilteredData(activeTestData[0][selectedCard] || []);
+            setFilteredData(activeTestData[selectedCard] || []);
             setShowResults(true);
           } else if (savedStudentId !== decoded.id || newTestId !== testId) {
             setTestId(newTestId);
-            setFilteredData(activeTestData[0][selectedCard] || []);
+            setFilteredData(activeTestData[selectedCard] || []);
             setShowResults(false);
             setCurrentIndex(0);
             setUserAnswers([]);
@@ -91,7 +103,6 @@ export default function TestModel({
       console.error("Failed to fetch test data:", error);
     }
   };
-
   useEffect(() => {
     let timerInterval;
 
@@ -130,15 +141,19 @@ export default function TestModel({
       const token = localStorage.getItem("t");
       const decoded = typeof token === "string" ? jwt.decode(token) : token;
 
-      localStorage.setItem(
-        selectedCard,
-        JSON.stringify({
-          userAnswers,
-          submitted: true,
-          testId,
-          studentId: decoded.id,
-        })
-      );
+      if (repeatFlag === false) {
+        localStorage.setItem(
+          selectedCard,
+          JSON.stringify({
+            userAnswers,
+            submitted: true,
+            testId,
+            studentId: decoded.id,
+          })
+        );
+      } else {
+        console.log("Skipping local storage save due to flag.");
+      }
 
       const correctAnswersCount = userAnswers.filter(
         (ans, index) => ans.userAnswer === filteredData[index]?.answer
@@ -211,7 +226,9 @@ export default function TestModel({
     >
       <div className="w-full">
         {filteredData.length === 0 ? (
-          <p className="text-center text-custom-blue font-semibold text-xl text-red-500">No test found</p>
+          <p className="text-center text-custom-blue font-semibold text-xl text-red-500">
+            No test found
+          </p>
         ) : showResults ? (
           <Results
             questions={filteredData}
@@ -233,11 +250,19 @@ export default function TestModel({
                 </h3>
               </div>
               <div className="w-full grid grid-cols-12 gap-4 px-4 md:px-10 py-4 md:py-10">
-                {/* Question Section (6 columns) */}
-                <div className="col-span-12 md:col-span-6 flex flex-col justify-center items-center">
+                <div
+                  className={`col-span-12 ${
+                    abacusFlag.includes(selectedCard)
+                      ? "md:col-span-6"
+                      : "md:col-span-12"
+                  } flex flex-col justify-center items-center`}
+                >
                   <div className="text-center text-4xl">
                     {currentQuestion?.question?.map((num, index) => (
-                      <p key={index} className="text-center text-4xl relative font-mono">
+                      <p
+                        key={index}
+                        className="text-center text-4xl relative font-mono"
+                      >
                         {index > 0 && (
                           <span className="absolute bottom-0 left-[-40px]">
                             {getSign(selectedCard)}
@@ -255,11 +280,11 @@ export default function TestModel({
                     onChange={handleAnswerChange}
                   />
                 </div>
-
-                {/* Abacus Section (6 columns) */}
-                <div className="col-span-12 md:col-span-6 flex justify-center items-center">
-                  <Abacus />
-                </div>
+                {abacusFlag.includes(selectedCard) && (
+                  <div className="col-span-12 md:col-span-6 flex justify-center items-center">
+                    <Abacus />
+                  </div>
+                )}
               </div>
             </>
           )

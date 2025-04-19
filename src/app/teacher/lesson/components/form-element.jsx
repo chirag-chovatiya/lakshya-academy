@@ -31,7 +31,6 @@ export default function StudentLesson({
       if (id) {
         try {
           const response = await get(`${API.stdLesson}/${id}`);
-          console.log(response)
           if (response.code === 200) {
             setFormData(response.data); 
           } else {

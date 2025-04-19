@@ -1,48 +1,55 @@
-export const generateRandomNumber = (numDigits) => {
+export const generateRandomNumber = (numDigits, pointFlag = false) => {
   const min = Math.pow(10, numDigits - 1);
   const max = Math.pow(10, numDigits) - 1;
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+
+  const number = Math.random() * (max - min) + min;
+  return pointFlag ? parseFloat(number.toFixed(2)) : Math.floor(number);
 };
 
-export const generateAdditionQuestion = (horizontalDigits, verticalDigits) => {
+
+export const generateAdditionQuestion = (horizontalDigits, verticalDigits, pointFlag = false) => {
   const verticalNumbers = Array.from({ length: verticalDigits }, () =>
-    generateRandomNumber(horizontalDigits)
+    generateRandomNumber(horizontalDigits, pointFlag)
   );
   const totalSum = verticalNumbers.reduce((acc, num) => acc + num, 0);
-
-  return { question: verticalNumbers, answer: totalSum };
-};
-
-export const generateMultiplicationQuestion = (horizontalDigits, subDigits) => {
-  const horizontalNumber = generateRandomNumber(horizontalDigits);
-  const subNumber = generateRandomNumber(subDigits);
-
-  const questionArray = [horizontalNumber, subNumber];
-  const totalMultiplication = questionArray.reduce((acc, num) => acc * num, 1);
-  
   return {
-    question: questionArray,
-    answer: totalMultiplication
+    question: verticalNumbers,
+    answer: pointFlag ? parseFloat(totalSum.toFixed(2)) : totalSum
   };
 };
 
-export const generateSubtractionQuestion = (horizontalDigits, subDigits) => {
-  const horizontalNumber = generateRandomNumber(horizontalDigits);
-  const subNumber = generateRandomNumber(subDigits);
-
+export const generateSubtractionQuestion = (horizontalDigits, subDigits, pointFlag = false) => {
+  const subNumber = generateRandomNumber(subDigits, pointFlag);
+  const horizontalNumber = generateRandomNumber(horizontalDigits, pointFlag);
   const startingNumber = horizontalNumber + subNumber;
   const result = startingNumber - subNumber;
-  return { question: [startingNumber, subNumber], answer: result };
+  return {
+    question: [parseFloat(startingNumber.toFixed(2)), subNumber],
+    answer: pointFlag ? parseFloat(result.toFixed(2)) : result
+  };
 };
 
-export const generateDivisionQuestion = (horizontalDigits, subDigits, pointFlag) => {
+
+export const generateMultiplicationQuestion = (horizontalDigits, subDigits, pointFlag = false) => {
+  const horizontalNumber = generateRandomNumber(horizontalDigits, pointFlag);
+  const subNumber = generateRandomNumber(subDigits, pointFlag);
+  const totalMultiplication = horizontalNumber * subNumber;
+
+  return {
+    question: [horizontalNumber, subNumber],
+    answer: pointFlag ? parseFloat(totalMultiplication.toFixed(2)) : totalMultiplication
+  };
+};
+
+
+export const generateDivisionQuestion = (horizontalDigits, subDigits, pointFlag = false) => {
   let horizontalNumber;
   let subNumber;
   let totalDivision;
 
   do {
-    horizontalNumber = generateRandomNumber(horizontalDigits);
     subNumber = generateRandomNumber(subDigits);
+    horizontalNumber = generateRandomNumber(horizontalDigits);
     totalDivision = horizontalNumber / subNumber;
     
     if (pointFlag) {

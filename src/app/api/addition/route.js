@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import sendResponse from "@/utils/response";
-import { createTest, getAllTest } from "@/models/addition/studentAdditionModel";
+import {
+  createTest,
+  findTeacherTestByUserId,
+  getAllTest,
+} from "@/models/addition/studentAdditionModel";
 import { authenticateToken } from "@/middlewares/auth";
 
 export async function POST(request) {
@@ -24,6 +28,17 @@ export async function POST(request) {
   try {
     const teacher_id = authResponse?.user?.id;
     const data = await request.json();
+    const { level, status } = data;
+
+    const existingTest = await findTeacherTestByUserId(teacher_id, level, true);
+
+    if (existingTest && status === true) {
+      return sendResponse(
+        NextResponse,
+        400,
+        "A test with this level already exists with active status"
+      );
+    }
 
     const newData = {
       ...data,
@@ -57,12 +72,11 @@ export async function GET(request) {
     const userId = authResponse?.user?.id;
     const userType = authResponse?.user?.user_type;
     const teacherId = authResponse?.user?.teacherId || null;
-
+    const level = authResponse?.user?.level;
     const page = parseInt(request.nextUrl.searchParams.get("page")) ?? 1;
     const pageSize =
       parseInt(request.nextUrl.searchParams.get("pageSize")) ?? 10;
     const teacherName = request.nextUrl.searchParams.get("teacherName") || "";
-
 
     const allTest = await getAllTest(
       page,
@@ -70,7 +84,8 @@ export async function GET(request) {
       userType,
       userId,
       teacherId,
-      teacherName
+      teacherName,
+      level
     );
     if (allTest) {
       return sendResponse(NextResponse, 200, "All Test are available", allTest);

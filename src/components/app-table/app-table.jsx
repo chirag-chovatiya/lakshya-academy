@@ -18,8 +18,8 @@ const Table = ({
   setSelectedRows,
   showCheckbox = false,
 }) => {
-  const handleStatusChange = (id, newStatus) => {
-    updateStatusById(id, newStatus);
+  const handleStatusChange = (id, newStatus, field) => {
+    updateStatusById(id, newStatus, field);
   };
 
   let pathname = usePathname();
@@ -89,7 +89,7 @@ const Table = ({
                               type="checkbox"
                               checked={item[col.key]}
                               onChange={() =>
-                                handleStatusChange(item.id, !item[col.key])
+                                handleStatusChange(item.id, !item[col.key], col.key)
                               }
                               className="absolute w-0 h-0 opacity-0"
                             />

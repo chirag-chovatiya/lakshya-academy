@@ -33,13 +33,13 @@ export default function StudentRating() {
               <tr className="bg-gray-200">
                 <th className="border border-gray-300 px-4 py-2">SR No.</th>
                 <th className="border border-gray-300 px-4 py-2">
-                  Student Name
+                  Name
                 </th>
                 <th className="border border-gray-300 px-4 py-2">
-                  Student Rating ⭐
+                  Rating ⭐
                 </th>
                 <th className="border border-gray-300 px-4 py-2">
-                  Student Level
+                  Level
                 </th>
               </tr>
             </thead>

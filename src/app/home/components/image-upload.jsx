@@ -19,8 +19,9 @@ export default function ImageUploadModel({ isModalOpen, setIsModalOpen }) {
   };
 
   const handleImageChange = (files) => {
-    setUploadedImages(files);
-    const urls = files.map((file) => URL.createObjectURL(file));
+    const safeFiles = Array.isArray(files) ? files : [];
+    setUploadedImages(safeFiles);
+    const urls = safeFiles.map((file) => URL.createObjectURL(file));
     setUploadedImageUrls(urls);
   };
 
@@ -43,7 +44,7 @@ export default function ImageUploadModel({ isModalOpen, setIsModalOpen }) {
 
       const response = await post(API.imageUpload, formData, true);
 
-      if (response.code === 200) {
+      if (response.code === 201 || response.code === 200) {
         console.log("Images uploaded successfully");
         closeModal();
       } else {

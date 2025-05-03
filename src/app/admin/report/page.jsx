@@ -52,6 +52,7 @@ export default function StudentLists() {
       { key: "divisionMark", title: "Division" },
       { key: "hwStatus", title: "HW Status" },
       { key: "result", title: "Result" },
+      { key: "timeTaken", title: "Taken Time" },
       { key: "createdAt", title: "Date" },
     ],
     []
@@ -86,7 +87,7 @@ export default function StudentLists() {
 
     try {
       const ids = selectedRows.join(",");
-    await del(`${API.getReport}/${ids}`);
+      await del(`${API.getReport}/${ids}`);
       initialize("report");
       setSelectedRows([]);
     } catch (error) {

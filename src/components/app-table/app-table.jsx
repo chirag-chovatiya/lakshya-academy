@@ -29,9 +29,9 @@ const Table = ({
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>
-            <tr className="bg-custom-blue text-left dark:bg-meta-4 rounded-xl">
+            <tr className="bg-custom-blue  text-left dark:bg-meta-4 rounded-xl">
               {showCheckbox && (
-                <th className="px-4 py-4 font-medium text-white">
+                <th className="px-4 py-4 font-medium text-white rounded-l-xl">
                   <input
                     type="checkbox"
                     onChange={(e) =>
@@ -48,7 +48,7 @@ const Table = ({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-4 py-4 font-medium text-white first:rounded-l-xl last:rounded-r-xl"
+                  className="px-4 py-4 font-medium text-white first:rounded-l-xl last:rounded-r-xl "
                 >
                   {col.title}
                 </th>
@@ -82,7 +82,7 @@ const Table = ({
                       key={col.key}
                       className="border-b border-[#eee] px-4 py-5 dark:border-strokedark"
                     >
-                      {col.key === "status" ? (
+                      {col.key === "status" || col.key === "linkStatus" ? (
                         isStatusActive ? (
                           <label className="relative inline-block w-10 h-6 cursor-pointer">
                             <input

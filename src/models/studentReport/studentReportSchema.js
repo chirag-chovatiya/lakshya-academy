@@ -42,6 +42,10 @@ const StudentReport = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: null,
     },
+    timeTaken: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
     hwStatus: {
       type: DataTypes.BOOLEAN,
       defaultValue: 0,

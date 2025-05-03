@@ -51,6 +51,7 @@ export default function StudentLists() {
       { key: "divisionMark", title: "Division" },
       { key: "hwStatus", title: "HW Status" },
       { key: "result", title: "Result" },
+      { key: "timeTaken", title: "Taken Time" },
       { key: "createdAt", title: "Date" },
     ],
     []

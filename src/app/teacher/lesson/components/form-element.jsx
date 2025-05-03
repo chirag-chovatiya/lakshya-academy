@@ -17,7 +17,7 @@ export default function StudentLesson({
   id = null,
   data = {
     studentLevel: 0,
-    description: "",
+    description: null,
     status: false,
   },
 }) {

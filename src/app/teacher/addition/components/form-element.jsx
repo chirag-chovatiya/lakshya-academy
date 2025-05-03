@@ -69,7 +69,12 @@ export default function FormStudentAddition({
             };
 
             setFormData(updatedFormData);
-            setVisibleFields(["addition", "subtraction", "multiplication", "division"]);
+            setVisibleFields([
+              "addition",
+              "subtraction",
+              "multiplication",
+              "division",
+            ]);
           } else {
             toast.error("Failed to fetch test data.");
           }
@@ -276,29 +281,28 @@ export default function FormStudentAddition({
                           placeholder="Enter total questions"
                           required={!id}
                         />
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={`${type}PointFlag`}
-                            name="pointFlag"
-                            checked={formData[`${type}Settings`].pointFlag}
-                            onChange={(e) =>
-                              setFormData((prevData) => ({
-                                ...prevData,
-                                [`${type}Settings`]: {
-                                  ...prevData[`${type}Settings`],
-                                  pointFlag: e.target.checked,
-                                },
-                              }))
-                            }
-                            className="mr-2"
-                          />
-                          <label
-                            htmlFor={`${type}PointFlag`}
-                            className="text-gray-700"
-                          >
-                            Include points in {type}
-                          </label>
+                        <div className="flex items-center w-full">
+                          <div className="flex-1">
+                            <SelectField
+                              id={`${type}PointFlag`}
+                              name="pointFlag"
+                              label={`Points for ${type}`}
+                              value={formData[`${type}Settings`].pointFlag}
+                              options={[
+                                { label: "1 Point", value: 1 },
+                                { label: "2 Points", value: 2 },
+                              ]}
+                              onChange={(e) =>
+                                setFormData((prevData) => ({
+                                  ...prevData,
+                                  [`${type}Settings`]: {
+                                    ...prevData[`${type}Settings`],
+                                    pointFlag: parseInt(e.target.value),
+                                  },
+                                }))
+                              }
+                            />
+                          </div>
                         </div>
                         <div className="flex items-center">
                           <input

@@ -3,7 +3,11 @@ export const generateRandomNumber = (numDigits, pointFlag = false) => {
   const max = Math.pow(10, numDigits) - 1;
 
   const number = Math.random() * (max - min) + min;
-  return pointFlag ? parseFloat(number.toFixed(2)) : Math.floor(number);
+  if (pointFlag === 1 || pointFlag === 2) {
+    return parseFloat(number.toFixed(pointFlag));
+  }
+
+  return Math.floor(number);
 };
 
 
@@ -14,20 +18,28 @@ export const generateAdditionQuestion = (horizontalDigits, verticalDigits, point
   const totalSum = verticalNumbers.reduce((acc, num) => acc + num, 0);
   return {
     question: verticalNumbers,
-    answer: pointFlag ? parseFloat(totalSum.toFixed(2)) : totalSum
+    answer: pointFlag ? parseFloat(totalSum.toFixed(pointFlag)) : totalSum
   };
 };
 
 export const generateSubtractionQuestion = (horizontalDigits, subDigits, pointFlag = false) => {
-  const subNumber = generateRandomNumber(subDigits, pointFlag);
-  const horizontalNumber = generateRandomNumber(horizontalDigits, pointFlag);
-  const startingNumber = horizontalNumber + subNumber;
-  const result = startingNumber - subNumber;
+  let startingNumber, subNumber, result;
+
+  do {
+    startingNumber = generateRandomNumber(horizontalDigits, pointFlag);
+    subNumber = generateRandomNumber(subDigits, pointFlag);
+    result = startingNumber - subNumber;
+  } while (subNumber > startingNumber || result < 0);
+
   return {
-    question: [parseFloat(startingNumber.toFixed(2)), subNumber],
-    answer: pointFlag ? parseFloat(result.toFixed(2)) : result
+    question: [
+      parseFloat(startingNumber.toFixed(pointFlag)),
+      parseFloat(subNumber.toFixed(pointFlag))
+    ],
+    answer: parseFloat(result.toFixed(pointFlag))
   };
 };
+
 
 
 export const generateMultiplicationQuestion = (horizontalDigits, subDigits, pointFlag = false) => {
@@ -37,7 +49,7 @@ export const generateMultiplicationQuestion = (horizontalDigits, subDigits, poin
 
   return {
     question: [horizontalNumber, subNumber],
-    answer: pointFlag ? parseFloat(totalMultiplication.toFixed(2)) : totalMultiplication
+    answer: pointFlag ? parseFloat(totalMultiplication.toFixed(pointFlag)) : totalMultiplication
   };
 };
 
@@ -65,7 +77,7 @@ export const generateDivisionQuestion = (horizontalDigits, subDigits, pointFlag 
   
   return {
     question: questionArray,
-    answer: pointFlag ? parseFloat(totalDivision.toFixed(2)) : totalDivision
+    answer: pointFlag ? parseFloat(totalDivision.toFixed(pointFlag)) : totalDivision
   };
 };
 

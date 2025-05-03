@@ -169,6 +169,7 @@ export default function TestModel({
         testId: testId,
         [fieldToUpdate]: totalScore,
         hwStatus,
+        timeTaken: formatElapsedTime(elapsedTime)
       };
 
       try {

@@ -34,7 +34,7 @@ const Abacus = () => {
                 key={`dot-container-${i}`}
                 className="flex justify-center w-1/6"
               >
-                {(i === 0 || i === 3) && (
+                {(i === 2 || i === 5) && (
                   <div className="w-[11px] h-[11px] border-[3px] border-[#3C0900] bg-gray-200 z-50 rounded-full"></div>
                 )}
               </div>

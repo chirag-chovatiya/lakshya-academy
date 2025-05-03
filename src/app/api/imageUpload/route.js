@@ -1,17 +1,13 @@
 import { NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
 import { createImage, getAllImage } from "@/models/homeWorkImg/imageModel";
 import sendResponse from "@/utils/response";
 import { authenticateToken } from "@/middlewares/auth";
+import { uploadFilesToFTP } from "@/helper/multer.service";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 export const POST = async (request) => {
   const authResponse = await authenticateToken(request);
+  
   if (!authResponse.user) {
     return sendResponse(
       NextResponse,
@@ -19,12 +15,14 @@ export const POST = async (request) => {
       authResponse.message || "Unauthorized"
     );
   }
+
   try {
-    const studentId = authResponse?.user?.id;
-    const teacherId = authResponse?.user?.teacherId;
+    const studentId = authResponse.user.id;
+    const teacherId = authResponse.user.teacherId;
     const formData = await request.formData();
     const files = formData.getAll("files");
     const studentLevel = formData.get("studentLevel");
+    const folderName = "studentlesson"; 
 
     if (!files.length) {
       return sendResponse(NextResponse, 400, "No files received.");
@@ -34,49 +32,33 @@ export const POST = async (request) => {
       return sendResponse(NextResponse, 400, "Student Level is required.");
     }
 
-    const uploadedFileUrls = [];
+    const uploadResult = await uploadFilesToFTP(files, folderName);
 
-    for (const file of files) {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const filename = file.name.replace(/\\/g, "/").replace("/", "");
+    if (!uploadResult.success) {
+      return sendResponse(NextResponse, 500, "Upload Failed");
+    }
 
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "lakshyAcadamy",
-            resource_type: "image",
-            public_id: filename,
-          },
-          (error, result) => {
-            if (error) return reject(error);
-            resolve(result);
-          }
-        );
+    const createdImages = [];
 
-        uploadStream.end(buffer);
-      });
-
-      const fileUrl = result.secure_url;
-      uploadedFileUrls.push(fileUrl);
-
-      // Save to database
-      await createImage({
+    for (const fileUrl of uploadResult.urls) {
+      const newImage = await createImage({
         studentId,
         studentLevel,
         teacherId,
         imgUrl: fileUrl,
       });
+      createdImages.push(newImage);
     }
 
-    const responseUrls =
-      uploadedFileUrls.length === 1 ? uploadedFileUrls[0] : uploadedFileUrls;
+    return sendResponse(
+      NextResponse,
+      201,
+      "Images uploaded and saved successfully",
+      createdImages
+    );
 
-    return sendResponse(NextResponse, 200, "Images Uploaded Successfully", {
-      urls: responseUrls,
-    });
   } catch (error) {
-    console.error("Error occurred: ", error);
-    console.log(error);
+    console.error("Error occurred:", error);
     return sendResponse(NextResponse, 500, "Image Upload Failed");
   }
 };

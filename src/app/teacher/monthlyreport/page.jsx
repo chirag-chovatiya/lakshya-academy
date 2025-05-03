@@ -83,6 +83,7 @@ export default function StudentLists() {
     { key: "divisionMark", title: "Division" },
     { key: "hwstatus", title: "H W Status" },
     { key: "result", title: "Result" },
+    { key: "timeTaken", title: "Taken Time" },
   ];
 
   const handleDelete = async (id) => {

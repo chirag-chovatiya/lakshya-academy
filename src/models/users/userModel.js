@@ -157,6 +157,7 @@ export const getUserByIdWithReports = async (
           "divisionMark",
           "result",
           "hwStatus",
+          "timeTaken",
           "createdAt",
         ],
         offset,

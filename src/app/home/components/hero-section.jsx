@@ -13,6 +13,7 @@ export default function HeroSection() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
+  const [excelData, setExcelData] = useState(null);
   const [cardCounts, setCardCounts] = useState({
     addition: 0,
     subtraction: 0,
@@ -57,6 +58,26 @@ export default function HeroSection() {
 
   useEffect(() => {
     fetchCardCounts();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await get(API.stdLesson);
+        if (
+          response.code === 200 &&
+          response.data &&
+          response.data.length > 0 &&
+          response.data[0].linkStatus
+        ) {
+          setExcelData(response.data[0]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch lesson data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -113,7 +134,7 @@ export default function HeroSection() {
       <div className="container mx-auto grid grid-cols-1  gap-4 p-5">
         <div className="block w-full h-full p-6 bg-white border border-custom-blue rounded-lg shadow">
           <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900">
-          Student Home Work Image & Practice Link
+            Student Home Work Image & Practice Link
           </h5>
           <div className="grid md:grid-cols-3 gap-4">
             <button
@@ -123,7 +144,8 @@ export default function HeroSection() {
               Student Home Work Image
             </button>
             <a
-              href="https://www.sorobanexam.org/mentalcalculation.html?fullscreen=1" target="_blank"
+              href="https://www.sorobanexam.org/mentalcalculation.html?fullscreen=1"
+              target="_blank"
               className="block p-4 bg-custom-blue rounded-lg shadow-md hover:shadow-lg transition duration-200"
             >
               <p className="text-white">
@@ -131,17 +153,27 @@ export default function HeroSection() {
               </p>
             </a>
             <a
-              href="https://abacus.tss.net.in/" target="_blank"
+              href="https://abacus.tss.net.in/"
+              target="_blank"
               className="block p-4 bg-custom-blue rounded-lg shadow-md"
             >
               <p className="text-white">
                 Learn Abacus and sharpen your skills.
               </p>
             </a>
+            {excelData && (
+              <a
+                href={excelData?.excelLink}
+                target="_blank"
+                className="block p-4 bg-custom-blue rounded-lg shadow-md"
+              >
+                <p className="text-white">Open Excel Link to Submit Homework</p>
+              </a>
+            )}
           </div>
         </div>
       </div>
-      <StudentRating/>
+      <StudentRating />
       {isImageUploadOpen && (
         <ImageUploadModel
           isModalOpen={isImageUploadOpen}

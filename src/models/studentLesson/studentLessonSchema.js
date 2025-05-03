@@ -24,7 +24,15 @@ const Lesson = sequelize.define(
     },
     description: {
       type: DataTypes.TEXT,
-      defaultValue: "",
+      defaultValue: null,
+    },
+    excelLink: {
+      type: DataTypes.TEXT,
+      defaultValue: null,
+    },
+    linkStatus: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     status: {
       type: DataTypes.BOOLEAN,

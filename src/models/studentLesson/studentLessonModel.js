@@ -15,7 +15,7 @@ export const findLessonByStudentLevel = async (studentLevel) => {
     const lesson = await Lesson.findOne({
       where: {
         studentLevel,
-        status: true,
+        [Op.or]: [{ status: true }, { linkStatus: true }],
       },
     });
     return lesson;
@@ -62,6 +62,10 @@ export const getAllLesson = async (
       whereClause.teacherId = teacherId;
     } else if (userType === "Student") {
       whereClause.studentLevel = level;
+      whereClause[Op.or] = [
+        { status: true },
+        { linkStatus: true }
+      ];
       if (teacherId) {
         whereClause.teacherId = teacherId;
       }
@@ -74,7 +78,7 @@ export const getAllLesson = async (
       });
       return getStudentLesson;
     }
-    
+
     const getLesson = await Lesson.findAndCountAll({
       where: whereClause,
       offset,
@@ -94,7 +98,12 @@ export const getAllLesson = async (
   }
 };
 
-export const updateLessonById = async (lessonId, teacherId, userType, newData) => {
+export const updateLessonById = async (
+  lessonId,
+  teacherId,
+  userType,
+  newData
+) => {
   try {
     const findLesson = await Lesson.findOne({ where: { id: lessonId } });
     if (!findLesson) return null;
@@ -102,14 +111,15 @@ export const updateLessonById = async (lessonId, teacherId, userType, newData) =
     if (userType === "Teacher" && findLesson.teacherId !== teacherId) {
       return;
     }
+    const isActivating = newData.status === true || newData.linkStatus === true;
 
-    if (newData.status === true) {
+    if (isActivating) {
       const conflictingLesson = await Lesson.findOne({
         where: {
           teacherId,
-          studentLevel: findLesson.studentLevel, 
-          status: true,
+          studentLevel: findLesson.studentLevel,
           id: { [Op.ne]: lessonId },
+          [Op.or]: [{ status: true }, { linkStatus: true }],
         },
       });
 
@@ -127,23 +137,25 @@ export const updateLessonById = async (lessonId, teacherId, userType, newData) =
   }
 };
 
-
-
 export const deleteLessonById = async function (lessonId, teacherId, userType) {
   try {
     const deleteLesson = await Lesson.findOne({ where: { id: lessonId } });
     if (!deleteLesson) {
-      return { success: false, message: "No Lesson found with the provided ID" };
+      return {
+        success: false,
+        message: "No Lesson found with the provided ID",
+      };
     }
 
     if (userType === "Teacher" && deleteLesson.teacherId !== teacherId) {
-      return { success: false, message: "Unauthorized: You cannot delete this lesson" };
+      return {
+        success: false,
+        message: "Unauthorized: You cannot delete this lesson",
+      };
     }
     await deleteLesson.destroy();
     return { success: true, message: "Lesson Deleted successfully" };
-
   } catch (error) {
     throw error;
   }
 };
-

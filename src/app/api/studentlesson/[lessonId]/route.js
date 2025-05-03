@@ -46,6 +46,8 @@ export async function POST(request, { params }) {
       studentLevel: newData.studentLevel,
       description: newData.description,
       status: newData.status,
+      excelLink: newData.excelLink,
+      linkStatus: newData.linkStatus
     };
     const userResult = await updateLessonById(
       lessonId,

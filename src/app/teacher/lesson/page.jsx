@@ -45,6 +45,7 @@ export default function StudentLists() {
       { key: "studentLevel", title: "Student Level" },
       { key: "description", title: "Description" },
       { key: "status", title: "Status" },
+      { key: "linkStatus", title: "Link Status" },
       { key: "createdAt", title: "Date" },
     ],
     []
@@ -101,11 +102,12 @@ export default function StudentLists() {
     }
   };
 
-  const updateStatusById = async (id, newStatus) => {
+  const updateStatusById = async (id, newStatus, field) => {
     try {
-      const response = await post(API.stdLesson + `/${id}`, {
-        status: newStatus,
-      });
+      const payload = {
+        [field]: newStatus,
+      };
+      const response = await post(API.stdLesson + `/${id}`, payload);
       if (response.code === 200) {
         toast.success("Status updated successfully!");
         initialize("lesson");

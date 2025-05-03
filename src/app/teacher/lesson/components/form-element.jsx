@@ -10,6 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLessonAdminStore } from "@/providers/lesson-store-provider";
 import { TextAreaField } from "@/components/app-inputfield/app-textarea";
+import StatusButton from "@/components/Switchers/StatusButton";
 
 export default function StudentLesson({
   handleCloseStudentForm,
@@ -19,6 +20,8 @@ export default function StudentLesson({
     studentLevel: 0,
     description: null,
     status: false,
+    excelLink: null,
+    linkStatus: false,
   },
 }) {
   const [formData, setFormData] = useState(data);
@@ -32,7 +35,7 @@ export default function StudentLesson({
         try {
           const response = await get(`${API.stdLesson}/${id}`);
           if (response.code === 200) {
-            setFormData(response.data); 
+            setFormData(response.data);
           } else {
             toast.error("Failed to fetch lesson data.");
           }
@@ -57,8 +60,10 @@ export default function StudentLesson({
         toast.success(`Lesson ${id ? "updated" : "submitted"} successfully!`);
         handleCloseStudentForm();
         initialize();
-      }  else if (response.code === 400) {
-        toast.error(`Another lesson at level ${formData.studentLevel} already has status set to true. Please update it first.`);
+      } else if (response.code === 400) {
+        toast.error(
+          `Another lesson at level ${formData.studentLevel} already has status set to true. Please update it first.`
+        );
       } else {
         toast.error(response.message || "Failed to submit form.");
       }
@@ -78,7 +83,7 @@ export default function StudentLesson({
         <>
           <ToastContainer />
           <form onSubmit={handleSubmit}>
-            <div className="grid mb-6 md:grid-cols-1">
+            <div className="grid md:grid-cols-1">
               <SelectField
                 id="studentLevel"
                 label="Student Level"
@@ -96,7 +101,7 @@ export default function StudentLesson({
                   }))
                 }
               />
-              <div className="grid mb-6 md:grid-cols-1 my-6">
+              <div className="grid md:grid-cols-1 my-6">
                 <TextAreaField
                   id="studentDescription"
                   label="Student Lesson Description"
@@ -112,6 +117,37 @@ export default function StudentLesson({
                   name="description"
                   rows={4}
                 />
+
+                <TextAreaField
+                  id="studentExlecLink"
+                  label="Student Lesson Excel Link"
+                  required={true}
+                  placeholder="Enter details about the link..."
+                  value={formData.excelLink}
+                  onChange={(e) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      excelLink: e.target.value,
+                    }))
+                  }
+                  name="excelLink"
+                  rows={2}
+                />
+                {/* <div className="col-span-12 md:col-span-2 flex flex-col md:items-end">
+                    <label
+                      htmlFor="linkStatus"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Link Status
+                    </label>
+                    <StatusButton
+                      value={formData.linkStatus}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, linkStatus: value })
+                      }
+                      defaultChecked={formData.linkStatus}
+                    />
+                  </div> */}
               </div>
             </div>
             <SubmitButton loading={loading} />

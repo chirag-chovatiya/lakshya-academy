@@ -13,7 +13,6 @@ export default function HeroSection() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
-  const [excelData, setExcelData] = useState(null);
   const [cardCounts, setCardCounts] = useState({
     addition: 0,
     subtraction: 0,
@@ -58,26 +57,6 @@ export default function HeroSection() {
 
   useEffect(() => {
     fetchCardCounts();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await get(API.stdLesson);
-        if (
-          response.code === 200 &&
-          response.data &&
-          response.data.length > 0 &&
-          response.data[0].linkStatus
-        ) {
-          setExcelData(response.data[0]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch lesson data:", error);
-      }
-    };
-
-    fetchData();
   }, []);
 
   return (
@@ -161,15 +140,6 @@ export default function HeroSection() {
                 Learn Abacus and sharpen your skills.
               </p>
             </a>
-            {excelData && (
-              <a
-                href={excelData?.excelLink}
-                target="_blank"
-                className="block p-4 bg-custom-blue rounded-lg shadow-md"
-              >
-                <p className="text-white">Open Excel Link to Submit Homework</p>
-              </a>
-            )}
           </div>
         </div>
       </div>

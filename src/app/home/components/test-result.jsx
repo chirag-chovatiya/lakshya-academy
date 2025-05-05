@@ -18,7 +18,7 @@ const Results = ({
       </div>
       <ul>
         {questions.map((q, index) => {
-          const userAnswer = userAnswers[index]?.userAnswer || null;
+          const userAnswer = userAnswers[index]?.userAnswer ?? null;
           const isCorrect = userAnswer === q.answer;
           return (
             <li key={index} className="mt-2">

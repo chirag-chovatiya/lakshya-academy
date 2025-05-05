@@ -29,12 +29,31 @@ export default function StudentLesson() {
   return (
     <>
       {lessonData && (
-        <div className="block w-full h-full p-6 bg-white border border-custom-blue rounded-lg shadow">
+        <div className="flex flex-col md:flex-row gap-4">
+        <div
+            className={`w-full ${lessonData?.linkStatus === false ? "md:w-full" : "md:w-1/2"}  p-4 bg-white border border-custom-blue rounded-lg shadow`}
+          >
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
             Student Weekly Home Work
           </h5>
-          <p className="font-normal text-gray-700">{lessonData?.description}</p>
+          <p className="font-normal text-gray-700">
+            {lessonData?.description}
+          </p>
         </div>
+      
+        {lessonData?.linkStatus === true && lessonData?.excelLink && (
+            <a
+              href={lessonData?.excelLink}
+              target="_blank"
+              className="flex justify-center w-full md:w-1/2 p-4 bg-white items-center border border-custom-blue rounded-lg shadow text-center"
+            >
+              <h5 className="mb-2 text-[22px] font-bold tracking-tight text-gray-900">
+                Speed Practice – Daily Challenge for Students
+              </h5>
+            </a>
+          )}
+      </div>
+      
       )}
     </>
   );

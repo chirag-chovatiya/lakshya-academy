@@ -199,7 +199,7 @@ export default function TestModel({
     const newAnswers = [...userAnswers];
     newAnswers[currentIndex] = {
       question: filteredData[currentIndex]?.question,
-      userAnswer: Number(e.target.value),
+      userAnswer: e.target.value ? Number(e.target.value) : "",
     };
     setUserAnswers(newAnswers);
   };
@@ -277,7 +277,7 @@ export default function TestModel({
                     type="number"
                     className="w-2/3 my-4 p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded"
                     placeholder="Your answer"
-                    value={userAnswers[currentIndex]?.userAnswer || ""}
+                    value={userAnswers[currentIndex]?.userAnswer ?? ""}
                     onChange={handleAnswerChange}
                   />
                 </div>
